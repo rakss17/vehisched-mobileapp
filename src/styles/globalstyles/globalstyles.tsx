@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface BackgroundColorProps {
@@ -25,3 +25,40 @@ export const Viewport = {
   width: Dimensions.get("window").width,
   height: Dimensions.get("window").height,
 };
+
+export const Colors = {
+  primaryColor1: "#060E57",
+  primaryColor2: "#D9D9D9",
+  primaryColor3: "#AEAEAE",
+  secondaryColor1: "#FFFFFF",
+  secondaryColor2: "black",
+};
+export const FontSizes = {
+  tiny: Viewport.width * 0.03,
+  small: Viewport.width * 0.04,
+  normal: Viewport.width * 0.05,
+  medium: Viewport.width * 0.06,
+  large: Viewport.width * 0.08,
+  extraLarge: Viewport.width * 0.1,
+};
+export const Styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: Viewport.width * 1.0,
+    height: Viewport.height * 1.0,
+  },
+  flexColumn: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+});
