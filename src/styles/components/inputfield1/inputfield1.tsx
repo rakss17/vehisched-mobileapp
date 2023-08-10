@@ -15,10 +15,11 @@ export const InputField1Styles = StyleSheet.create({
     paddingRight: 10,
   },
   inputWithIcon: {
-    paddingRight: 0, // Reduce space when icon is showing
+    width: Viewport.width * 0.61,
+    height: Viewport.height * 0.05,
   },
   icon1: {
-    padding: 0,
+    marginLeft: 5,
   },
   icon2: {
     paddingHorizontal: 8,

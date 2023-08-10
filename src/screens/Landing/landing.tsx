@@ -45,7 +45,7 @@ export default function Landing() {
               height: Viewport.height * 0.5,
               marginTop: 40,
               borderRadius: 10,
-              padding: 10,
+              padding: 20,
             }}
           >
             <View style={Styles.flexColumn}>
