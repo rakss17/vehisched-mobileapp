@@ -50,7 +50,7 @@ export default function Landing() {
   return (
     <>
       <BackgroundColor style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={Styles.container}>
+        <ScrollView contentContainerStyle={Styles.containerr}>
           <Text
             style={{
               fontSize: FontSizes.extraLarge,

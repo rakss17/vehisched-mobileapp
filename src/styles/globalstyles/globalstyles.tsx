@@ -35,6 +35,7 @@ export const Colors = {
   secondaryColor1: "#FFFFFF",
   secondaryColor2: "black",
   secondaryColor3: "#1F78FF",
+  secondaryColor4: "#616161",
 };
 export const FontSizes = {
   tiny: Viewport.width * 0.03,
@@ -45,13 +46,21 @@ export const FontSizes = {
   extraLarge: Viewport.width * 0.1,
 };
 export const Styles = StyleSheet.create({
+  containerr: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: Viewport.width * 1.0,
+    height: Viewport.height * 1.0,
+  },
   container: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     width: Viewport.width * 1.0,
-    height: Viewport.height * 0.85,
+    height: Viewport.height * 1.0,
     backgroundColor: Colors.secondaryColor1,
   },
   flexColumn: {
