@@ -11,12 +11,26 @@ import InputField1 from "../../components/inputfield/inputfield1";
 import Checkbox from "expo-checkbox";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/buttons/button";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+
+type RootStackParamList = {
+  Landing: undefined;
+  Requester: undefined;
+};
+
+type LandingScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Landing"
+>;
 
 export default function Landing() {
   const [data, setData] = useState({
     username: "",
     password: "",
   });
+
+  const navigation = useNavigation<LandingScreenNavigationProp>();
 
   const handleOnChangeText = (value: any, fieldName: any) => {
     setData({ ...data, [fieldName]: value });
@@ -26,6 +40,12 @@ export default function Landing() {
 
   const handleCheckBoxToggle = () => {
     setIsChecked(!isChecked);
+  };
+
+  const handleSignIn = () => {
+    if (data.username === "requester") {
+      navigation.navigate("Requester");
+    }
   };
   return (
     <>
@@ -105,7 +125,7 @@ export default function Landing() {
                     marginLeft: 45,
                   }}
                 >
-                  <Button text="Sign In"></Button>
+                  <Button onPress={handleSignIn} text="Sign In"></Button>
                 </BackgroundColor>
               </View>
               <BackgroundColor

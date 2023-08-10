@@ -1,16 +1,18 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StatusBar } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import Landing from "./src/screens/Landing/landing";
+import Requester from "./src/screens/Requester/requester";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <StatusBar barStyle="dark-content" backgroundColor="#D9D9D9" />
+      <StatusBar style="light" />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Landing" component={Landing} />
+        <Stack.Screen name="Requester" component={Requester} />
       </Stack.Navigator>
     </NavigationContainer>
   );
