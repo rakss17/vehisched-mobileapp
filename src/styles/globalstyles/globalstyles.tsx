@@ -51,7 +51,8 @@ export const Styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: Viewport.width * 1.0,
-    height: Viewport.height * 1.0,
+    height: Viewport.height * 0.85,
+    backgroundColor: Colors.secondaryColor1,
   },
   flexColumn: {
     display: "flex",

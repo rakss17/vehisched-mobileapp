@@ -28,6 +28,7 @@ export const DropdownStyles = StyleSheet.create({
     borderColor: Colors.primaryColor2,
     borderRadius: 4,
     backgroundColor: Colors.primaryColor2,
+    zIndex: 1,
   },
   dropdownMenuItem: {
     padding: 10,
