@@ -5,7 +5,6 @@ import {
   FontSizes,
   Colors,
 } from "../../styles/globalstyles/globalstyles";
-import { Platform } from "react-native";
 import { faCar, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Requester from "./requester";
