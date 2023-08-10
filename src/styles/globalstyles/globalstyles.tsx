@@ -1,20 +1,22 @@
-import React, { ReactNode } from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import React, { ReactNode, CSSProperties } from "react";
+import { Dimensions, ViewStyle, StyleSheet, StyleProp } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface BackgroundColorProps {
-  children: ReactNode;
+  children?: ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const BackgroundColor: React.FC<BackgroundColorProps> = ({
   children,
+  style,
 }) => {
   return (
     <LinearGradient
       colors={["#060E57", "#CD931E"]}
       start={{ x: 1, y: 0.5 }}
       end={{ x: 0, y: 0 }}
-      style={{ flex: 1 }}
+      style={style}
     >
       {children}
     </LinearGradient>
@@ -32,6 +34,7 @@ export const Colors = {
   primaryColor3: "#AEAEAE",
   secondaryColor1: "#FFFFFF",
   secondaryColor2: "black",
+  secondaryColor3: "#1F78FF",
 };
 export const FontSizes = {
   tiny: Viewport.width * 0.03,
@@ -55,7 +58,6 @@ export const Styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
   },
   flexRow: {
     display: "flex",
