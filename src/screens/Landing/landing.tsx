@@ -12,17 +12,7 @@ import Checkbox from "expo-checkbox";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/buttons/button";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-
-type RootStackParamList = {
-  Landing: undefined;
-  Requester: undefined;
-};
-
-type LandingScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Landing"
->;
+import { NavigationProp } from "../../interfaces/interfaces";
 
 export default function Landing() {
   const [data, setData] = useState({
@@ -30,7 +20,7 @@ export default function Landing() {
     password: "",
   });
 
-  const navigation = useNavigation<LandingScreenNavigationProp>();
+  const navigation = useNavigation<NavigationProp>();
 
   const handleOnChangeText = (value: any, fieldName: any) => {
     setData({ ...data, [fieldName]: value });

@@ -7,18 +7,11 @@ import {
   Colors,
 } from "../../styles/globalstyles/globalstyles";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NavigationProp } from "../../interfaces/interfaces";
 import Dropdown from "../dropdown/dropdown";
 
-type RootStackParamList = {
-  Header: undefined;
-  Landing: undefined;
-};
-
-type HeaderNavigationProp = StackNavigationProp<RootStackParamList, "Header">;
-
 export default function Header() {
-  const navigation = useNavigation<HeaderNavigationProp>();
+  const navigation = useNavigation<NavigationProp>();
   const handleDropdown = (options: string) => {
     if (options === "Sign Out") {
       navigation.navigate("Landing");

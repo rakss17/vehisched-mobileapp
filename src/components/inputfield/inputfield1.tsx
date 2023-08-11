@@ -3,14 +3,7 @@ import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { InputField1Styles } from "../../styles/components/inputfield1/inputfield1";
-
-interface InputFieldProps {
-  value: string;
-  placeholder: string;
-  secureTextEntry?: boolean;
-  icon: any;
-  onChangeText?: (text: string) => void;
-}
+import { InputFieldProps } from "../../interfaces/interfaces";
 
 export default function InputField1({
   value,

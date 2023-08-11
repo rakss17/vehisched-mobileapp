@@ -3,11 +3,7 @@ import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { DropdownStyles } from "../../styles/components/dropdown/dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faUser, faCaretDown } from "@fortawesome/free-solid-svg-icons";
-
-type DropdownProps = {
-  options: string[];
-  onCategoryChange: (category: string) => void;
-};
+import { DropdownProps } from "../../interfaces/interfaces";
 
 export default function Dropdown(props: DropdownProps) {
   const [selectedOption, setSelectedOption] = useState(props.options[0]);

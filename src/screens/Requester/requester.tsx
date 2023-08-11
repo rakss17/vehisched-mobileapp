@@ -9,15 +9,8 @@ import {
 } from "../../styles/globalstyles/globalstyles";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
+import { Vehicle } from "../../interfaces/interfaces";
 
-interface Vehicle {
-  id: number;
-  vehicle_name: string;
-  capacity: number;
-  vehicle_type: string;
-  vehicle_image: any;
-  status: string;
-}
 const fetchedVehicles: Vehicle[] = [
   {
     id: 1,

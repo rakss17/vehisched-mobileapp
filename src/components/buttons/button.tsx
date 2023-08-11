@@ -1,12 +1,7 @@
 import React from "react";
 import { TouchableOpacity, Text } from "react-native";
 import { ButtonStyle } from "../../styles/components/buttons/button";
-
-interface ButtonProps {
-  defaultBG?: boolean;
-  text: string;
-  onPress?: () => void;
-}
+import { ButtonProps } from "../../interfaces/interfaces";
 
 const Button: React.FC<ButtonProps> = ({ text, defaultBG, onPress }) => {
   return (
