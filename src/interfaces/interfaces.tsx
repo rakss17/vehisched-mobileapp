@@ -41,3 +41,9 @@ export interface BackgroundColorProps {
   children?: ReactNode;
   style?: StyleProp<ViewStyle>;
 }
+
+export interface ModalProps {
+  visible: boolean;
+  transparent: any;
+  animationType: any;
+}

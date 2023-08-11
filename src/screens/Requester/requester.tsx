@@ -11,9 +11,11 @@ import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { Vehicle } from "../../interfaces/interfaces";
 import { vehiclesMockData } from "../../components/mockdata/mockdata";
+import SetTripModal from "../../components/modals/settrip";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [isSetTripVisible, setIsSetTripVisible] = useState(false);
   const fetchedVehicleList = () => {
     setVehicles(vehiclesMockData);
   };
@@ -21,6 +23,11 @@ export default function Requester() {
   useEffect(() => {
     fetchedVehicleList();
   }, []);
+
+  const handleSetTripVisible = () => {
+    setIsSetTripVisible(true);
+  };
+
   return (
     <>
       <BackgroundColor
@@ -38,7 +45,7 @@ export default function Requester() {
           >
             Available Vehicles
           </Text>
-          <Button defaultBG text="Set Trip" />
+          <Button onPress={handleSetTripVisible} defaultBG text="Set Trip" />
         </View>
         <BackgroundColor
           style={{
@@ -133,6 +140,11 @@ export default function Requester() {
           </ScrollView>
         </View>
       </View>
+      <SetTripModal
+        animationType="slide"
+        visible={isSetTripVisible}
+        transparent={true}
+      />
     </>
   );
 }

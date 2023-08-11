@@ -12,11 +12,7 @@ export default function App() {
       <StatusBar style="light" />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Landing" component={Landing} />
-        <Stack.Screen
-          name="Requester"
-          component={RequesterTabs}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="Requester" component={RequesterTabs} />
       </Stack.Navigator>
     </NavigationContainer>
   );
