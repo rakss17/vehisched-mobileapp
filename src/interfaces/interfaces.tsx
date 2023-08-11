@@ -1,4 +1,13 @@
 import { StackNavigationProp } from "@react-navigation/stack";
+import { ReactNode } from "react";
+import { ViewStyle, StyleProp } from "react-native";
+
+type RootStackParamList = {
+  Landing: undefined;
+  Requester: undefined;
+};
+
+export type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 export interface Vehicle {
   id: number;
@@ -28,9 +37,7 @@ export interface InputFieldProps {
   onChangeText?: (text: string) => void;
 }
 
-type RootStackParamList = {
-  Landing: undefined;
-  Requester: undefined;
-};
-
-export type NavigationProp = StackNavigationProp<RootStackParamList>;
+export interface BackgroundColorProps {
+  children?: ReactNode;
+  style?: StyleProp<ViewStyle>;
+}

@@ -1,11 +1,7 @@
-import React, { ReactNode, CSSProperties } from "react";
-import { Dimensions, ViewStyle, StyleSheet, StyleProp } from "react-native";
+import React from "react";
+import { Dimensions, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-
-interface BackgroundColorProps {
-  children?: ReactNode;
-  style?: StyleProp<ViewStyle>;
-}
+import { BackgroundColorProps } from "../../interfaces/interfaces";
 
 export const BackgroundColor: React.FC<BackgroundColorProps> = ({
   children,
