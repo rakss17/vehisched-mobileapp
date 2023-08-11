@@ -47,3 +47,13 @@ export interface ModalProps {
   transparent: any;
   animationType: any;
 }
+export interface CalendarData {
+  key: string;
+  day?: number;
+  isToday: boolean;
+  isSelected: boolean | null;
+}
+
+export interface DatePickerProps {
+  onDateSelected: (date: Date) => void;
+}

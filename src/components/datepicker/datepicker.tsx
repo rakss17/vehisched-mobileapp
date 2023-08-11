@@ -6,21 +6,16 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
+import {
+  Colors,
+  Viewport,
+  FontSizes,
+} from "../../styles/globalstyles/globalstyles";
+import { CalendarData, DatePickerProps } from "../../interfaces/interfaces";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
-interface CalendarData {
-  key: string;
-  day?: number;
-  isToday: boolean;
-  isSelected: boolean | null;
-}
-
-interface CustomCalendarPickerProps {
-  onDateSelected: (date: Date) => void;
-}
-
-const CustomCalendarPicker: React.FC<CustomCalendarPickerProps> = ({
-  onDateSelected,
-}) => {
+const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [displayedMonth, setDisplayedMonth] = useState(new Date());
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -88,25 +83,48 @@ const CustomCalendarPicker: React.FC<CustomCalendarPickerProps> = ({
     year: "numeric",
   });
 
+  const renderDayNamesRow = () => {
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return (
+      <View style={styles.dayNamesRow}>
+        {dayNames.map((dayName) => (
+          <Text key={dayName} style={styles.dayNameText}>
+            {dayName}
+          </Text>
+        ))}
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.dropdownContainer}>
         <TouchableOpacity onPress={toggleDropdown} style={styles.button}>
           <Text style={styles.buttonText}>
-            {selectedDate ? selectedDate.toDateString() : "Select Date"}
+            {selectedDate
+              ? selectedDate
+                  .toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                  .replace(/\d{4}-/, "")
+              : "mm/dd/yyyy"}
           </Text>
+          <FontAwesomeIcon style={styles.icon} icon={faCalendarAlt} size={23} />
         </TouchableOpacity>
         {isDropdownVisible && (
           <View style={styles.dropdown}>
             <View style={styles.monthHeader}>
               <TouchableOpacity onPress={() => handleMonthChange(-1)}>
-                <Text>{"<"}</Text>
+                <Text style={styles.arrow}>{"<"}</Text>
               </TouchableOpacity>
               <Text style={styles.monthHeaderText}>{monthLabel}</Text>
               <TouchableOpacity onPress={() => handleMonthChange(1)}>
-                <Text>{">"}</Text>
+                <Text style={styles.arrow}>{">"}</Text>
               </TouchableOpacity>
             </View>
+            {renderDayNamesRow()}
             <FlatList
               data={generateCalendar()}
               keyExtractor={(item) => item.key}
@@ -159,56 +177,79 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     position: "absolute",
-    top: 40,
-    left: -100,
+    top: Viewport.height * 0.07,
+    left: Viewport.width * -0.15,
     right: 0,
-    width: "100%",
+    width: Viewport.width * 0.8,
     backgroundColor: "white",
     borderWidth: 1,
     borderColor: "lightgray",
-    borderRadius: 4,
+    borderRadius: 10,
     zIndex: 1,
   },
   button: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderWidth: 1,
-    borderColor: "lightgray",
-    borderRadius: 4,
+    width: Viewport.width * 0.5,
+    height: Viewport.height * 0.06,
+    backgroundColor: Colors.secondaryColor1,
+    gap: 15,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: FontSizes.normal,
+    color: Colors.secondaryColor2,
+  },
+  icon: {
+    color: Colors.primaryColor1,
   },
   monthHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignItems: "center",
     marginBottom: 10,
   },
   monthHeaderText: {
-    fontSize: 18,
+    fontSize: FontSizes.small,
     fontWeight: "bold",
   },
+  arrow: {
+    fontSize: FontSizes.normal,
+  },
   dayCell: {
-    width: 40,
+    width: Viewport.width * 0.115,
     height: 40,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "lightgray",
+    borderColor: "white",
   },
   today: {
-    backgroundColor: "lightblue",
+    backgroundColor: Colors.primaryColor2,
+    borderRadius: 10,
   },
   todayText: {
-    color: "blue",
+    color: Colors.secondaryColor2,
   },
   selected: {
-    backgroundColor: "lightgreen",
+    backgroundColor: Colors.primaryColor1,
+    borderRadius: 10,
   },
   selectedText: {
-    color: "green",
+    color: Colors.secondaryColor1,
+  },
+  dayNamesRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    marginBottom: 5,
+  },
+  dayNameText: {
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
-export default CustomCalendarPicker;
+export default DatePicker;

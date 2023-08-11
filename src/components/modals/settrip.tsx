@@ -6,7 +6,7 @@ import {
   Colors,
 } from "../../styles/globalstyles/globalstyles";
 import { ModalProps } from "../../interfaces/interfaces";
-import CustomCalendarPicker from "../datepicker/datepicker";
+import DatePicker from "../datepicker/datepicker";
 
 const SetTripModal: React.FC<ModalProps> = ({
   animationType,
@@ -14,8 +14,13 @@ const SetTripModal: React.FC<ModalProps> = ({
   visible,
 }) => {
   const handleDateSelected = (selectedDate: Date) => {
-    console.log("Selected date:", selectedDate);
-    // You can do whatever you want with the selected date here
+    alert(
+      selectedDate.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    );
   };
   return (
     <Modal
@@ -45,7 +50,7 @@ const SetTripModal: React.FC<ModalProps> = ({
               Styles.flexColumn,
             ]}
           >
-            <CustomCalendarPicker onDateSelected={handleDateSelected} />
+            <DatePicker onDateSelected={handleDateSelected} />
           </View>
         </View>
       </>
