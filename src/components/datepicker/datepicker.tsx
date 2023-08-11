@@ -167,13 +167,14 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: Viewport.height * 0.06,
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
   dropdownContainer: {
     position: "relative",
-    marginBottom: 10,
+    marginBottom: 0,
   },
   dropdown: {
     position: "absolute",

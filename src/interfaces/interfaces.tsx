@@ -22,6 +22,8 @@ export interface ButtonProps {
   defaultBG?: boolean;
   text: string;
   onPress?: () => void;
+  transparentBG?: boolean;
+  transparentText?: boolean;
 }
 
 export interface DropdownProps {
@@ -46,6 +48,7 @@ export interface ModalProps {
   visible: boolean;
   transparent: any;
   animationType: any;
+  onRequestClose: () => void;
 }
 export interface CalendarData {
   key: string;

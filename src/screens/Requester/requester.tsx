@@ -28,6 +28,10 @@ export default function Requester() {
     setIsSetTripVisible(true);
   };
 
+  const handleSetTripClose = () => {
+    setIsSetTripVisible(false);
+  };
+
   return (
     <>
       <BackgroundColor
@@ -141,9 +145,10 @@ export default function Requester() {
         </View>
       </View>
       <SetTripModal
-        animationType="slide"
+        animationType="fade"
         visible={isSetTripVisible}
         transparent={true}
+        onRequestClose={handleSetTripClose}
       />
     </>
   );
