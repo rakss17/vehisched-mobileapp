@@ -10,6 +10,7 @@ import {
 import InputField2 from "../inputfield/inputfield2";
 import { RequestFormDataProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
+import Dropdown from "../dropdown/dropdown";
 const RequestForm: React.FC<ModalProps> = ({
   visible,
   transparent,
@@ -19,7 +20,16 @@ const RequestForm: React.FC<ModalProps> = ({
   const [requestFormData, setRequestFormatData] =
     useState<RequestFormDataProps>({
       requester_name: "",
+      office_dept: "",
     });
+  const [selectedOffice, setSelectedOffice] = useState("Select office/dept");
+  const handleOfficeChange = (selectedOption: string) => {
+    setSelectedOffice(selectedOption);
+    setRequestFormatData((prevData) => ({
+      ...prevData,
+      office_dept: selectedOption, // Set selected office in office_dept
+    }));
+  };
   const handleTest = () => {
     console.log(requestFormData);
   };
@@ -62,7 +72,14 @@ const RequestForm: React.FC<ModalProps> = ({
               }
               placeholderText="Requester's name"
             />
-
+            <Dropdown
+              showBG
+              menuAdjusted
+              showText
+              text={selectedOffice}
+              onCategoryChange={handleOfficeChange}
+              options={["CITC", "COT", "CEA", "CSM", "CSTE", "SHS"]}
+            />
             <Button onPress={handleTest} defaultBG text="Next" />
           </View>
         </View>

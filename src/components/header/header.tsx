@@ -58,6 +58,7 @@ export default function Header() {
           </View>
 
           <Dropdown
+            showIcon
             options={["Profile", "Settings", "Sign Out"]}
             onCategoryChange={handleDropdown}
           />

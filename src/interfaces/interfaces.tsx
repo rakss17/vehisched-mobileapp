@@ -29,6 +29,11 @@ export interface ButtonProps {
 export interface DropdownProps {
   options: string[];
   onCategoryChange: (category: string) => void;
+  showIcon?: boolean;
+  showBG?: boolean;
+  menuAdjusted?: boolean;
+  showText?: boolean;
+  text?: string;
 }
 
 export interface InputFieldProps {
@@ -71,6 +76,7 @@ export interface TripData {
 
 export interface RequestFormDataProps {
   requester_name: string;
+  office_dept: string;
 }
 
 export interface InputField2Props {
