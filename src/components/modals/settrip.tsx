@@ -8,6 +8,7 @@ import {
 } from "../../styles/globalstyles/globalstyles";
 import { ModalProps } from "../../interfaces/interfaces";
 import DatePicker from "../datepicker/datepicker";
+import TimePicker from "../timepicker/timepicker";
 import Button from "../buttons/button";
 
 const SetTripModal: React.FC<ModalProps> = ({
@@ -24,6 +25,20 @@ const SetTripModal: React.FC<ModalProps> = ({
     //     day: "numeric",
     //   })
     // );
+  };
+
+  const handleTimeSelected = (
+    hours: number,
+    minutes: number,
+    period: string
+  ) => {
+    const formatNumberToTwoDigits = (number: number) => {
+      return number < 10 ? `0${number}` : `${number}`;
+    };
+    const formattedHours = formatNumberToTwoDigits(hours);
+    const formattedMinutes = formatNumberToTwoDigits(minutes);
+
+    alert(`Selected Time: ${formattedHours}:${formattedMinutes} ${period}`);
   };
   return (
     <Modal
@@ -63,6 +78,7 @@ const SetTripModal: React.FC<ModalProps> = ({
             >
               Set Trip Date
             </Text>
+
             <View style={[{ gap: 30 }, Styles.flexRow]}>
               <Text
                 style={{
@@ -76,7 +92,7 @@ const SetTripModal: React.FC<ModalProps> = ({
               </Text>
               <View style={[{ gap: 10 }, Styles.flexColumn]}>
                 <DatePicker onDateSelected={handleDateSelected} />
-                <DatePicker onDateSelected={handleDateSelected} />
+                <TimePicker onTimeSelected={handleTimeSelected} />
               </View>
             </View>
             <View style={[{ gap: 35 }, Styles.flexRow]}>
@@ -93,7 +109,7 @@ const SetTripModal: React.FC<ModalProps> = ({
               </Text>
               <View style={[{ gap: 10 }, Styles.flexColumn]}>
                 <DatePicker onDateSelected={handleDateSelected} />
-                <DatePicker onDateSelected={handleDateSelected} />
+                <TimePicker onTimeSelected={handleTimeSelected} />
               </View>
             </View>
             <View style={[{ gap: 22 }, Styles.flexRow]}>
