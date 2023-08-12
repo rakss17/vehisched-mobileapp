@@ -12,10 +12,12 @@ import Button from "../../components/buttons/button";
 import { Vehicle } from "../../interfaces/interfaces";
 import { vehiclesMockData } from "../../components/mockdata/mockdata";
 import SetTripModal from "../../components/modals/settrip";
+import RequestForm from "../../components/modals/requestform";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
+  const [isRequestFormVisible, setIsRequestFormVisible] = useState(false);
   const fetchedVehicleList = () => {
     setVehicles(vehiclesMockData);
   };
@@ -32,6 +34,13 @@ export default function Requester() {
     setIsSetTripVisible(false);
   };
 
+  const handleRequestFormVisible = () => {
+    setIsRequestFormVisible(true);
+  };
+
+  const handleRequestFormClose = () => {
+    setIsRequestFormVisible(false);
+  };
   return (
     <>
       <BackgroundColor
@@ -80,6 +89,7 @@ export default function Requester() {
             ) : (
               vehicles.map((vehicle) => (
                 <TouchableOpacity
+                  onPress={handleRequestFormVisible}
                   key={vehicle.id}
                   style={[
                     {
@@ -149,6 +159,12 @@ export default function Requester() {
         visible={isSetTripVisible}
         transparent={true}
         onRequestClose={handleSetTripClose}
+      />
+      <RequestForm
+        animationType="fade"
+        visible={isRequestFormVisible}
+        transparent={true}
+        onRequestClose={handleRequestFormClose}
       />
     </>
   );

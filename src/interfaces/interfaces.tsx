@@ -68,3 +68,12 @@ export interface TripData {
   toTime: string;
   noOfPassenger: number;
 }
+
+export interface RequestFormDataProps {
+  requester_name: string;
+}
+
+export interface InputField2Props {
+  placeholderText: string;
+  onChangeText: (text: string) => void;
+}
