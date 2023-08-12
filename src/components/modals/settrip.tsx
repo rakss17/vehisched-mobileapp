@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Modal, Text, TextInput } from "react-native";
 import {
   Viewport,
@@ -6,7 +6,7 @@ import {
   Colors,
   FontSizes,
 } from "../../styles/globalstyles/globalstyles";
-import { ModalProps } from "../../interfaces/interfaces";
+import { ModalProps, TripData } from "../../interfaces/interfaces";
 import DatePicker from "../datepicker/datepicker";
 import TimePicker from "../timepicker/timepicker";
 import Button from "../buttons/button";
@@ -17,17 +17,27 @@ const SetTripModal: React.FC<ModalProps> = ({
   visible,
   onRequestClose,
 }) => {
-  const handleDateSelected = (selectedDate: Date) => {
-    // alert(
-    //   selectedDate.toLocaleDateString(undefined, {
-    //     year: "numeric",
-    //     month: "short",
-    //     day: "numeric",
-    //   })
-    // );
+  const [tripData, setTripData] = useState<TripData>({
+    fromDate: "",
+    fromTime: "",
+    toDate: "",
+    toTime: "",
+    noOfPassenger: 0,
+  });
+
+  const handleFromDateSelected = (selectedDate: Date) => {
+    const formattedDate = selectedDate.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    setTripData((prevData) => ({
+      ...prevData,
+      fromDate: formattedDate,
+    }));
   };
 
-  const handleTimeSelected = (
+  const handleFromTimeSelected = (
     hours: number,
     minutes: number,
     period: string
@@ -38,7 +48,43 @@ const SetTripModal: React.FC<ModalProps> = ({
     const formattedHours = formatNumberToTwoDigits(hours);
     const formattedMinutes = formatNumberToTwoDigits(minutes);
 
-    alert(`Selected Time: ${formattedHours}:${formattedMinutes} ${period}`);
+    setTripData((prevData) => ({
+      ...prevData,
+      fromTime: `${formattedHours}:${formattedMinutes} ${period}`,
+    }));
+  };
+
+  const handleToDateSelected = (selectedDate: Date) => {
+    const formattedDate = selectedDate.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    setTripData((prevData) => ({
+      ...prevData,
+      toDate: formattedDate,
+    }));
+  };
+
+  const handleToTimeSelected = (
+    hours: number,
+    minutes: number,
+    period: string
+  ) => {
+    const formatNumberToTwoDigits = (number: number) => {
+      return number < 10 ? `0${number}` : `${number}`;
+    };
+    const formattedHours = formatNumberToTwoDigits(hours);
+    const formattedMinutes = formatNumberToTwoDigits(minutes);
+
+    setTripData((prevData) => ({
+      ...prevData,
+      toTime: `${formattedHours}:${formattedMinutes} ${period}`,
+    }));
+  };
+
+  const handleSetTrip = () => {
+    console.log(tripData);
   };
   return (
     <Modal
@@ -91,8 +137,8 @@ const SetTripModal: React.FC<ModalProps> = ({
                 From:{" "}
               </Text>
               <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                <DatePicker onDateSelected={handleDateSelected} />
-                <TimePicker onTimeSelected={handleTimeSelected} />
+                <DatePicker onDateSelected={handleFromDateSelected} />
+                <TimePicker onTimeSelected={handleFromTimeSelected} />
               </View>
             </View>
             <View style={[{ gap: 35 }, Styles.flexRow]}>
@@ -108,8 +154,8 @@ const SetTripModal: React.FC<ModalProps> = ({
                 To:{" "}
               </Text>
               <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                <DatePicker onDateSelected={handleDateSelected} />
-                <TimePicker onTimeSelected={handleTimeSelected} />
+                <DatePicker onDateSelected={handleToDateSelected} />
+                <TimePicker onTimeSelected={handleToTimeSelected} />
               </View>
             </View>
             <View style={[{ gap: 22 }, Styles.flexRow]}>
@@ -124,6 +170,7 @@ const SetTripModal: React.FC<ModalProps> = ({
               </Text>
               <TextInput
                 keyboardType="numeric"
+                value={tripData.noOfPassenger.toString()}
                 style={{
                   backgroundColor: Colors.secondaryColor1,
                   width: Viewport.width * 0.2,
@@ -132,7 +179,13 @@ const SetTripModal: React.FC<ModalProps> = ({
                   padding: 10,
                   fontSize: FontSizes.normal,
                 }}
-              ></TextInput>
+                onChangeText={(text) =>
+                  setTripData({
+                    ...tripData,
+                    noOfPassenger: parseInt(text, 10) || 0,
+                  })
+                }
+              />
             </View>
             <View style={[{ gap: 50 }, Styles.flexRow]}>
               <Button
@@ -141,7 +194,7 @@ const SetTripModal: React.FC<ModalProps> = ({
                 transparentBG
                 transparentText
               />
-              <Button text="Set Trip" defaultBG />
+              <Button onPress={handleSetTrip} text="Set Trip" defaultBG />
             </View>
           </View>
         </View>

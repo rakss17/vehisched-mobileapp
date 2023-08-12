@@ -60,3 +60,11 @@ export interface CalendarData {
 export interface DatePickerProps {
   onDateSelected: (date: Date) => void;
 }
+
+export interface TripData {
+  fromDate: string;
+  fromTime: string;
+  toDate: string;
+  toTime: string;
+  noOfPassenger: number;
+}
