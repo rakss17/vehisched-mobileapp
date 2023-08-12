@@ -77,6 +77,8 @@ export interface TripData {
 export interface RequestFormDataProps {
   requester_name: string;
   office_dept: string;
+  number_of_passenger: number;
+  passenger_name: string[];
 }
 
 export interface InputField2Props {

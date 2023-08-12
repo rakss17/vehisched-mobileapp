@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Modal, View, Text, ScrollView } from "react-native";
 import { ModalProps } from "../../interfaces/interfaces";
 import {
@@ -22,15 +22,17 @@ const RequestForm: React.FC<ModalProps> = ({
     useState<RequestFormDataProps>({
       requester_name: "",
       office_dept: "",
+      number_of_passenger: 0,
+      passenger_name: [],
     });
-  const [numberOfPassengers, setNumberOfPassengers] = useState(0); // Example initial value
+  const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
     Array(numberOfPassengers).fill("")
   );
   const [selectedOffice, setSelectedOffice] = useState("Select office/dept");
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
-  const scrollRef = useRef();
+
   const handleOfficeChange = (selectedOption: string) => {
     setSelectedOffice(selectedOption);
     setRequestFormatData((prevData) => ({
@@ -47,11 +49,12 @@ const RequestForm: React.FC<ModalProps> = ({
       case "Second":
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
-        break;
 
-      //   default:
-      //     setRequestData([]);
-      //     break;
+        break;
+      case "Third":
+        console.log(requestFormData);
+      default:
+        break;
     }
   };
 
@@ -59,6 +62,11 @@ const RequestForm: React.FC<ModalProps> = ({
     const updatedPassengerData = [...passengerData];
     updatedPassengerData[index] = value;
     setPassengerData(updatedPassengerData);
+
+    setRequestFormatData((prevData) => ({
+      ...prevData,
+      passenger_name: updatedPassengerData,
+    }));
   };
 
   const handleNumberOfPassengersChange = (text: string) => {
@@ -66,12 +74,21 @@ const RequestForm: React.FC<ModalProps> = ({
     if (!isNaN(parsedNumber) && parsedNumber >= 0) {
       setNumberOfPassengers(parsedNumber);
       setPassengerData(Array(parsedNumber).fill(""));
+      setRequestFormatData((prevData) => ({
+        ...prevData,
+        number_of_passenger: parsedNumber,
+      }));
     } else {
       setNumberOfPassengers(0);
       setPassengerData([]);
+
+      // Reset the passenger count in requestFormData
+      setRequestFormatData((prevData) => ({
+        ...prevData,
+        number_of_passenger: 0,
+      }));
     }
   };
-
   return (
     <>
       <Modal
@@ -218,7 +235,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     text="Back"
                   />
                   <Button
-                    onPress={() => handleButtonPress("Second")}
+                    onPress={() => handleButtonPress("Third")}
                     defaultBG
                     text="Next"
                   />
