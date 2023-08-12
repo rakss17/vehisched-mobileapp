@@ -10,6 +10,7 @@ import { InputField2Props } from "../../interfaces/interfaces";
 const InputField2: React.FC<InputField2Props> = ({
   placeholderText,
   onChangeText,
+  keyboardType,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -59,6 +60,7 @@ const InputField2: React.FC<InputField2Props> = ({
   return (
     <View style={styles.inputContainer}>
       <TextInput
+        keyboardType={keyboardType}
         style={styles.input}
         onFocus={handleFocus}
         onBlur={handleBlur}

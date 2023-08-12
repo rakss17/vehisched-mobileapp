@@ -82,4 +82,5 @@ export interface RequestFormDataProps {
 export interface InputField2Props {
   placeholderText: string;
   onChangeText: (text: string) => void;
+  keyboardType?: any;
 }
