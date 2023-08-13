@@ -79,13 +79,50 @@ export interface RequestFormDataProps {
   office_dept: string;
   number_of_passenger: number;
   passenger_name: string[];
+  destination: string;
 }
 
 export interface AutoCompleteAddressProps {
   onDistanceCalculated: (distance: string) => void;
+  onAddressSelected: (address: string) => void;
 }
 export interface InputField2Props {
   placeholderText: string;
   onChangeText: (text: string) => void;
   keyboardType?: any;
+}
+
+export interface Address {
+  name: string | null;
+  p1: string | null;
+  p2: string | null;
+  p3: string | null;
+  p4: string | null;
+  address: string;
+  lat: number;
+  lon: number;
+}
+
+export interface SuggestionAddress {
+  name: string | null;
+  p1: string | null;
+  p2: string | null;
+  p3: string | null;
+  p4: string | null;
+  address: string;
+  lat: number;
+  lon: number;
+}
+
+export interface SuggestionAddressProps {
+  placeholder: string;
+  showList: boolean;
+  suggestionListData: SuggestionAddress[];
+  onPressItem: (item: SuggestionAddress) => void;
+  handleSearchTextChange: (text: string) => void;
+}
+
+export interface SuggestionListItemProps {
+  item: Address;
+  onPressItem: (item: Address) => void;
 }

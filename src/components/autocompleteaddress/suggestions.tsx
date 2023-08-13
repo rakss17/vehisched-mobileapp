@@ -1,30 +1,22 @@
 import React, { useRef } from "react";
 import { StyleSheet, View, TextInput, FlatList } from "react-native";
-import SuggestionListItem from "./suggestionlistitems"; // Assuming SuggestionListItem component is defined
+import SuggestionListItem from "./suggestionlistitems";
+import {
+  Colors,
+  Styles,
+  Viewport,
+} from "../../styles/globalstyles/globalstyles";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  SuggestionAddress,
+  SuggestionAddressProps,
+} from "../../interfaces/interfaces";
 
-interface Suggestion {
-  name: string | null;
-  p1: string | null;
-  p2: string | null;
-  p3: string | null;
-  p4: string | null;
-  address: string;
-  lat: number;
-  lon: number;
-}
-
-interface SuggestionsProps {
-  placeholder: string;
-  showList: boolean;
-  suggestionListData: Suggestion[];
-  onPressItem: (item: Suggestion) => void;
-  handleSearchTextChange: (text: string) => void;
-}
-
-export function Suggestions(props: SuggestionsProps) {
+export function SuggestionsAddress(props: SuggestionAddressProps) {
   const searchInputRef = useRef<TextInput | null>(null);
 
-  const handleOnPressItem = (item: Suggestion) => {
+  const handleOnPressItem = (item: SuggestionAddress) => {
     if (searchInputRef.current) {
       searchInputRef.current.blur();
     }
@@ -33,12 +25,15 @@ export function Suggestions(props: SuggestionsProps) {
 
   return (
     <View style={styles.suggestionListContainer}>
-      <TextInput
-        ref={searchInputRef}
-        style={styles.searchInput}
-        placeholder={props.placeholder}
-        onChangeText={props.handleSearchTextChange}
-      />
+      <View style={[{}, Styles.flexRow]}>
+        <TextInput
+          ref={searchInputRef}
+          style={styles.searchInput}
+          placeholder={props.placeholder}
+          onChangeText={props.handleSearchTextChange}
+        />
+        <FontAwesomeIcon style={styles.icon} icon={faCaretDown} />
+      </View>
 
       {props.showList && (
         <FlatList
@@ -58,19 +53,24 @@ export function Suggestions(props: SuggestionsProps) {
 
 const styles = StyleSheet.create({
   searchInput: {
-    height: 40,
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderWidth: 1,
+    height: Viewport.height * 0.07,
+    width: Viewport.width * 0.6,
+    padding: 10,
+    borderBottomWidth: 1,
   },
   suggestionListContainer: {
-    width: "90%",
-    marginLeft: "5%",
+    width: Viewport.width * 0.71,
   },
   searchList: {
-    width: "95%",
-    marginTop: 10,
+    top: 5,
+    right: 20,
+    borderRadius: 10,
+    backgroundColor: Colors.secondaryColor1,
+  },
+  icon: {
+    position: "absolute",
+    left: Viewport.width * 0.53,
   },
 });
 
-export default Suggestions;
+export default SuggestionsAddress;

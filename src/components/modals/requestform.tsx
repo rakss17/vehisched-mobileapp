@@ -25,6 +25,7 @@ const RequestForm: React.FC<ModalProps> = ({
       office_dept: "",
       number_of_passenger: 0,
       passenger_name: [],
+      destination: "",
     });
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
@@ -40,6 +41,13 @@ const RequestForm: React.FC<ModalProps> = ({
 
   const handleDistanceCalculated = (distance: string) => {
     setDistanceToUSTPFormatted(distance);
+  };
+
+  const handleAddressCalculated = (address: string) => {
+    setRequestFormatData((prevData) => ({
+      ...prevData,
+      destination: address,
+    }));
   };
 
   const handleOfficeChange = (selectedOption: string) => {
@@ -68,6 +76,7 @@ const RequestForm: React.FC<ModalProps> = ({
       case "Fourth":
         setIsThirdFormShow(false);
         setIsFourthFormShow(true);
+        console.log(requestFormData);
         break;
       default:
         break;
@@ -104,7 +113,7 @@ const RequestForm: React.FC<ModalProps> = ({
       }));
     }
   };
-  console.log(distanceToUSTPFormatted);
+
   return (
     <>
       <Modal
@@ -290,9 +299,12 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
-                <AutoCompleteAddress
-                  onDistanceCalculated={handleDistanceCalculated}
-                />
+                <View style={{ paddingLeft: 40 }}>
+                  <AutoCompleteAddress
+                    onDistanceCalculated={handleDistanceCalculated}
+                    onAddressSelected={handleAddressCalculated}
+                  />
+                </View>
                 <View>
                   <Text
                     style={{

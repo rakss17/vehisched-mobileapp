@@ -1,19 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Suggestions } from "./suggestions"; // Assuming you have a Suggestions component
+import { SuggestionsAddress } from "./suggestions";
 import * as Location from "expo-location";
-import { AutoCompleteAddressProps } from "../../interfaces/interfaces";
-
-interface Address {
-  name: string | null;
-  p1: string | null;
-  p2: string | null;
-  p3: string | null;
-  p4: string | null;
-  address: string;
-  lat: number;
-  lon: number;
-}
+import { AutoCompleteAddressProps, Address } from "../../interfaces/interfaces";
 
 function haversineDistance(
   lat1: number,
@@ -21,7 +10,7 @@ function haversineDistance(
   lat2: number,
   lon2: number
 ): number {
-  const R = 6371; // Radius of the Earth in kilometers
+  const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
   const a =
@@ -32,11 +21,12 @@ function haversineDistance(
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
-  return distance; // Distance in kilometers
+  return distance;
 }
 
 const AutoCompleteAddress: React.FC<AutoCompleteAddressProps> = ({
   onDistanceCalculated,
+  onAddressSelected,
 }) => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
@@ -100,16 +90,13 @@ const AutoCompleteAddress: React.FC<AutoCompleteAddressProps> = ({
       .catch(function (error) {
         if (axios.isAxiosError(error)) {
           if (error.response) {
-            // Request made and server responded
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response.headers);
             console.log("giatay");
           } else if (error.request) {
-            // The request was made but no response was received
             console.log(error.request);
           } else {
-            // Something happened in setting up the request that triggered an Error
             console.log("Error", error.message);
           }
         }
@@ -117,8 +104,8 @@ const AutoCompleteAddress: React.FC<AutoCompleteAddressProps> = ({
   };
 
   const ustpCoordinates = {
-    lat: 8.484771052817331, // USTP's latitude
-    lon: 124.65672733061609, // USTP's longitude
+    lat: 8.484771052817331,
+    lon: 124.65672733061609,
   };
 
   const onPressItem = (item: Address) => {
@@ -133,11 +120,12 @@ const AutoCompleteAddress: React.FC<AutoCompleteAddressProps> = ({
 
     setPlaceholder(item.address);
     setShowList(false);
-
+    const combinedNameAndAddress = `${item.name}, ${item.address}`;
     onDistanceCalculated(distanceToUSTPFormatted);
+    onAddressSelected(combinedNameAndAddress);
   };
   return (
-    <Suggestions
+    <SuggestionsAddress
       placeholder={placeholder}
       showList={showList}
       suggestionListData={suggestionListData}
