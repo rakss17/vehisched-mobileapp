@@ -32,6 +32,7 @@ const RequestForm: React.FC<ModalProps> = ({
   const [selectedOffice, setSelectedOffice] = useState("Select office/dept");
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
+  const [isThirdFormShow, setIsThirdFormShow] = useState(false);
 
   const handleOfficeChange = (selectedOption: string) => {
     setSelectedOffice(selectedOption);
@@ -49,10 +50,11 @@ const RequestForm: React.FC<ModalProps> = ({
       case "Second":
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
-
+        setIsThirdFormShow(false);
         break;
       case "Third":
-        console.log(requestFormData);
+        setIsSecondFormShow(false);
+        setIsThirdFormShow(true);
       default:
         break;
     }
@@ -82,7 +84,6 @@ const RequestForm: React.FC<ModalProps> = ({
       setNumberOfPassengers(0);
       setPassengerData([]);
 
-      // Reset the passenger count in requestFormData
       setRequestFormatData((prevData) => ({
         ...prevData,
         number_of_passenger: 0,
@@ -214,7 +215,6 @@ const RequestForm: React.FC<ModalProps> = ({
                   placeholderText="No. of passenger(s)"
                 />
                 <ScrollView>
-                  {/* Generating InputField2 components with a gap */}
                   {passengerData.map((passenger, index) => (
                     <View style={{ marginVertical: 15 }} key={index}>
                       <InputField2
@@ -236,6 +236,84 @@ const RequestForm: React.FC<ModalProps> = ({
                   />
                   <Button
                     onPress={() => handleButtonPress("Third")}
+                    defaultBG
+                    text="Next"
+                  />
+                </View>
+              </View>
+            )}
+            {isThirdFormShow && (
+              <View
+                style={{
+                  height: Viewport.height * 0.5,
+                  width: Viewport.width * 0.8,
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <View
+                  style={{
+                    width: Viewport.width * 0.8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: FontSizes.normal,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    What is your destination?
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Selected Vehicle:{" "}
+                  </Text>
+                </View>
+                <InputField2
+                  keyboardType="numeric"
+                  onChangeText={handleNumberOfPassengersChange}
+                  placeholderText="No. of passenger(s)"
+                />
+                <View>
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+                      marginLeft: Viewport.width * 0.1,
+                      marginTop: Viewport.height * 0.01,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Distance: 1500 Kilometers
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+                      marginTop: Viewport.height * 0.04,
+                      textAlign: "left",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Requesters traveling to destinations that exceed 50
+                    kilometers are required to provide a travel order for the
+                    vehicle's fuel and the driver's per diem.
+                  </Text>
+                </View>
+
+                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                  <Button
+                    onPress={() => handleButtonPress("Second")}
+                    transparentBG
+                    transparentText
+                    text="Back"
+                  />
+                  <Button
+                    onPress={() => handleButtonPress("Fourth")}
                     defaultBG
                     text="Next"
                   />
