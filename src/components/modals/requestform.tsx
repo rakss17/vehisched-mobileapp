@@ -11,6 +11,7 @@ import InputField2 from "../inputfield/inputfield2";
 import { RequestFormDataProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
 import Dropdown from "../dropdown/dropdown";
+import AutoCompleteAddress from "../autocompleteaddress/autocompleteaddress";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -29,10 +30,17 @@ const RequestForm: React.FC<ModalProps> = ({
   const [passengerData, setPassengerData] = useState(
     Array(numberOfPassengers).fill("")
   );
+  const [distanceToUSTPFormatted, setDistanceToUSTPFormatted] =
+    useState<string>("");
   const [selectedOffice, setSelectedOffice] = useState("Select office/dept");
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
   const [isThirdFormShow, setIsThirdFormShow] = useState(false);
+  const [isFourthFormShow, setIsFourthFormShow] = useState(false);
+
+  const handleDistanceCalculated = (distance: string) => {
+    setDistanceToUSTPFormatted(distance);
+  };
 
   const handleOfficeChange = (selectedOption: string) => {
     setSelectedOffice(selectedOption);
@@ -55,6 +63,12 @@ const RequestForm: React.FC<ModalProps> = ({
       case "Third":
         setIsSecondFormShow(false);
         setIsThirdFormShow(true);
+        setIsFourthFormShow(false);
+        break;
+      case "Fourth":
+        setIsThirdFormShow(false);
+        setIsFourthFormShow(true);
+        break;
       default:
         break;
     }
@@ -90,6 +104,7 @@ const RequestForm: React.FC<ModalProps> = ({
       }));
     }
   };
+  console.log(distanceToUSTPFormatted);
   return (
     <>
       <Modal
@@ -275,10 +290,8 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
-                <InputField2
-                  keyboardType="numeric"
-                  onChangeText={handleNumberOfPassengersChange}
-                  placeholderText="No. of passenger(s)"
+                <AutoCompleteAddress
+                  onDistanceCalculated={handleDistanceCalculated}
                 />
                 <View>
                   <Text
@@ -289,7 +302,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Distance: 1500 Kilometers
+                    Distance: {distanceToUSTPFormatted} km
                   </Text>
                   <Text
                     style={{
@@ -308,6 +321,55 @@ const RequestForm: React.FC<ModalProps> = ({
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
                     onPress={() => handleButtonPress("Second")}
+                    transparentBG
+                    transparentText
+                    text="Back"
+                  />
+                  <Button
+                    onPress={() => handleButtonPress("Fourth")}
+                    defaultBG
+                    text="Next"
+                  />
+                </View>
+              </View>
+            )}
+            {isFourthFormShow && (
+              <View
+                style={{
+                  height: Viewport.height * 0.5,
+                  width: Viewport.width * 0.8,
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <View
+                  style={{
+                    width: Viewport.width * 0.8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: FontSizes.normal,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    What is your destination?
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Selected Vehicle:{" "}
+                  </Text>
+                </View>
+
+                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                  <Button
+                    onPress={() => handleButtonPress("Third")}
                     transparentBG
                     transparentText
                     text="Back"

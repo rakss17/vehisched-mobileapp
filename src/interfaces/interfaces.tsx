@@ -81,6 +81,9 @@ export interface RequestFormDataProps {
   passenger_name: string[];
 }
 
+export interface AutoCompleteAddressProps {
+  onDistanceCalculated: (distance: string) => void;
+}
 export interface InputField2Props {
   placeholderText: string;
   onChangeText: (text: string) => void;
