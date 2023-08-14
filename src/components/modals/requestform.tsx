@@ -14,6 +14,7 @@ import Dropdown from "../dropdown/dropdown";
 import AutoCompleteAddress from "../autocompleteaddress/autocompleteaddress";
 import DatePicker from "../datepicker/datepicker";
 import TimePicker from "../timepicker/timepicker";
+import UploadButton from "../buttons/upload";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -38,7 +39,7 @@ const RequestForm: React.FC<ModalProps> = ({
     Array(numberOfPassengers).fill("")
   );
   const [distanceToUSTPFormatted, setDistanceToUSTPFormatted] =
-    useState<string>("");
+    useState<any>("");
   const [selectedOffice, setSelectedOffice] = useState("Select office/dept");
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
@@ -49,6 +50,7 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isUrgentYes, setIsUrgentYes] = useState(false);
   const [isUrgentNo, setIsUrgentNo] = useState(false);
   const [isSixthFormShow, setIsSixthFormShow] = useState(false);
+  const [isSeventhFormShow, setIsSeventhFormShow] = useState(false);
 
   const handleDistanceCalculated = (distance: any) => {
     setDistanceToUSTPFormatted(distance);
@@ -98,12 +100,32 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsFourthFormShow(false);
         setIsFifthFormShow(true);
         setIsSixthFormShow(false);
-        console.log(requestFormData);
+        setIsSeventhFormShow(false);
         break;
       case "Sixth":
         setIsFifthFormShow(false);
-        setIsSixthFormShow(true);
-        console.log(requestFormData);
+        if (distanceToUSTPFormatted > 50) {
+          setIsSixthFormShow(true);
+          setIsSeventhFormShow(false);
+        } else if (distanceToUSTPFormatted < 50) {
+          setIsSixthFormShow(false);
+          setIsSeventhFormShow(true);
+        }
+
+        break;
+      case "SeventhBack":
+        if (distanceToUSTPFormatted < 50) {
+          setIsFifthFormShow(true);
+          setIsSeventhFormShow(false);
+        } else if (distanceToUSTPFormatted > 50) {
+          setIsSixthFormShow(true);
+          setIsSeventhFormShow(false);
+        }
+
+        break;
+      case "Seventh":
+        setIsSixthFormShow(false);
+        setIsSeventhFormShow(true);
         break;
       default:
         break;
@@ -580,6 +602,105 @@ const RequestForm: React.FC<ModalProps> = ({
                   />
                   <Button
                     onPress={() => handleButtonPress("Sixth")}
+                    defaultBG
+                    text="Next"
+                  />
+                </View>
+              </View>
+            )}
+            {isSixthFormShow && (
+              <View
+                style={{
+                  height: Viewport.height * 0.5,
+                  width: Viewport.width * 0.8,
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <View
+                  style={{
+                    width: Viewport.width * 0.8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: FontSizes.normal,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Download and Upload Travel Order Document
+                  </Text>
+
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Selected Vehicle:{" "}
+                  </Text>
+                </View>
+                <UploadButton />
+                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                  <Button
+                    onPress={() => handleButtonPress("Fifth")}
+                    transparentBG
+                    transparentText
+                    text="Back"
+                  />
+                  <Button
+                    onPress={() => handleButtonPress("Seventh")}
+                    defaultBG
+                    text="Next"
+                  />
+                </View>
+              </View>
+            )}
+            {isSeventhFormShow && (
+              <View
+                style={{
+                  height: Viewport.height * 0.5,
+                  width: Viewport.width * 0.8,
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <View
+                  style={{
+                    width: Viewport.width * 0.8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: FontSizes.normal,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Please confirm your details before submitting. Thank you.
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Selected Vehicle:{" "}
+                  </Text>
+                </View>
+                <UploadButton />
+                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                  <Button
+                    onPress={() => handleButtonPress("SeventhBack")}
+                    transparentBG
+                    transparentText
+                    text="Back"
+                  />
+                  <Button
+                    onPress={() => handleButtonPress("Submit")}
                     defaultBG
                     text="Next"
                   />
