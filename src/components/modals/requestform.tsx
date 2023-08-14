@@ -37,10 +37,16 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
   const [isThirdFormShow, setIsThirdFormShow] = useState(false);
+  const [showTextNote, setShowTextNote] = useState(false);
   const [isFourthFormShow, setIsFourthFormShow] = useState(false);
 
-  const handleDistanceCalculated = (distance: string) => {
+  const handleDistanceCalculated = (distance: any) => {
     setDistanceToUSTPFormatted(distance);
+    if (distance > 50) {
+      setShowTextNote(true);
+    } else if (distance < 50) {
+      setShowTextNote(false);
+    }
   };
 
   const handleAddressCalculated = (address: string) => {
@@ -328,6 +334,19 @@ const RequestForm: React.FC<ModalProps> = ({
                     kilometers are required to provide a travel order for the
                     vehicle's fuel and the driver's per diem.
                   </Text>
+                  {showTextNote && (
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        marginTop: Viewport.height * 0.04,
+                        textAlign: "left",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Please provide the travel order document on the last part
+                      of this form.
+                    </Text>
+                  )}
                 </View>
 
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
