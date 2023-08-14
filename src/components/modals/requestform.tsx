@@ -440,7 +440,7 @@ const RequestForm: React.FC<ModalProps> = ({
                 <TimePicker secondBG onTimeSelected={handleToTimeSelected} />
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
-                    onPress={() => handleButtonPress("Fourth")}
+                    onPress={() => handleButtonPress("Third")}
                     transparentBG
                     transparentText
                     text="Back"
