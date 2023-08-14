@@ -64,6 +64,12 @@ export interface CalendarData {
 
 export interface DatePickerProps {
   onDateSelected: (date: Date) => void;
+  button2?: boolean;
+}
+
+export interface TimePickerProps {
+  onTimeSelected: (hours: number, minutes: number, period: string) => void;
+  secondBG?: boolean;
 }
 
 export interface TripData {
@@ -80,6 +86,8 @@ export interface RequestFormDataProps {
   number_of_passenger: number;
   passenger_name: string[];
   destination: string;
+  date: string;
+  time: string;
 }
 
 export interface AutoCompleteAddressProps {

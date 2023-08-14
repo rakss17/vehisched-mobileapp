@@ -12,6 +12,8 @@ import { RequestFormDataProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
 import Dropdown from "../dropdown/dropdown";
 import AutoCompleteAddress from "../autocompleteaddress/autocompleteaddress";
+import DatePicker from "../datepicker/datepicker";
+import TimePicker from "../timepicker/timepicker";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -26,6 +28,8 @@ const RequestForm: React.FC<ModalProps> = ({
       number_of_passenger: 0,
       passenger_name: [],
       destination: "",
+      date: "",
+      time: "",
     });
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
@@ -39,6 +43,7 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isThirdFormShow, setIsThirdFormShow] = useState(false);
   const [showTextNote, setShowTextNote] = useState(false);
   const [isFourthFormShow, setIsFourthFormShow] = useState(false);
+  const [isFifthFormShow, setIsFifthFormShow] = useState(false);
 
   const handleDistanceCalculated = (distance: any) => {
     setDistanceToUSTPFormatted(distance);
@@ -82,6 +87,11 @@ const RequestForm: React.FC<ModalProps> = ({
       case "Fourth":
         setIsThirdFormShow(false);
         setIsFourthFormShow(true);
+        setIsFifthFormShow(false);
+        break;
+      case "Fifth":
+        setIsFourthFormShow(false);
+        setIsFifthFormShow(false);
         console.log(requestFormData);
         break;
       default:
@@ -118,6 +128,35 @@ const RequestForm: React.FC<ModalProps> = ({
         number_of_passenger: 0,
       }));
     }
+  };
+
+  const handleToDateSelected = (selectedDate: Date) => {
+    const formattedDate = selectedDate.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    setRequestFormatData((prevData) => ({
+      ...prevData,
+      date: formattedDate,
+    }));
+  };
+
+  const handleToTimeSelected = (
+    hours: number,
+    minutes: number,
+    period: string
+  ) => {
+    const formatNumberToTwoDigits = (number: number) => {
+      return number < 10 ? `0${number}` : `${number}`;
+    };
+    const formattedHours = formatNumberToTwoDigits(hours);
+    const formattedMinutes = formatNumberToTwoDigits(minutes);
+
+    setRequestFormatData((prevData) => ({
+      ...prevData,
+      time: `${formattedHours}:${formattedMinutes} ${period}`,
+    }));
   };
 
   return (
@@ -385,7 +424,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    What is your destination?
+                    When is your preferred travel date and time?
                   </Text>
                   <Text
                     style={{
@@ -397,16 +436,17 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
-
+                <DatePicker button2 onDateSelected={handleToDateSelected} />
+                <TimePicker secondBG onTimeSelected={handleToTimeSelected} />
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
-                    onPress={() => handleButtonPress("Third")}
+                    onPress={() => handleButtonPress("Fourth")}
                     transparentBG
                     transparentText
                     text="Back"
                   />
                   <Button
-                    onPress={() => handleButtonPress("Fourth")}
+                    onPress={() => handleButtonPress("Fifth")}
                     defaultBG
                     text="Next"
                   />

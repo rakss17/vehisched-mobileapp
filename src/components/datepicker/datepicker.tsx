@@ -15,7 +15,7 @@ import { CalendarData, DatePickerProps } from "../../interfaces/interfaces";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
-const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected, button2 }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [displayedMonth, setDisplayedMonth] = useState(new Date());
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -99,7 +99,10 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
   return (
     <View style={styles.container}>
       <View style={styles.dropdownContainer}>
-        <TouchableOpacity onPress={toggleDropdown} style={styles.button}>
+        <TouchableOpacity
+          onPress={toggleDropdown}
+          style={[styles.button, button2 && styles.button2]}
+        >
           <Text style={styles.buttonText}>
             {selectedDate
               ? selectedDate
@@ -114,7 +117,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
           <FontAwesomeIcon style={styles.icon} icon={faCalendarAlt} size={23} />
         </TouchableOpacity>
         {isDropdownVisible && (
-          <View style={styles.dropdown}>
+          <View style={[styles.dropdown, button2 && styles.dropdown2]}>
             <View style={styles.monthHeader}>
               <TouchableOpacity onPress={() => handleMonthChange(-1)}>
                 <Text style={styles.arrow}>{"<"}</Text>
@@ -188,10 +191,34 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     zIndex: 1,
   },
+  dropdown2: {
+    position: "absolute",
+    top: Viewport.height * 0.07,
+    left: Viewport.width * -0.1,
+    right: 0,
+    width: Viewport.width * 0.8,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "lightgray",
+    borderRadius: 10,
+    zIndex: 1,
+  },
   button: {
     width: Viewport.width * 0.5,
     height: Viewport.height * 0.06,
     backgroundColor: Colors.secondaryColor1,
+    gap: 15,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+  },
+  button2: {
+    width: Viewport.width * 0.6,
+    height: Viewport.height * 0.06,
+    backgroundColor: Colors.primaryColor2,
+    borderBottomWidth: 1,
     gap: 15,
     display: "flex",
     flexDirection: "row",
