@@ -192,6 +192,13 @@ const RequestForm: React.FC<ModalProps> = ({
     }));
   };
 
+  // Inside RequestForm component
+  const [selectedFileName, setSelectedFileName] = useState<string>("");
+
+  const handleFileSelected = (fileName: string) => {
+    setSelectedFileName(fileName);
+  };
+
   return (
     <>
       <Modal
@@ -642,7 +649,10 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
-                <UploadButton />
+                <UploadButton
+                  selectedFileName={selectedFileName}
+                  onFileSelected={handleFileSelected}
+                />
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
                     onPress={() => handleButtonPress("Fifth")}
@@ -691,7 +701,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
-                <UploadButton />
+
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
                     onPress={() => handleButtonPress("SeventhBack")}
