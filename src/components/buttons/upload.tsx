@@ -8,11 +8,7 @@ import {
   FontSizes,
   Colors,
 } from "../../styles/globalstyles/globalstyles";
-
-interface UploadButtonProps {
-  selectedFileName: string;
-  onFileSelected: (fileName: string) => void;
-}
+import { UploadButtonProps } from "../../interfaces/interfaces";
 
 const UploadButton: React.FC<UploadButtonProps> = ({
   selectedFileName,

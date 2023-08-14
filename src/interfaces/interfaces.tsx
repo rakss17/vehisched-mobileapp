@@ -137,3 +137,8 @@ export interface SuggestionListItemProps {
   item: Address;
   onPressItem: (item: Address) => void;
 }
+
+export interface UploadButtonProps {
+  selectedFileName: string;
+  onFileSelected: (fileName: string) => void;
+}
