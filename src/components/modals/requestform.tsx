@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Modal, View, Text, ScrollView } from "react-native";
-import { ModalProps } from "../../interfaces/interfaces";
+import Checkbox from "expo-checkbox";
 import {
   Styles,
   Viewport,
@@ -8,7 +8,7 @@ import {
   Colors,
 } from "../../styles/globalstyles/globalstyles";
 import InputField2 from "../inputfield/inputfield2";
-import { RequestFormDataProps } from "../../interfaces/interfaces";
+import { RequestFormDataProps, ModalProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
 import Dropdown from "../dropdown/dropdown";
 import AutoCompleteAddress from "../autocompleteaddress/autocompleteaddress";
@@ -30,6 +30,8 @@ const RequestForm: React.FC<ModalProps> = ({
       destination: "",
       date: "",
       time: "",
+      purpose: "",
+      urgent: false,
     });
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
@@ -44,6 +46,9 @@ const RequestForm: React.FC<ModalProps> = ({
   const [showTextNote, setShowTextNote] = useState(false);
   const [isFourthFormShow, setIsFourthFormShow] = useState(false);
   const [isFifthFormShow, setIsFifthFormShow] = useState(false);
+  const [isUrgentYes, setIsUrgentYes] = useState(false);
+  const [isUrgentNo, setIsUrgentNo] = useState(false);
+  const [isSixthFormShow, setIsSixthFormShow] = useState(false);
 
   const handleDistanceCalculated = (distance: any) => {
     setDistanceToUSTPFormatted(distance);
@@ -91,7 +96,13 @@ const RequestForm: React.FC<ModalProps> = ({
         break;
       case "Fifth":
         setIsFourthFormShow(false);
+        setIsFifthFormShow(true);
+        setIsSixthFormShow(false);
+        console.log(requestFormData);
+        break;
+      case "Sixth":
         setIsFifthFormShow(false);
+        setIsSixthFormShow(true);
         console.log(requestFormData);
         break;
       default:
@@ -447,6 +458,128 @@ const RequestForm: React.FC<ModalProps> = ({
                   />
                   <Button
                     onPress={() => handleButtonPress("Fifth")}
+                    defaultBG
+                    text="Next"
+                  />
+                </View>
+              </View>
+            )}
+            {isFifthFormShow && (
+              <View
+                style={{
+                  height: Viewport.height * 0.5,
+                  width: Viewport.width * 0.8,
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <View
+                  style={{
+                    width: Viewport.width * 0.8,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: FontSizes.normal,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Is it urgent? And what is your purpose?
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Selected Vehicle:{" "}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    {
+                      gap: 10,
+                      width: Viewport.width * 0.7,
+                    },
+                    Styles.flexRow,
+                  ]}
+                >
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Urgent Request?
+                  </Text>
+                  <Checkbox
+                    disabled={false}
+                    value={isUrgentYes}
+                    onValueChange={(newValue) => {
+                      setIsUrgentYes(newValue);
+                      setIsUrgentNo(!newValue);
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Yes
+                  </Text>
+                  <Checkbox
+                    disabled={false}
+                    value={isUrgentNo}
+                    onValueChange={(newValue) => {
+                      setIsUrgentNo(newValue);
+                      setIsUrgentYes(!newValue);
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    No
+                  </Text>
+                </View>
+                {isUrgentYes && (
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Please provide a brief statement explaining the urgency or
+                    importance of your purpose for requesting the reservation.
+                  </Text>
+                )}
+                <View style={{ marginTop: 20 }}>
+                  <InputField2
+                    adjustedWidth
+                    onChangeText={(text) =>
+                      setRequestFormatData({
+                        ...requestFormData,
+                        purpose: text,
+                      })
+                    }
+                    placeholderText="Purpose"
+                  />
+                </View>
+
+                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                  <Button
+                    onPress={() => handleButtonPress("Fourth")}
+                    transparentBG
+                    transparentText
+                    text="Back"
+                  />
+                  <Button
+                    onPress={() => handleButtonPress("Sixth")}
                     defaultBG
                     text="Next"
                   />

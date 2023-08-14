@@ -88,6 +88,8 @@ export interface RequestFormDataProps {
   destination: string;
   date: string;
   time: string;
+  purpose: string;
+  urgent: boolean;
 }
 
 export interface AutoCompleteAddressProps {
@@ -98,6 +100,7 @@ export interface InputField2Props {
   placeholderText: string;
   onChangeText: (text: string) => void;
   keyboardType?: any;
+  adjustedWidth?: boolean;
 }
 
 export interface Address {

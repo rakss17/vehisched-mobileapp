@@ -11,6 +11,7 @@ const InputField2: React.FC<InputField2Props> = ({
   placeholderText,
   onChangeText,
   keyboardType,
+  adjustedWidth,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -61,7 +62,7 @@ const InputField2: React.FC<InputField2Props> = ({
     <View style={styles.inputContainer}>
       <TextInput
         keyboardType={keyboardType}
-        style={styles.input}
+        style={[styles.input, adjustedWidth && styles.input2]}
         onFocus={handleFocus}
         onBlur={handleBlur}
         value={inputValue}
@@ -94,6 +95,16 @@ const styles = StyleSheet.create({
   },
   input: {
     width: Viewport.width * 0.6,
+    height: Viewport.height * 0.07,
+    padding: 10,
+    fontSize: FontSizes.normal,
+    borderBottomWidth: 1,
+    borderColor: Colors.secondaryColor2,
+    borderRadius: 0,
+    zIndex: 1,
+  },
+  input2: {
+    width: Viewport.width * 0.7,
     height: Viewport.height * 0.07,
     padding: 10,
     fontSize: FontSizes.normal,
