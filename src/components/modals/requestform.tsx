@@ -16,6 +16,7 @@ import DatePicker from "../datepicker/datepicker";
 import TimePicker from "../timepicker/timepicker";
 import UploadButton from "../buttons/upload";
 import DownloadButton from "../buttons/download";
+import Confirmation from "./confirmation";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -52,6 +53,7 @@ const RequestForm: React.FC<ModalProps> = ({
     minutes: null,
     period: null,
   });
+
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
   const [isThirdFormShow, setIsThirdFormShow] = useState(false);
@@ -63,6 +65,7 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isSixthFormShow, setIsSixthFormShow] = useState(false);
   const [isSeventhFormShow, setIsSeventhFormShow] = useState(false);
   const [isTextErrorShow, setIsTextErrorShow] = useState(false);
+  const [isConfirmationShow, setIsConfirmationShow] = useState(false);
 
   const handleDistanceCalculated = (distance: any) => {
     setDistanceToUSTPFormatted(distance);
@@ -210,7 +213,32 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsSeventhFormShow(true);
         break;
       case "Submit":
-        console.log(requestFormData);
+        setRequestFormatData({
+          requester_name: "",
+          office_dept: "",
+          number_of_passenger: 0,
+          passenger_name: [],
+          destination: "",
+          date: "",
+          time: "",
+          purpose: "",
+          urgent: false,
+        });
+        setSelectedDate(null);
+        setSelectedTime({
+          hours: null,
+          minutes: null,
+          period: null,
+        });
+        setShowTextNote(false);
+        setDistanceToUSTPFormatted("");
+        setSelectedOffice("Select office/dept");
+        setNumberOfPassengers(0);
+        setPassengerData([]);
+        setIsSeventhFormShow(false);
+        setIsFirstFormShow(true);
+        onRequestClose();
+        setIsConfirmationShow(true);
         break;
       default:
         break;
@@ -294,6 +322,9 @@ const RequestForm: React.FC<ModalProps> = ({
     "https://docs.google.com/document/d/1HJ3MiD0j2Ef77Qcgmvl64JG1DKQxLHL5/edit?usp=drive_link&ouid=115657237309251643032&rtpof=true&sd=true";
   const buttonText = "Download Template";
 
+  const handleRequestClose = () => {
+    setIsConfirmationShow(false);
+  };
   return (
     <>
       <Modal
@@ -1088,6 +1119,15 @@ const RequestForm: React.FC<ModalProps> = ({
           </View>
         </View>
       </Modal>
+      <Confirmation
+        visible={isConfirmationShow}
+        animationType="fade"
+        transparent={true}
+        header="Request Submitted!"
+        content="We will send you a notification about your request ASAP."
+        footer="Thank you!"
+        onRequestClose={handleRequestClose}
+      />
     </>
   );
 };

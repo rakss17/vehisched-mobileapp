@@ -65,15 +65,15 @@ export interface CalendarData {
 export interface DatePickerProps {
   onDateSelected: (date: Date) => void;
   button2?: boolean;
-  selectedDate: any;
+  selectedDate?: any;
 }
 
 export interface TimePickerProps {
   onTimeSelected: (hours: number, minutes: number, period: string) => void;
   secondBG?: boolean;
-  selectedHours: any;
-  selectedMinutes: any;
-  selectedPeriod: any;
+  selectedHours?: any;
+  selectedMinutes?: any;
+  selectedPeriod?: any;
 }
 
 export interface TripData {
@@ -151,4 +151,14 @@ export interface UploadButtonProps {
 export interface DownloadButtonProps {
   downloadUrl: string;
   buttonText: string;
+}
+
+export interface ConfirmationProps {
+  header: string;
+  content: string;
+  footer: string;
+  visible: boolean;
+  transparent: any;
+  animationType: any;
+  onRequestClose: () => void;
 }
