@@ -17,12 +17,12 @@ const UploadButton: React.FC<UploadButtonProps> = ({
   const pickFile = async () => {
     try {
       let doc = await DocumentPicker.getDocumentAsync({
-        type: "application/pdf", // Filter for PDF files
+        type: "application/pdf",
       });
 
       if (!doc.canceled && doc.assets && doc.assets.length > 0) {
         const fileName = doc.assets[0].name;
-        onFileSelected(fileName); // Notify the parent component
+        onFileSelected(fileName);
       }
     } catch (err) {
       console.error("Error picking document:", err);

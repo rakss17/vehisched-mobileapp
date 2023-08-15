@@ -15,6 +15,7 @@ import AutoCompleteAddress from "../autocompleteaddress/autocompleteaddress";
 import DatePicker from "../datepicker/datepicker";
 import TimePicker from "../timepicker/timepicker";
 import UploadButton from "../buttons/upload";
+import DownloadButton from "../buttons/download";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -192,12 +193,15 @@ const RequestForm: React.FC<ModalProps> = ({
     }));
   };
 
-  // Inside RequestForm component
   const [selectedFileName, setSelectedFileName] = useState<string>("");
 
   const handleFileSelected = (fileName: string) => {
     setSelectedFileName(fileName);
   };
+
+  const downloadUrl =
+    "https://docs.google.com/document/d/1HJ3MiD0j2Ef77Qcgmvl64JG1DKQxLHL5/edit?usp=drive_link&ouid=115657237309251643032&rtpof=true&sd=true";
+  const buttonText = "Download Template";
 
   return (
     <>
@@ -649,6 +653,10 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
+                <DownloadButton
+                  downloadUrl={downloadUrl}
+                  buttonText={buttonText}
+                />
                 <UploadButton
                   selectedFileName={selectedFileName}
                   onFileSelected={handleFileSelected}

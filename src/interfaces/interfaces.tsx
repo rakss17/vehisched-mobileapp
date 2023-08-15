@@ -142,3 +142,8 @@ export interface UploadButtonProps {
   selectedFileName: string;
   onFileSelected: (fileName: string) => void;
 }
+
+export interface DownloadButtonProps {
+  downloadUrl: string;
+  buttonText: string;
+}
