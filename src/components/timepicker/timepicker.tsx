@@ -17,11 +17,18 @@ import { TimePickerProps } from "../../interfaces/interfaces";
 const TimePicker: React.FC<TimePickerProps> = ({
   onTimeSelected,
   secondBG,
+  selectedHours: initialHours,
+  selectedMinutes: initialMinutes,
+  selectedPeriod: initialPeriod,
 }) => {
-  const [selectedHours, setSelectedHours] = useState<number | null>(null);
-  const [selectedMinutes, setSelectedMinutes] = useState<number | null>(null);
+  const [selectedHours, setSelectedHours] = useState<number | null>(
+    initialHours
+  );
+  const [selectedMinutes, setSelectedMinutes] = useState<number | null>(
+    initialMinutes
+  );
   const [selectedPeriod, setSelectedPeriod] = useState<"AM" | "PM" | null>(
-    null
+    initialPeriod
   );
   useEffect(() => {
     if (

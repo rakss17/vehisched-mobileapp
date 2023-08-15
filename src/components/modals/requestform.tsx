@@ -42,6 +42,16 @@ const RequestForm: React.FC<ModalProps> = ({
   const [distanceToUSTPFormatted, setDistanceToUSTPFormatted] =
     useState<any>("");
   const [selectedOffice, setSelectedOffice] = useState("Select office/dept");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<{
+    hours: number | null;
+    minutes: number | null;
+    period: string | null;
+  }>({
+    hours: null,
+    minutes: null,
+    period: null,
+  });
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
   const [isThirdFormShow, setIsThirdFormShow] = useState(false);
@@ -52,6 +62,7 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isUrgentNo, setIsUrgentNo] = useState(false);
   const [isSixthFormShow, setIsSixthFormShow] = useState(false);
   const [isSeventhFormShow, setIsSeventhFormShow] = useState(false);
+  const [isTextErrorShow, setIsTextErrorShow] = useState(false);
 
   const handleDistanceCalculated = (distance: any) => {
     setDistanceToUSTPFormatted(distance);
@@ -76,7 +87,58 @@ const RequestForm: React.FC<ModalProps> = ({
       office_dept: selectedOption,
     }));
   };
+  const isCurrentStepValid = () => {
+    if (isFirstFormShow) {
+      if (!requestFormData.requester_name || !requestFormData.office_dept) {
+        setIsTextErrorShow(true);
+        return false;
+      }
+    } else if (isSecondFormShow) {
+      if (
+        !requestFormData.number_of_passenger ||
+        !passengerData.every((passenger) => passenger.trim() !== "")
+      ) {
+        setIsTextErrorShow(true);
+        return false;
+      }
+    } else if (isThirdFormShow) {
+      if (!requestFormData.destination) {
+        setIsTextErrorShow(true);
+        return false;
+      }
+    } else if (isFourthFormShow) {
+      if (!requestFormData.time || !requestFormData.date) {
+        setIsTextErrorShow(true);
+        return false;
+      }
+    } else if (isFifthFormShow) {
+      if (!requestFormData.purpose) {
+        setIsTextErrorShow(true);
+        return false;
+      }
+      if (isUrgentYes && !showTextNote) {
+        setIsTextErrorShow(true);
+        return false;
+      }
+    } else if (isSixthFormShow || isSeventhFormShow) {
+      // Add any additional validation logic for these steps
+    }
+
+    return true;
+  };
+
   const handleButtonPress = (form: string) => {
+    if (
+      form !== "First" &&
+      form !== "SecondBack" &&
+      form !== "ThirdBack" &&
+      form !== "FourthBack" &&
+      form !== "FifthBack" &&
+      !isCurrentStepValid()
+    ) {
+      return;
+    }
+
     switch (form) {
       case "First":
         setIsFirstFormShow(true);
@@ -87,7 +149,17 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsSecondFormShow(true);
         setIsThirdFormShow(false);
         break;
+      case "SecondBack":
+        setIsFirstFormShow(false);
+        setIsSecondFormShow(true);
+        setIsThirdFormShow(false);
+        break;
       case "Third":
+        setIsSecondFormShow(false);
+        setIsThirdFormShow(true);
+        setIsFourthFormShow(false);
+        break;
+      case "ThirdBack":
         setIsSecondFormShow(false);
         setIsThirdFormShow(true);
         setIsFourthFormShow(false);
@@ -97,7 +169,18 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsFourthFormShow(true);
         setIsFifthFormShow(false);
         break;
+      case "FourthBack":
+        setIsThirdFormShow(false);
+        setIsFourthFormShow(true);
+        setIsFifthFormShow(false);
+        break;
       case "Fifth":
+        setIsFourthFormShow(false);
+        setIsFifthFormShow(true);
+        setIsSixthFormShow(false);
+        setIsSeventhFormShow(false);
+        break;
+      case "FifthBack":
         setIsFourthFormShow(false);
         setIsFifthFormShow(true);
         setIsSixthFormShow(false);
@@ -112,7 +195,6 @@ const RequestForm: React.FC<ModalProps> = ({
           setIsSixthFormShow(false);
           setIsSeventhFormShow(true);
         }
-
         break;
       case "SeventhBack":
         if (distanceToUSTPFormatted < 50) {
@@ -122,15 +204,18 @@ const RequestForm: React.FC<ModalProps> = ({
           setIsSixthFormShow(true);
           setIsSeventhFormShow(false);
         }
-
         break;
       case "Seventh":
         setIsSixthFormShow(false);
         setIsSeventhFormShow(true);
         break;
+      case "Submit":
+        console.log(requestFormData);
+        break;
       default:
         break;
     }
+    setIsTextErrorShow(false);
   };
 
   const updatePassengerData = (index: number, value: string) => {
@@ -174,9 +259,10 @@ const RequestForm: React.FC<ModalProps> = ({
       ...prevData,
       date: formattedDate,
     }));
+    setSelectedDate(selectedDate);
   };
 
-  const handleToTimeSelected = (
+  const handleTimeSelected = (
     hours: number,
     minutes: number,
     period: string
@@ -191,6 +277,11 @@ const RequestForm: React.FC<ModalProps> = ({
       ...prevData,
       time: `${formattedHours}:${formattedMinutes} ${period}`,
     }));
+    setSelectedTime({
+      hours,
+      minutes,
+      period,
+    });
   };
 
   const [selectedFileName, setSelectedFileName] = useState<string>("");
@@ -261,7 +352,14 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
+                {isTextErrorShow && (
+                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
+                    Please fill-out the fields!
+                  </Text>
+                )}
+
                 <InputField2
+                  value={requestFormData.requester_name}
                   onChangeText={(text) =>
                     setRequestFormatData({
                       ...requestFormData,
@@ -322,7 +420,13 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
+                {isTextErrorShow && (
+                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
+                    Please fill-out the fields!
+                  </Text>
+                )}
                 <InputField2
+                  value={requestFormData.number_of_passenger.toString()}
                   keyboardType="numeric"
                   onChangeText={handleNumberOfPassengersChange}
                   placeholderText="No. of passenger(s)"
@@ -331,6 +435,7 @@ const RequestForm: React.FC<ModalProps> = ({
                   {passengerData.map((passenger, index) => (
                     <View style={{ marginVertical: 15 }} key={index}>
                       <InputField2
+                        value={passenger}
                         onChangeText={(text) =>
                           updatePassengerData(index, text)
                         }
@@ -388,6 +493,11 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
+                {isTextErrorShow && (
+                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
+                    Please fill-out the field!
+                  </Text>
+                )}
                 <View style={{ paddingLeft: 40 }}>
                   <AutoCompleteAddress
                     onDistanceCalculated={handleDistanceCalculated}
@@ -434,7 +544,7 @@ const RequestForm: React.FC<ModalProps> = ({
 
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
-                    onPress={() => handleButtonPress("Second")}
+                    onPress={() => handleButtonPress("SecondBack")}
                     transparentBG
                     transparentText
                     text="Back"
@@ -480,11 +590,27 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
-                <DatePicker button2 onDateSelected={handleToDateSelected} />
-                <TimePicker secondBG onTimeSelected={handleToTimeSelected} />
+                {isTextErrorShow && (
+                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
+                    Please fill-out the fields!
+                  </Text>
+                )}
+                <DatePicker
+                  button2
+                  selectedDate={selectedDate}
+                  onDateSelected={handleToDateSelected}
+                />
+
+                <TimePicker
+                  secondBG
+                  onTimeSelected={handleTimeSelected}
+                  selectedHours={selectedTime.hours}
+                  selectedMinutes={selectedTime.minutes}
+                  selectedPeriod={selectedTime.period}
+                />
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
-                    onPress={() => handleButtonPress("Third")}
+                    onPress={() => handleButtonPress("ThirdBack")}
                     transparentBG
                     transparentText
                     text="Back"
@@ -530,6 +656,11 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
+                {isTextErrorShow && (
+                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
+                    Please fill-out the fields!
+                  </Text>
+                )}
                 <View
                   style={[
                     {
@@ -593,6 +724,7 @@ const RequestForm: React.FC<ModalProps> = ({
                 )}
                 <View style={{ marginTop: 20 }}>
                   <InputField2
+                    value={requestFormData.purpose}
                     adjustedWidth
                     onChangeText={(text) =>
                       setRequestFormatData({
@@ -606,7 +738,7 @@ const RequestForm: React.FC<ModalProps> = ({
 
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
-                    onPress={() => handleButtonPress("Fourth")}
+                    onPress={() => handleButtonPress("FourthBack")}
                     transparentBG
                     transparentText
                     text="Back"
@@ -653,6 +785,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     Selected Vehicle:{" "}
                   </Text>
                 </View>
+
                 <DownloadButton
                   downloadUrl={downloadUrl}
                   buttonText={buttonText}
@@ -663,7 +796,7 @@ const RequestForm: React.FC<ModalProps> = ({
                 />
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
-                    onPress={() => handleButtonPress("Fifth")}
+                    onPress={() => handleButtonPress("FifthBack")}
                     transparentBG
                     transparentText
                     text="Back"
@@ -710,6 +843,233 @@ const RequestForm: React.FC<ModalProps> = ({
                   </Text>
                 </View>
 
+                <ScrollView
+                  style={[
+                    {
+                      width: Viewport.width * 0.75,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Requester's name:{" "}
+                      </Text>
+                      {requestFormData.requester_name}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: 5,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Office/dept:
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                      }}
+                    >
+                      {" "}
+                      {requestFormData.office_dept}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: 5,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      No. of Passenger{"("}s{")"}:
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                      }}
+                    >
+                      {" "}
+                      {requestFormData.number_of_passenger}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: 5,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Passenger's name{"("}s{")"}:{" "}
+                      </Text>
+
+                      {requestFormData.passenger_name.length > 1
+                        ? requestFormData.passenger_name.join(", ")
+                        : requestFormData.passenger_name[0]}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small, marginTop: 5 }}>
+                      <Text style={{ fontWeight: "bold" }}>Destination: </Text>
+                      {requestFormData.destination}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: 5,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Distance:
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                      }}
+                    >
+                      {" "}
+                      {distanceToUSTPFormatted}
+                      {" km"}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: 5,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Date:
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                      }}
+                    >
+                      {" "}
+                      {requestFormData.date}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: 5,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Time:
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                      }}
+                    >
+                      {" "}
+                      {requestFormData.time}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: 5,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Urgent:
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                      }}
+                    >
+                      {" "}
+                      {isUrgentYes ? "Yes" : "No"}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: 5,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small, marginTop: 5 }}>
+                      <Text style={{ fontWeight: "bold" }}>Purpose: </Text>
+                      {requestFormData.purpose}
+                    </Text>
+                  </View>
+                </ScrollView>
+
                 <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
                   <Button
                     onPress={() => handleButtonPress("SeventhBack")}
@@ -720,7 +1080,7 @@ const RequestForm: React.FC<ModalProps> = ({
                   <Button
                     onPress={() => handleButtonPress("Submit")}
                     defaultBG
-                    text="Next"
+                    text="Submit"
                   />
                 </View>
               </View>

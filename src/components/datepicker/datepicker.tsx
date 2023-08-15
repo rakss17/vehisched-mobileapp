@@ -15,8 +15,14 @@ import { CalendarData, DatePickerProps } from "../../interfaces/interfaces";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
-const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected, button2 }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+const DatePicker: React.FC<DatePickerProps> = ({
+  selectedDate: initialSelectedDate,
+  onDateSelected,
+  button2,
+}) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    initialSelectedDate
+  );
   const [displayedMonth, setDisplayedMonth] = useState(new Date());
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 

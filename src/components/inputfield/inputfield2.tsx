@@ -12,9 +12,10 @@ const InputField2: React.FC<InputField2Props> = ({
   onChangeText,
   keyboardType,
   adjustedWidth,
+  value,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(value || "");
   const labelPosition = useRef(new Animated.Value(inputValue ? 1 : 0)).current;
 
   const handleFocus = () => {

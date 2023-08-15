@@ -65,11 +65,15 @@ export interface CalendarData {
 export interface DatePickerProps {
   onDateSelected: (date: Date) => void;
   button2?: boolean;
+  selectedDate: any;
 }
 
 export interface TimePickerProps {
   onTimeSelected: (hours: number, minutes: number, period: string) => void;
   secondBG?: boolean;
+  selectedHours: any;
+  selectedMinutes: any;
+  selectedPeriod: any;
 }
 
 export interface TripData {
@@ -101,6 +105,7 @@ export interface InputField2Props {
   onChangeText: (text: string) => void;
   keyboardType?: any;
   adjustedWidth?: boolean;
+  value: any;
 }
 
 export interface Address {
