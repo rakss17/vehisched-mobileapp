@@ -25,6 +25,15 @@ const SetTripModal: React.FC<ModalProps> = ({
     noOfPassenger: 0,
   });
 
+  const [selectedTime, setSelectedTime] = useState<{
+    hours: number | null;
+    minutes: number | null;
+    period: string | null;
+  }>({
+    hours: null,
+    minutes: null,
+    period: null,
+  });
   const handleFromDateSelected = (selectedDate: Date) => {
     const formattedDate = selectedDate.toLocaleDateString(undefined, {
       year: "numeric",
@@ -138,7 +147,12 @@ const SetTripModal: React.FC<ModalProps> = ({
               </Text>
               <View style={[{ gap: 10 }, Styles.flexColumn]}>
                 <DatePicker onDateSelected={handleFromDateSelected} />
-                <TimePicker onTimeSelected={handleFromTimeSelected} />
+                <TimePicker
+                  onTimeSelected={handleFromTimeSelected}
+                  selectedHours={selectedTime.hours}
+                  selectedMinutes={selectedTime.minutes}
+                  selectedPeriod={selectedTime.period}
+                />
               </View>
             </View>
             <View style={[{ gap: 35 }, Styles.flexRow]}>
@@ -155,7 +169,12 @@ const SetTripModal: React.FC<ModalProps> = ({
               </Text>
               <View style={[{ gap: 10 }, Styles.flexColumn]}>
                 <DatePicker onDateSelected={handleToDateSelected} />
-                <TimePicker onTimeSelected={handleToTimeSelected} />
+                <TimePicker
+                  onTimeSelected={handleToTimeSelected}
+                  selectedHours={selectedTime.hours}
+                  selectedMinutes={selectedTime.minutes}
+                  selectedPeriod={selectedTime.period}
+                />
               </View>
             </View>
             <View style={[{ gap: 22 }, Styles.flexRow]}>
