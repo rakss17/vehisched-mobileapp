@@ -9,7 +9,7 @@ import {
 import { ModalProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
 
-const Confirmation: React.FC<ModalProps> = ({
+const PromptDialog: React.FC<ModalProps> = ({
   animationType,
   transparent,
   visible,
@@ -17,6 +17,7 @@ const Confirmation: React.FC<ModalProps> = ({
   content,
   footer,
   onRequestClose,
+  onNextPressed,
 }) => {
   return (
     <Modal
@@ -39,9 +40,10 @@ const Confirmation: React.FC<ModalProps> = ({
             {
               backgroundColor: Colors.primaryColor2,
               width: Viewport.width * 0.9,
-              height: Viewport.height * 0.35,
+              height: Viewport.height * 0.45,
               gap: 20,
               borderRadius: 10,
+              padding: 15,
             },
             Styles.flexColumn,
           ]}
@@ -75,11 +77,19 @@ const Confirmation: React.FC<ModalProps> = ({
           >
             {footer}
           </Text>
-          <Button onPress={onRequestClose} text="Close" defaultBG />
+          <View style={[{ gap: 35 }, Styles.flexRow]}>
+            <Button
+              text="Cancel"
+              transparentBG
+              transparentText
+              onPress={onRequestClose}
+            />
+            <Button text="Next" defaultBG onPress={onNextPressed} />
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
 
-export default Confirmation;
+export default PromptDialog;

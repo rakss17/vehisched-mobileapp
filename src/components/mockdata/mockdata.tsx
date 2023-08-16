@@ -8,6 +8,7 @@ export const vehiclesMockData: Vehicle[] = [
     vehicle_type: "Pickup Truck",
     vehicle_image: require("../../../assets/toyota-hilux.jpg"),
     status: "On Trip",
+    isVip: false,
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const vehiclesMockData: Vehicle[] = [
     vehicle_type: "SUV",
     vehicle_image: require("../../../assets/mitsubishi-montero.jpg"),
     status: "Available",
+    isVip: true,
   },
   {
     id: 3,
@@ -24,6 +26,7 @@ export const vehiclesMockData: Vehicle[] = [
     vehicle_type: "SUV",
     vehicle_image: require("../../../assets/fortuner.jpg"),
     status: "On Trip",
+    isVip: false,
   },
   {
     id: 4,
@@ -32,6 +35,7 @@ export const vehiclesMockData: Vehicle[] = [
     vehicle_type: "Van",
     vehicle_image: require("../../../assets/toyota-hiace.png"),
     status: "Available",
+    isVip: true,
   },
   {
     id: 5,
@@ -40,6 +44,7 @@ export const vehiclesMockData: Vehicle[] = [
     vehicle_type: "Pickup Truck",
     vehicle_image: require("../../../assets/toyota-hilux.jpg"),
     status: "Unavailable",
+    isVip: false,
   },
   {
     id: 6,
@@ -48,5 +53,6 @@ export const vehiclesMockData: Vehicle[] = [
     vehicle_type: "Van",
     vehicle_image: require("../../../assets/toyota-hiace.png"),
     status: "Unavailable",
+    isVip: false,
   },
 ];

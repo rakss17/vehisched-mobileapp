@@ -16,6 +16,7 @@ export interface Vehicle {
   vehicle_type: string;
   vehicle_image: any;
   status: string;
+  isVip: boolean;
 }
 
 export interface ButtonProps {
@@ -54,6 +55,10 @@ export interface ModalProps {
   transparent: any;
   animationType: any;
   onRequestClose: () => void;
+  header?: string;
+  content?: string;
+  footer?: string;
+  onNextPressed?: () => void;
 }
 export interface CalendarData {
   key: string;
@@ -151,14 +156,4 @@ export interface UploadButtonProps {
 export interface DownloadButtonProps {
   downloadUrl: string;
   buttonText: string;
-}
-
-export interface ConfirmationProps {
-  header: string;
-  content: string;
-  footer: string;
-  visible: boolean;
-  transparent: any;
-  animationType: any;
-  onRequestClose: () => void;
 }
