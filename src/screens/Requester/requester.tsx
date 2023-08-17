@@ -20,6 +20,10 @@ export default function Requester() {
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
   const [isRequestFormVisible, setIsRequestFormVisible] = useState(false);
   const [isVehicleVip, setIsVehicleVip] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(
+    undefined
+  );
+
   const fetchedVehicleList = () => {
     setVehicles(vehiclesMockData);
   };
@@ -42,6 +46,8 @@ export default function Requester() {
     } else {
       setIsRequestFormVisible(true);
     }
+
+    setSelectedVehicle(vehicle); // Set the selected vehicle here
   };
 
   const handleRequestFormClose = () => {
@@ -176,6 +182,7 @@ export default function Requester() {
         visible={isRequestFormVisible}
         transparent={true}
         onRequestClose={handleRequestFormClose}
+        selectedVehicle={selectedVehicle}
       />
       <PromptDialog
         animationType="fade"

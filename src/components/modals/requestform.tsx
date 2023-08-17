@@ -23,6 +23,7 @@ const RequestForm: React.FC<ModalProps> = ({
   transparent,
   animationType,
   onRequestClose,
+  selectedVehicle,
 }) => {
   const [requestFormData, setRequestFormatData] =
     useState<RequestFormDataProps>({
@@ -66,6 +67,7 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isSeventhFormShow, setIsSeventhFormShow] = useState(false);
   const [isTextErrorShow, setIsTextErrorShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
+  const [exceedsCapacity, setExceedsCapacity] = useState(false);
 
   const handleDistanceCalculated = (distance: any) => {
     setDistanceToUSTPFormatted(distance);
@@ -119,7 +121,7 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsTextErrorShow(true);
         return false;
       }
-      if (isUrgentYes && !showTextNote) {
+      if (!isUrgentYes && !isUrgentNo) {
         setIsTextErrorShow(true);
         return false;
       }
@@ -264,21 +266,27 @@ const RequestForm: React.FC<ModalProps> = ({
 
   const handleNumberOfPassengersChange = (text: string) => {
     const parsedNumber = parseInt(text, 10);
-    if (!isNaN(parsedNumber) && parsedNumber >= 0) {
+    if (
+      !isNaN(parsedNumber) &&
+      parsedNumber >= 0 &&
+      selectedVehicle &&
+      parsedNumber <= selectedVehicle.capacity
+    ) {
       setNumberOfPassengers(parsedNumber);
       setPassengerData(Array(parsedNumber).fill(""));
       setRequestFormatData((prevData) => ({
         ...prevData,
         number_of_passenger: parsedNumber,
       }));
+      setExceedsCapacity(false);
     } else {
       setNumberOfPassengers(0);
       setPassengerData([]);
-
       setRequestFormatData((prevData) => ({
         ...prevData,
         number_of_passenger: 0,
       }));
+      setExceedsCapacity(true);
     }
   };
 
@@ -468,6 +476,11 @@ const RequestForm: React.FC<ModalProps> = ({
                   onChangeText={handleNumberOfPassengersChange}
                   placeholderText="No. of passenger(s)"
                 />
+                {exceedsCapacity && (
+                  <Text style={{ color: "red" }}>
+                    Exceeds seating capacity of the vehicle
+                  </Text>
+                )}
                 <ScrollView>
                   {passengerData.map((passenger, index) => (
                     <View style={{ marginVertical: 15 }} key={index}>

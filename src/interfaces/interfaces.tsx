@@ -59,6 +59,7 @@ export interface ModalProps {
   content?: string;
   footer?: string;
   onNextPressed?: () => void;
+  selectedVehicle?: Vehicle | undefined;
 }
 export interface CalendarData {
   key: string;
