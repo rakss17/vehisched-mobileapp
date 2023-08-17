@@ -56,3 +56,126 @@ export const vehiclesMockData: Vehicle[] = [
     isVip: false,
   },
 ];
+
+export const fetchedPendingData = [
+  {
+    request_number: "02",
+    travel_date: "August 17, 2023",
+    vehicle: "Ford Ranger",
+    status: "Pending",
+  },
+  {
+    request_number: "03",
+    travel_date: "August 18, 2023",
+    vehicle: "Nissan Navarada",
+    status: "Pending",
+  },
+  {
+    request_number: "04",
+    travel_date: "August 19, 2023",
+    vehicle: "Chevrolet Colorado",
+    status: "Pending",
+  },
+  {
+    request_number: "05",
+    travel_date: "August 20, 2023",
+    vehicle: "Honda Ridgeline",
+    status: "Pending",
+  },
+  {
+    request_number: "06",
+    travel_date: "August 21, 2023",
+    vehicle: "Mitsubishi Triton",
+    status: "Pending",
+  },
+  {
+    request_number: "07",
+    travel_date: "August 22, 2023",
+    vehicle: "Isuzu D-Max",
+    status: "Pending",
+  },
+  {
+    request_number: "08",
+    travel_date: "August 23, 2023",
+    vehicle: "Volkswagen Amarok",
+    status: "Pending",
+  },
+  {
+    request_number: "09",
+    travel_date: "August 24, 2023",
+    vehicle: "Mazda BT-50",
+    status: "Pending",
+  },
+  {
+    request_number: "10",
+    travel_date: "August 25, 2023",
+    vehicle: "GMC Canyon",
+    status: "Pending",
+  },
+  {
+    request_number: "11",
+    travel_date: "August 26, 2023",
+    vehicle: "RAM 1500",
+    status: "Pending",
+  },
+  {
+    request_number: "11",
+    travel_date: "August 26, 2023",
+    vehicle: "RAM 1500",
+    status: "Pending",
+  },
+  {
+    request_number: "11",
+    travel_date: "August 26, 2023",
+    vehicle: "RAM 1500",
+    status: "Pending",
+  },
+];
+
+export const fetchedApprovedData = [
+  {
+    request_number: "10",
+    travel_date: "April 16, 2024",
+    vehicle: "Toyota hilux",
+    status: "Approved",
+  },
+  {
+    request_number: "02",
+    travel_date: "August 17, 2023",
+    vehicle: "Ford Ranger",
+    status: "Approved",
+  },
+  {
+    request_number: "03",
+    travel_date: "August 18, 2023",
+    vehicle: "Nissan Navara",
+    status: "Approved",
+  },
+  {
+    request_number: "04",
+    travel_date: "August 19, 2023",
+    vehicle: "Chevrolet Colorado",
+    status: "Approved",
+  },
+];
+export const fetchedCanceledData = [];
+export const fetchedDeclinedData = [
+  {
+    request_number: "10",
+    travel_date: "April 16, 2024",
+    vehicle: "Toyota hilux",
+    status: "Declined",
+  },
+  {
+    request_number: "10",
+    travel_date: "August 25, 2023",
+    vehicle: "GMC Canyon",
+    status: "Declined",
+  },
+  {
+    request_number: "11",
+    travel_date: "August 26, 2023",
+    vehicle: "RAM 1500",
+    status: "Declined",
+  },
+];

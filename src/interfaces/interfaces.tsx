@@ -19,6 +19,13 @@ export interface Vehicle {
   isVip: boolean;
 }
 
+export interface Requests {
+  request_number: string;
+  travel_date: string;
+  vehicle: string;
+  status: string;
+}
+
 export interface ButtonProps {
   defaultBG?: boolean;
   text: string;
