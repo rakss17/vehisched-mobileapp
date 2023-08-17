@@ -8,6 +8,7 @@ import {
 import { faCar, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Requester from "./requester";
+import Request from "./request";
 
 const Tab = createBottomTabNavigator();
 
@@ -44,9 +45,9 @@ export function RequesterTabs() {
       />
       <Tab.Screen
         name="Request"
-        component={Requester}
+        component={Request}
         options={{
-          tabBarLabel: "Request",
+          tabBarLabel: "Your request",
           tabBarIcon: ({ color }) => (
             <FontAwesomeIcon icon={faClipboardList} color={color} size={25} />
           ),
