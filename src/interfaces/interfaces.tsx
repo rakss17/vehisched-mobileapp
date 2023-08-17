@@ -25,6 +25,9 @@ export interface ButtonProps {
   onPress?: () => void;
   transparentBG?: boolean;
   transparentText?: boolean;
+  transparentBG2?: boolean;
+  transparentText2?: boolean;
+  isHighlighted?: boolean;
 }
 
 export interface DropdownProps {
