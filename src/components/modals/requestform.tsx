@@ -36,6 +36,7 @@ const RequestForm: React.FC<ModalProps> = ({
       time: "",
       purpose: "",
       urgent: false,
+      vehicle: "",
     });
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
@@ -144,7 +145,10 @@ const RequestForm: React.FC<ModalProps> = ({
     ) {
       return;
     }
-
+    setRequestFormatData((prevData) => ({
+      ...prevData,
+      vehicle: selectedVehicle?.vehicle_name,
+    }));
     switch (form) {
       case "Close":
         setIsTextErrorShow(false);
@@ -230,6 +234,7 @@ const RequestForm: React.FC<ModalProps> = ({
           time: "",
           purpose: "",
           urgent: false,
+          vehicle: "",
         });
         setSelectedDate(null);
         setSelectedTime({
@@ -246,6 +251,9 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsFirstFormShow(true);
         onRequestClose();
         setIsConfirmationShow(true);
+
+        console.log(requestFormData);
+
         break;
       default:
         break;
@@ -393,7 +401,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle:{" "}
+                    Selected Vehicle: {selectedVehicle?.vehicle_name}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -462,7 +470,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle:{" "}
+                    Selected Vehicle: {selectedVehicle?.vehicle_name}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -541,7 +549,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle:{" "}
+                    Selected Vehicle: {selectedVehicle?.vehicle_name}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -638,7 +646,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle:{" "}
+                    Selected Vehicle: {selectedVehicle?.vehicle_name}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -704,7 +712,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle:{" "}
+                    Selected Vehicle: {selectedVehicle?.vehicle_name}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -834,7 +842,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle:{" "}
+                    Selected Vehicle: {selectedVehicle?.vehicle_name}
                   </Text>
                 </View>
 
@@ -891,7 +899,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle:{" "}
+                    Selected Vehicle: {selectedVehicle?.vehicle_name}
                   </Text>
                 </View>
 

@@ -11,7 +11,7 @@ export type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 export interface Vehicle {
   id: number;
-  vehicle_name: string;
+  vehicle_name: any;
   capacity: number;
   vehicle_type: string;
   vehicle_image: any;
@@ -101,6 +101,7 @@ export interface RequestFormDataProps {
   time: string;
   purpose: string;
   urgent: boolean;
+  vehicle: string;
 }
 
 export interface AutoCompleteAddressProps {

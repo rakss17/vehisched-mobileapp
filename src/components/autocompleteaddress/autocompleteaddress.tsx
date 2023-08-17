@@ -32,18 +32,18 @@ const AutoCompleteAddress: React.FC<AutoCompleteAddressProps> = ({
     null
   );
 
-  useEffect(() => {
-    const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+  // useEffect(() => {
+  //   const getLocation = async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
 
-      if (status !== "granted") return;
+  //     if (status !== "granted") return;
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    };
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     setLocation(location);
+  //   };
 
-    getLocation();
-  }, []);
+  //   getLocation();
+  // }, []);
 
   const tomtomKey = "GVQpGM8LZWojxAKYq2GJpnZKX5jfcwJ2";
 
@@ -61,10 +61,10 @@ const AutoCompleteAddress: React.FC<AutoCompleteAddressProps> = ({
 
     const countrySet = "PH";
 
-    if (location) {
-      searchUrl = searchUrl + `&lon=${location.coords.longitude}`;
-      searchUrl = searchUrl + `&lat=${location.coords.latitude}`;
-    }
+    // if (location) {
+    //   searchUrl = searchUrl + `&lon=${location.coords.longitude}`;
+    //   searchUrl = searchUrl + `&lat=${location.coords.latitude}`;
+    // }
 
     searchUrl = searchUrl + `&countrySet=${countrySet}`;
     axios
@@ -118,7 +118,7 @@ const AutoCompleteAddress: React.FC<AutoCompleteAddressProps> = ({
 
     const distanceToUSTPFormatted = distanceToUSTP.toFixed(2);
 
-    setPlaceholder(item.address);
+    setPlaceholder(item.name + ", " + item.address);
     setShowList(false);
     const combinedNameAndAddress = `${item.name}, ${item.address}`;
     onDistanceCalculated(distanceToUSTPFormatted);
