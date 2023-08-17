@@ -132,6 +132,7 @@ const RequestForm: React.FC<ModalProps> = ({
 
   const handleButtonPress = (form: string) => {
     if (
+      form !== "Close" &&
       form !== "First" &&
       form !== "SecondBack" &&
       form !== "ThirdBack" &&
@@ -143,6 +144,10 @@ const RequestForm: React.FC<ModalProps> = ({
     }
 
     switch (form) {
+      case "Close":
+        setIsTextErrorShow(false);
+        onRequestClose();
+        break;
       case "First":
         setIsFirstFormShow(true);
         setIsSecondFormShow(false);
@@ -398,6 +403,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     })
                   }
                   placeholderText="Requester's name"
+                  capitalizeWords={true}
                 />
                 <Dropdown
                   showBG
@@ -409,7 +415,7 @@ const RequestForm: React.FC<ModalProps> = ({
                 />
                 <View style={[{ gap: 60, marginTop: 20 }, Styles.flexRow]}>
                   <Button
-                    onPress={onRequestClose}
+                    onPress={() => handleButtonPress("Close")}
                     transparentBG
                     transparentText
                     text="Close"
@@ -471,6 +477,7 @@ const RequestForm: React.FC<ModalProps> = ({
                           updatePassengerData(index, text)
                         }
                         placeholderText={`Passenger ${index + 1}`}
+                        capitalizeWords={true}
                       />
                     </View>
                   ))}
@@ -764,6 +771,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       })
                     }
                     placeholderText="Purpose"
+                    capitalizeWords={false}
                   />
                 </View>
 

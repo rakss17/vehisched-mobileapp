@@ -48,6 +48,11 @@ const DatePicker: React.FC<DatePickerProps> = ({
     const calendarData: CalendarData[] = [];
 
     const today = new Date();
+    const maxSelectableDate = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 2
+    );
     const daysInMonth = new Date(
       displayedMonth.getFullYear(),
       displayedMonth.getMonth() + 1,
@@ -64,6 +69,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
         key: `blank-${i}`,
         isToday: false,
         isSelected: null,
+        disabled: true, // Disable days before the current month
       });
     }
 
@@ -77,8 +83,15 @@ const DatePicker: React.FC<DatePickerProps> = ({
       const isSelected =
         selectedDate &&
         currentDate.toDateString() === selectedDate.toDateString();
+      const isSelectable = currentDate >= maxSelectableDate;
 
-      calendarData.push({ key: i.toString(), day: i, isToday, isSelected });
+      calendarData.push({
+        key: i.toString(),
+        day: i,
+        isToday,
+        isSelected,
+        disabled: !isSelectable,
+      });
     }
 
     return calendarData;
@@ -141,6 +154,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() =>
+                    !item.disabled &&
                     item.day &&
                     handleDatePress(
                       new Date(
@@ -154,12 +168,15 @@ const DatePicker: React.FC<DatePickerProps> = ({
                     styles.dayCell,
                     item.isToday && styles.today,
                     item.isSelected && styles.selected,
+                    item.disabled && styles.disabled,
                   ]}
                 >
                   <Text
                     style={[
                       item.isToday && styles.todayText,
                       item.isSelected && styles.selectedText,
+                      item.disabled && styles.disabledText,
+                      item.isToday && styles.today,
                     ]}
                   >
                     {item.day && item.day > 0 ? item.day.toString() : ""}
@@ -261,7 +278,7 @@ const styles = StyleSheet.create({
     borderColor: "white",
   },
   today: {
-    backgroundColor: Colors.primaryColor2,
+    color: Colors.primaryColor1,
     borderRadius: 10,
   },
   todayText: {
@@ -283,6 +300,13 @@ const styles = StyleSheet.create({
   dayNameText: {
     fontWeight: "bold",
     fontSize: 16,
+  },
+  disabled: {
+    backgroundColor: Colors.secondaryColor1,
+    borderRadius: 10,
+  },
+  disabledText: {
+    color: Colors.primaryColor3,
   },
 });
 

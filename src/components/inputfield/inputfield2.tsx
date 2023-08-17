@@ -13,6 +13,7 @@ const InputField2: React.FC<InputField2Props> = ({
   keyboardType,
   adjustedWidth,
   value,
+  capitalizeWords,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(value || "");
@@ -38,9 +39,19 @@ const InputField2: React.FC<InputField2Props> = ({
     }
   };
   const handleTextChange = (text: string) => {
-    setInputValue(text);
+    let newValue = text;
+
+    if (capitalizeWords) {
+      newValue = text
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    }
+
+    setInputValue(newValue);
+
     if (onChangeText) {
-      onChangeText(text);
+      onChangeText(newValue);
     }
   };
 

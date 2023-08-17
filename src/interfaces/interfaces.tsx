@@ -65,6 +65,7 @@ export interface CalendarData {
   day?: number;
   isToday: boolean;
   isSelected: boolean | null;
+  disabled: boolean;
 }
 
 export interface DatePickerProps {
@@ -111,6 +112,7 @@ export interface InputField2Props {
   keyboardType?: any;
   adjustedWidth?: boolean;
   value: any;
+  capitalizeWords?: boolean;
 }
 
 export interface Address {
