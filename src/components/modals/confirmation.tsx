@@ -17,6 +17,10 @@ const Confirmation: React.FC<ModalProps> = ({
   content,
   footer,
   onRequestClose,
+  adjustedSize,
+  showHeader,
+  showContent,
+  showFooter,
 }) => {
   return (
     <Modal
@@ -44,37 +48,51 @@ const Confirmation: React.FC<ModalProps> = ({
               borderRadius: 10,
             },
             Styles.flexColumn,
+            adjustedSize && {
+              backgroundColor: Colors.primaryColor2,
+              width: Viewport.width * 0.9,
+              height: Viewport.height * 0.25,
+              gap: 30,
+              borderRadius: 10,
+              padding: 0,
+            },
           ]}
         >
-          <Text
-            style={{
-              fontSize: FontSizes.normal,
-              color: Colors.primaryColor1,
-              fontWeight: "bold",
-            }}
-          >
-            {header}
-          </Text>
-          <Text
-            style={{
-              fontSize: FontSizes.normal,
-              color: Colors.primaryColor1,
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            {content}
-          </Text>
-          <Text
-            style={{
-              fontSize: FontSizes.normal,
-              color: Colors.primaryColor1,
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            {footer}
-          </Text>
+          {showHeader && (
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                color: Colors.primaryColor1,
+                fontWeight: "bold",
+              }}
+            >
+              {header}
+            </Text>
+          )}
+          {showContent && (
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                color: Colors.primaryColor1,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              {content}
+            </Text>
+          )}
+          {showFooter && (
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                color: Colors.primaryColor1,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              {footer}
+            </Text>
+          )}
           <Button onPress={onRequestClose} text="Close" defaultBG />
         </View>
       </View>

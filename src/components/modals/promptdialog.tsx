@@ -18,6 +18,10 @@ const PromptDialog: React.FC<ModalProps> = ({
   footer,
   onRequestClose,
   onNextPressed,
+  adjustedSize,
+  showHeader,
+  showContent,
+  showFooter,
 }) => {
   return (
     <Modal
@@ -46,37 +50,52 @@ const PromptDialog: React.FC<ModalProps> = ({
               padding: 15,
             },
             Styles.flexColumn,
+            adjustedSize && {
+              backgroundColor: Colors.primaryColor2,
+              width: Viewport.width * 0.9,
+              height: Viewport.height * 0.25,
+              gap: 20,
+              borderRadius: 10,
+              padding: 20,
+            },
           ]}
         >
-          <Text
-            style={{
-              fontSize: FontSizes.normal,
-              color: Colors.primaryColor1,
-              fontWeight: "bold",
-            }}
-          >
-            {header}
-          </Text>
-          <Text
-            style={{
-              fontSize: FontSizes.normal,
-              color: Colors.primaryColor1,
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            {content}
-          </Text>
-          <Text
-            style={{
-              fontSize: FontSizes.normal,
-              color: Colors.primaryColor1,
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
-            {footer}
-          </Text>
+          {showHeader && (
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                color: Colors.primaryColor1,
+                fontWeight: "bold",
+              }}
+            >
+              {header}
+            </Text>
+          )}
+          {showContent && (
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                color: Colors.primaryColor1,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              {content}
+            </Text>
+          )}
+          {showFooter && (
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                color: Colors.primaryColor1,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              {footer}
+            </Text>
+          )}
+
           <View style={[{ gap: 35 }, Styles.flexRow]}>
             <Button
               text="Cancel"
@@ -84,7 +103,7 @@ const PromptDialog: React.FC<ModalProps> = ({
               transparentText
               onPress={onRequestClose}
             />
-            <Button text="Next" defaultBG onPress={onNextPressed} />
+            <Button text="Yes" defaultBG onPress={onNextPressed} />
           </View>
         </View>
       </View>

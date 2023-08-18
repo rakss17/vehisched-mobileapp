@@ -70,6 +70,10 @@ export interface ModalProps {
   footer?: string;
   onNextPressed?: () => void;
   selectedVehicle?: Vehicle | undefined;
+  adjustedSize?: boolean;
+  showHeader?: boolean;
+  showContent?: boolean;
+  showFooter?: boolean;
 }
 export interface CalendarData {
   key: string;
@@ -170,4 +174,9 @@ export interface UploadButtonProps {
 export interface DownloadButtonProps {
   downloadUrl: string;
   buttonText: string;
+}
+
+export interface EllipsisMenuProps {
+  options: string[];
+  handler: (options: string) => void;
 }

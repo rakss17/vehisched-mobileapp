@@ -22,10 +22,15 @@ import {
   fetchedDeclinedData,
 } from "../../components/mockdata/mockdata";
 import { Requests } from "../../interfaces/interfaces";
+import EllipsisMenu from "../../components/ellipsismenu/ellipsismenu";
+import PromptDialog from "../../components/modals/promptdialog";
+import Confirmation from "../../components/modals/confirmation";
 
 export default function Request() {
   const [requestData, setRequestData] = useState<Requests[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("Pending");
+  const [isCancelModalShow, setIsCancelModalShow] = useState(false);
+  const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const handleButtonPress = (status: string) => {
     setSelectedStatus(status);
     switch (status) {
@@ -50,6 +55,21 @@ export default function Request() {
   useEffect(() => {
     handleButtonPress("Pending");
   }, []);
+
+  const handleEllipsisMenu = (options: string) => {
+    if (options === "Cancel request") {
+      setIsCancelModalShow(true);
+    }
+  };
+  const hanldeOnRequestClose = () => {
+    setIsCancelModalShow(false);
+    setIsConfirmationShow(false);
+  };
+  const handleNextPressed = () => {
+    setIsCancelModalShow(false);
+    setIsConfirmationShow(true);
+  };
+
   return (
     <>
       <BackgroundColor
@@ -140,11 +160,34 @@ export default function Request() {
                 <Text style={styles.tableCell1}>{request.request_number}</Text>
                 <Text style={styles.tableCell2}>{request.travel_date}</Text>
                 <Text style={styles.tableCell3}>{request.vehicle}</Text>
+                <EllipsisMenu
+                  options={["Cancel request"]}
+                  handler={handleEllipsisMenu}
+                />
               </View>
             </TouchableOpacity>
           ))
         )}
       </ScrollView>
+      <PromptDialog
+        transparent={true}
+        animationType="fade"
+        visible={isCancelModalShow}
+        onRequestClose={hanldeOnRequestClose}
+        content="Are you sure you want to cancel your trip?"
+        adjustedSize
+        showContent
+        onNextPressed={handleNextPressed}
+      />
+      <Confirmation
+        visible={isConfirmationShow}
+        animationType="fade"
+        transparent={true}
+        content="Trip Canceled Successfully!"
+        onRequestClose={hanldeOnRequestClose}
+        showContent
+        adjustedSize
+      />
     </>
   );
 }
@@ -173,17 +216,19 @@ const styles = StyleSheet.create({
   tableCell1: {
     width: Viewport.width * 0.2,
     fontSize: FontSizes.small,
-    paddingLeft: 25,
+
+    textAlign: "center",
   },
   tableCell2: {
     width: Viewport.width * 0.3,
     fontSize: FontSizes.small,
-    marginLeft: 40,
+
+    textAlign: "center",
   },
   tableCell3: {
     width: Viewport.width * 0.35,
     fontSize: FontSizes.small,
-    paddingLeft: 30,
+    textAlign: "center",
   },
   noText: {
     fontSize: FontSizes.small,

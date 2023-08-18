@@ -1156,6 +1156,9 @@ const RequestForm: React.FC<ModalProps> = ({
         content="We will send you a notification about your request ASAP."
         footer="Thank you!"
         onRequestClose={handleRequestClose}
+        showContent
+        showHeader
+        showFooter
       />
     </>
   );

@@ -194,6 +194,9 @@ export default function Requester() {
         uses it during your trip."
         footer="Are you sure you want to use this vehicle?"
         onNextPressed={handleOnNextPressed}
+        showHeader
+        showContent
+        showFooter
       />
     </>
   );
