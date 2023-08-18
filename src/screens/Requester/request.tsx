@@ -146,26 +146,28 @@ export default function Request() {
         }}
       />
       <View style={styles.tableContainer}>
-        <Text style={styles.tableHeader}>Request No.</Text>
-        <Text style={styles.tableHeader}>Travel Date</Text>
-        <Text style={styles.tableHeader}>Vehicle</Text>
+        <Text style={styles.tableHeader1}>Request No.</Text>
+        <Text style={styles.tableHeader2}>Travel Date</Text>
+        <Text style={styles.tableHeader3}>Vehicle</Text>
       </View>
       <ScrollView>
         {requestData.length === 0 ? (
           <Text style={styles.noText}>No vehicles available</Text>
         ) : (
           requestData.map((request, index) => (
-            <TouchableOpacity key={index}>
-              <View style={styles.tableRow}>
-                <Text style={styles.tableCell1}>{request.request_number}</Text>
-                <Text style={styles.tableCell2}>{request.travel_date}</Text>
-                <Text style={styles.tableCell3}>{request.vehicle}</Text>
-                <EllipsisMenu
-                  options={["Cancel request"]}
-                  handler={handleEllipsisMenu}
-                />
-              </View>
-            </TouchableOpacity>
+            <View key={index} style={styles.tableRow}>
+              <Text style={styles.tableCell1}>{request.request_number}</Text>
+              <Text style={styles.tableCell2}>{request.travel_date}</Text>
+              <Text style={styles.tableCell3}>{request.vehicle}</Text>
+              {selectedStatus === "Pending" || selectedStatus === "Approved" ? (
+                <View style={styles.tableCell4}>
+                  <EllipsisMenu
+                    options={["Cancel request"]}
+                    handler={handleEllipsisMenu}
+                  />
+                </View>
+              ) : null}
+            </View>
           ))
         )}
       </ScrollView>
@@ -195,14 +197,24 @@ export default function Request() {
 const styles = StyleSheet.create({
   tableContainer: {
     flexDirection: "row",
-
     marginTop: 10,
   },
-  tableHeader: {
+  tableHeader1: {
     width: Viewport.width * 0.35,
     fontSize: FontSizes.small,
-
     paddingLeft: 20,
+    fontWeight: "bold",
+  },
+  tableHeader2: {
+    width: Viewport.width * 0.35,
+    fontSize: FontSizes.small,
+    paddingLeft: 10,
+    fontWeight: "bold",
+  },
+  tableHeader3: {
+    width: Viewport.width * 0.35,
+    fontSize: FontSizes.small,
+    paddingLeft: 5,
     fontWeight: "bold",
   },
   tableRow: {
@@ -214,21 +226,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tableCell1: {
-    width: Viewport.width * 0.2,
+    width: Viewport.width * 0.1,
     fontSize: FontSizes.small,
-
+    marginLeft: 23,
     textAlign: "center",
   },
   tableCell2: {
-    width: Viewport.width * 0.3,
+    width: Viewport.width * 0.25,
     fontSize: FontSizes.small,
-
+    marginLeft: 55,
     textAlign: "center",
   },
   tableCell3: {
-    width: Viewport.width * 0.35,
+    width: Viewport.width * 0.25,
+
     fontSize: FontSizes.small,
     textAlign: "center",
+    marginLeft: 20,
+  },
+  tableCell4: {
+    width: Viewport.width * 0.01,
+    marginLeft: 20,
   },
   noText: {
     fontSize: FontSizes.small,

@@ -1,5 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity, Modal, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Text,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -32,21 +39,26 @@ const EllipsisMenu: React.FC<EllipsisMenuProps> = ({ options, handler }) => {
         <FontAwesomeIcon icon={faEllipsisV} size={20} color="black" />
       </TouchableOpacity>
       <Modal visible={isModalVisible} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <View
-            style={[styles.modalContainer2, { height: modalContainer2Height }]}
-          >
-            {options.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handleMenuOptionClick(option)}
-                style={styles.menuItem}
-              >
-                <Text style={styles.contenttext}>{option}</Text>
-              </TouchableOpacity>
-            ))}
+        <TouchableWithoutFeedback onPress={toggleModal}>
+          <View style={styles.modalContainer}>
+            <View
+              style={[
+                styles.modalContainer2,
+                { height: modalContainer2Height },
+              ]}
+            >
+              {options.map((option, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleMenuOptionClick(option)}
+                  style={styles.menuItem}
+                >
+                  <Text style={styles.contenttext}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -54,7 +66,7 @@ const EllipsisMenu: React.FC<EllipsisMenuProps> = ({ options, handler }) => {
 
 const styles = StyleSheet.create({
   ellipsisContainer: {
-    flex: 1,
+    flex: 0.15,
     alignItems: "center",
     justifyContent: "center",
   },
