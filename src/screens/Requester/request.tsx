@@ -30,7 +30,9 @@ export default function Request() {
   const [requestData, setRequestData] = useState<Requests[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("Pending");
   const [isCancelModalShow, setIsCancelModalShow] = useState(false);
+  const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
+  const [isConfirmation2Show, setIsConfirmation2Show] = useState(false);
   const handleButtonPress = (status: string) => {
     setSelectedStatus(status);
     switch (status) {
@@ -59,15 +61,24 @@ export default function Request() {
   const handleEllipsisMenu = (options: string) => {
     if (options === "Cancel request") {
       setIsCancelModalShow(true);
+    } else if (options === "Delete request") {
+      setIsDeleteModalShow(true);
     }
   };
   const hanldeOnRequestClose = () => {
     setIsCancelModalShow(false);
     setIsConfirmationShow(false);
+    setIsConfirmation2Show(false);
   };
   const handleNextPressed = () => {
     setIsCancelModalShow(false);
+
     setIsConfirmationShow(true);
+  };
+  const handleNext2Pressed = () => {
+    setIsDeleteModalShow(false);
+
+    setIsConfirmation2Show(true);
   };
 
   return (
@@ -159,14 +170,18 @@ export default function Request() {
               <Text style={styles.tableCell1}>{request.request_number}</Text>
               <Text style={styles.tableCell2}>{request.travel_date}</Text>
               <Text style={styles.tableCell3}>{request.vehicle}</Text>
-              {selectedStatus === "Pending" || selectedStatus === "Approved" ? (
-                <View style={styles.tableCell4}>
-                  <EllipsisMenu
-                    options={["Cancel request"]}
-                    handler={handleEllipsisMenu}
-                  />
-                </View>
-              ) : null}
+
+              <View style={styles.tableCell4}>
+                <EllipsisMenu
+                  options={
+                    selectedStatus === "Pending" ||
+                    selectedStatus === "Approved"
+                      ? ["View request", "Cancel request"]
+                      : ["View request", "Delete request"]
+                  }
+                  handler={handleEllipsisMenu}
+                />
+              </View>
             </View>
           ))
         )}
@@ -185,7 +200,26 @@ export default function Request() {
         visible={isConfirmationShow}
         animationType="fade"
         transparent={true}
-        content="Trip Canceled Successfully!"
+        content="Trip canceled successfully!"
+        onRequestClose={hanldeOnRequestClose}
+        showContent
+        adjustedSize
+      />
+      <PromptDialog
+        transparent={true}
+        animationType="fade"
+        visible={isDeleteModalShow}
+        onRequestClose={hanldeOnRequestClose}
+        content="Are you sure you want to delete this request?"
+        adjustedSize
+        showContent
+        onNextPressed={handleNext2Pressed}
+      />
+      <Confirmation
+        visible={isConfirmation2Show}
+        animationType="fade"
+        transparent={true}
+        content="Request deleted successfully!"
         onRequestClose={hanldeOnRequestClose}
         showContent
         adjustedSize

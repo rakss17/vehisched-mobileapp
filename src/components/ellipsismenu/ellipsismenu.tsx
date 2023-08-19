@@ -18,6 +18,8 @@ import { EllipsisMenuProps } from "../../interfaces/interfaces";
 
 const EllipsisMenu: React.FC<EllipsisMenuProps> = ({ options, handler }) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const isCancelOption = options.includes("Cancel request");
+  const isDeleteOption = options.includes("Delete request");
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -53,7 +55,19 @@ const EllipsisMenu: React.FC<EllipsisMenuProps> = ({ options, handler }) => {
                   onPress={() => handleMenuOptionClick(option)}
                   style={styles.menuItem}
                 >
-                  <Text style={styles.contenttext}>{option}</Text>
+                  <Text
+                    style={[
+                      styles.contenttext,
+                      isCancelOption &&
+                        option === "Cancel request" &&
+                        styles.selectedOptionText,
+                      isDeleteOption &&
+                        option === "Delete request" &&
+                        styles.selectedOptionText,
+                    ]}
+                  >
+                    {option}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -99,6 +113,9 @@ const styles = StyleSheet.create({
   },
   contenttext: {
     fontSize: FontSizes.normal,
+  },
+  selectedOptionText: {
+    color: "red",
   },
 });
 

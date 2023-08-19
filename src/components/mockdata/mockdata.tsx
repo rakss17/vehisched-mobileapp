@@ -158,7 +158,14 @@ export const fetchedApprovedData = [
     status: "Approved",
   },
 ];
-export const fetchedCanceledData = [];
+export const fetchedCanceledData = [
+  {
+    request_number: "10",
+    travel_date: "April 16, 2024",
+    vehicle: "Toyota hilux",
+    status: "Declined",
+  },
+];
 export const fetchedDeclinedData = [
   {
     request_number: "10",
