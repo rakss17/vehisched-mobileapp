@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
 
   menuItem: {
     paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    width: Viewport.width * 1,
+    alignItems: "center",
   },
   contenttext: {
     fontSize: FontSizes.normal,

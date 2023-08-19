@@ -23,7 +23,8 @@ const RequestDetails: React.FC<
         <View
           style={[
             {
-              flex: 1,
+              height: Viewport.height * 1,
+              width: Viewport.width * 1,
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               zIndex: 1,
             },
@@ -36,9 +37,9 @@ const RequestDetails: React.FC<
                 backgroundColor: Colors.primaryColor2,
                 width: Viewport.width * 0.9,
                 height: Viewport.height * 0.65,
-                paddingBottom: 20,
+                paddingBottom: Viewport.height * 0.03,
                 borderRadius: 10,
-                gap: 5,
+                gap: Viewport.height * 0.02,
               },
               Styles.flexColumn,
             ]}
@@ -47,7 +48,7 @@ const RequestDetails: React.FC<
               <Text
                 style={{
                   fontSize: FontSizes.normal,
-                  marginTop: 25,
+                  marginTop: Viewport.height * 0.02,
                   fontWeight: "bold",
                   textAlign: "center",
                 }}
@@ -59,7 +60,7 @@ const RequestDetails: React.FC<
                   style={[
                     {
                       width: Viewport.width * 0.75,
-                      marginTop: 20,
+                      marginTop: Viewport.height * 0.02,
                     },
                     Styles.flexRow,
                   ]}

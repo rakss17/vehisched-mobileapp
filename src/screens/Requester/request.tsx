@@ -76,15 +76,14 @@ export default function Request() {
     setIsConfirmationShow(false);
     setIsConfirmation2Show(false);
     setIsRequestDetailsShow(false);
+    setIsDeleteModalShow(false);
   };
   const handleNextPressed = () => {
     setIsCancelModalShow(false);
-
     setIsConfirmationShow(true);
   };
   const handleNext2Pressed = () => {
     setIsDeleteModalShow(false);
-
     setIsConfirmation2Show(true);
   };
 
@@ -278,13 +277,13 @@ const styles = StyleSheet.create({
   tableCell1: {
     width: Viewport.width * 0.1,
     fontSize: FontSizes.small,
-    marginLeft: 23,
+    marginLeft: Viewport.width * 0.06,
     textAlign: "center",
   },
   tableCell2: {
     width: Viewport.width * 0.25,
     fontSize: FontSizes.small,
-    marginLeft: 55,
+    marginLeft: Viewport.width * 0.14,
     textAlign: "center",
   },
   tableCell3: {
@@ -292,11 +291,11 @@ const styles = StyleSheet.create({
 
     fontSize: FontSizes.small,
     textAlign: "center",
-    marginLeft: 20,
+    marginLeft: Viewport.width * 0.04,
   },
   tableCell4: {
     width: Viewport.width * 0.01,
-    marginLeft: 20,
+    marginLeft: Viewport.width * 0.05,
   },
   noText: {
     fontSize: FontSizes.small,
