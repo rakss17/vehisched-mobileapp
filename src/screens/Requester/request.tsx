@@ -25,14 +25,17 @@ import { Requests } from "../../interfaces/interfaces";
 import EllipsisMenu from "../../components/ellipsismenu/ellipsismenu";
 import PromptDialog from "../../components/modals/promptdialog";
 import Confirmation from "../../components/modals/confirmation";
+import RequestDetails from "../../components/modals/requestdetails";
 
 export default function Request() {
   const [requestData, setRequestData] = useState<Requests[]>([]);
+  const [selectedRequest, setSelectedRequest] = useState<Requests | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("Pending");
   const [isCancelModalShow, setIsCancelModalShow] = useState(false);
   const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [isConfirmation2Show, setIsConfirmation2Show] = useState(false);
+  const [isRequestDetailsShow, setIsRequestDetailsShow] = useState(false);
   const handleButtonPress = (status: string) => {
     setSelectedStatus(status);
     switch (status) {
@@ -58,8 +61,11 @@ export default function Request() {
     handleButtonPress("Pending");
   }, []);
 
-  const handleEllipsisMenu = (options: string) => {
-    if (options === "Cancel request") {
+  const handleEllipsisMenu = (options: string, request: Requests) => {
+    setSelectedRequest(request);
+    if (options === "View request") {
+      setIsRequestDetailsShow(true);
+    } else if (options === "Cancel request") {
       setIsCancelModalShow(true);
     } else if (options === "Delete request") {
       setIsDeleteModalShow(true);
@@ -69,6 +75,7 @@ export default function Request() {
     setIsCancelModalShow(false);
     setIsConfirmationShow(false);
     setIsConfirmation2Show(false);
+    setIsRequestDetailsShow(false);
   };
   const handleNextPressed = () => {
     setIsCancelModalShow(false);
@@ -179,13 +186,22 @@ export default function Request() {
                       ? ["View request", "Cancel request"]
                       : ["View request", "Delete request"]
                   }
-                  handler={handleEllipsisMenu}
+                  handler={(option: string) =>
+                    handleEllipsisMenu(option, request)
+                  }
                 />
               </View>
             </View>
           ))
         )}
       </ScrollView>
+      <RequestDetails
+        transparent={true}
+        animationType="fade"
+        visible={isRequestDetailsShow}
+        onRequestClose={hanldeOnRequestClose}
+        requestData={selectedRequest}
+      />
       <PromptDialog
         transparent={true}
         animationType="fade"

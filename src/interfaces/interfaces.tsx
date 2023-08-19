@@ -20,10 +20,18 @@ export interface Vehicle {
 }
 
 export interface Requests {
+  requester_name: string;
+  office_dept: string;
   request_number: string;
   travel_date: string;
   vehicle: string;
   status: string;
+  number_of_passenger: number;
+  passenger_name: string[];
+  destination: string;
+  time: string;
+  purpose: string;
+  urgent: boolean;
 }
 
 export interface ButtonProps {
