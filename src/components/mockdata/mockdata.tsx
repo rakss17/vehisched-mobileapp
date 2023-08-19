@@ -320,3 +320,31 @@ export const fetchedDeclinedData = [
     urgent: false,
   },
 ];
+
+export const todayMockData = [
+  {
+    trip_number: 1,
+    time: "08:00 AM",
+    destination: "Office",
+  },
+  {
+    trip_number: 2,
+    time: "09:30 AM",
+    destination: "Client Meeting",
+  },
+  {
+    trip_number: 3,
+    time: "12:15 PM",
+    destination: "Lunch",
+  },
+  {
+    trip_number: 4,
+    time: "03:45 PM",
+    destination: "Supplier Visit",
+  },
+  {
+    trip_number: 5,
+    time: "06:00 PM",
+    destination: "Home",
+  },
+];

@@ -38,6 +38,7 @@ const RequestDetails: React.FC<
                 height: Viewport.height * 0.65,
                 paddingBottom: 20,
                 borderRadius: 10,
+                gap: 5,
               },
               Styles.flexColumn,
             ]}
@@ -53,7 +54,7 @@ const RequestDetails: React.FC<
               >
                 Request details
               </Text>
-              <View style={{ gap: 5 }}>
+              <View style={{ gap: Viewport.height * 0.01 }}>
                 <View
                   style={[
                     {
@@ -223,7 +224,9 @@ const RequestDetails: React.FC<
                 </View>
               </View>
             </ScrollView>
-            <Button onPress={onRequestClose} text="Close" defaultBG />
+            <View>
+              <Button onPress={onRequestClose} text="Close" defaultBG />
+            </View>
           </View>
         </View>
       </Modal>

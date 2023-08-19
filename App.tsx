@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import Landing from "./src/screens/Landing/landing";
 import { RequesterTabs } from "./src/screens/Requester/requestertabs";
+import { DriverTabs } from "./src/screens/Driver/drivertabs";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,6 +14,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Landing" component={Landing} />
         <Stack.Screen name="Requester" component={RequesterTabs} />
+        <Stack.Screen name="Driver" component={DriverTabs} />
       </Stack.Navigator>
     </NavigationContainer>
   );

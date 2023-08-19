@@ -35,6 +35,8 @@ export default function Landing() {
   const handleSignIn = () => {
     if (data.username === "requester") {
       navigation.navigate("Requester");
+    } else if (data.username === "driver") {
+      navigation.navigate("Driver");
     }
   };
   return (

@@ -5,6 +5,7 @@ import { ViewStyle, StyleProp } from "react-native";
 type RootStackParamList = {
   Landing: undefined;
   Requester: undefined;
+  Driver: undefined;
 };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -187,4 +188,10 @@ export interface DownloadButtonProps {
 export interface EllipsisMenuProps {
   options: string[];
   handler: (options: string) => void;
+}
+
+export interface Schedule {
+  trip_number: number;
+  time: string;
+  destination: string;
 }
