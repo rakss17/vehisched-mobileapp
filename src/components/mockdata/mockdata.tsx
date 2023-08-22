@@ -324,27 +324,46 @@ export const fetchedDeclinedData = [
 export const todayMockData = [
   {
     trip_number: 1,
+    requester_name: "Bohari S Ambulo",
+    passenger_name: [
+      "Tristan C Araquil",
+      "Mark Dave M Lorejo",
+      "Michael Ray V Romeo",
+    ],
     time: "08:00 AM",
+    date: "08/22/2023",
     destination: "Office",
   },
   {
     trip_number: 2,
+    requester_name: "John Doe",
+    passenger_name: ["Alice Smith", "Bob Johnson"],
     time: "09:30 AM",
+    date: "08/22/2023",
     destination: "Client Meeting",
   },
   {
     trip_number: 3,
+    requester_name: "Jane Smith",
+    passenger_name: ["Eve Johnson"],
     time: "12:15 PM",
+    date: "08/22/2023",
     destination: "Lunch",
   },
   {
     trip_number: 4,
+    requester_name: "Michael Brown",
+    passenger_name: ["Olivia Davis", "Liam Wilson", "Emma White"],
     time: "03:45 PM",
+    date: "08/22/2023",
     destination: "Supplier Visit",
   },
   {
     trip_number: 5,
+    requester_name: "Sophia Lee",
+    passenger_name: ["Noah Martin"],
     time: "06:00 PM",
+    date: "08/22/2023",
     destination: "Home",
   },
 ];

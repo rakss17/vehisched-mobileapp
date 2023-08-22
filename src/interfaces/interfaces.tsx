@@ -194,4 +194,7 @@ export interface Schedule {
   trip_number: number;
   time: string;
   destination: string;
+  requester_name: string;
+  passenger_name: string[];
+  date: string;
 }
