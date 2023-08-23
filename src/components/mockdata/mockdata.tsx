@@ -355,6 +355,7 @@ export const todayMockData = [
     time: "08:00 AM",
     date: "08/22/2023",
     destination: "Office",
+    status: "Reschedule",
   },
   {
     trip_number: 2,
@@ -363,6 +364,7 @@ export const todayMockData = [
     time: "09:30 AM",
     date: "08/22/2023",
     destination: "Client Meeting",
+    status: "Reschedule",
   },
   {
     trip_number: 3,
@@ -371,6 +373,7 @@ export const todayMockData = [
     time: "12:15 PM",
     date: "08/22/2023",
     destination: "Lunch",
+    status: "Completed",
   },
   {
     trip_number: 4,
@@ -378,7 +381,9 @@ export const todayMockData = [
     passenger_name: ["Olivia Davis", "Liam Wilson", "Emma White"],
     time: "03:45 PM",
     date: "08/22/2023",
-    destination: "Supplier Visit",
+    destination:
+      "University of Science and Technology of Southern Philippines - CDO Campus",
+    status: "Canceled",
   },
   {
     trip_number: 5,
@@ -398,5 +403,6 @@ export const todayMockData = [
     time: "06:00 PM",
     date: "08/22/2023",
     destination: "Home",
+    status: "Completed",
   },
 ];

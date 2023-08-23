@@ -199,4 +199,5 @@ export interface Schedule {
   requester_name: string;
   passenger_name: string[];
   date: string;
+  status: string;
 }

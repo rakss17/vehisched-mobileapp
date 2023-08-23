@@ -17,21 +17,30 @@ export default function Trips() {
   const [selectedStatus, setSelectedStatus] = useState<string>("Reschedule");
   const handleButtonPress = (status: string) => {
     setSelectedStatus(status);
+    let filteredTrips: Schedule[] = [];
+
     switch (status) {
       case "Reschedule":
-        setTripData(todayMockData);
+        filteredTrips = todayMockData.filter(
+          (trip) => trip.status === "Reschedule"
+        );
         break;
       case "Completed":
-        setTripData(todayMockData);
+        filteredTrips = todayMockData.filter(
+          (trip) => trip.status === "Completed"
+        );
         break;
       case "Canceled":
-        setTripData(todayMockData);
+        filteredTrips = todayMockData.filter(
+          (trip) => trip.status === "Canceled"
+        );
         break;
       default:
-        setTripData([]);
+        filteredTrips = [];
         break;
     }
-    setSelectedStatus(status);
+
+    setTripData(filteredTrips);
   };
   useEffect(() => {
     handleButtonPress("Reschedule");
