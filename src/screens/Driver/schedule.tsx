@@ -331,7 +331,9 @@ export default function Schedules() {
                                 },
                               ]}
                             >
-                              Trip Ticket
+                              {selectedStatus === "In Progress"
+                                ? "Trip completed?"
+                                : "Trip Ticket"}
                             </Text>
                             <QRCode
                               value={JSON.stringify(schedule)}
