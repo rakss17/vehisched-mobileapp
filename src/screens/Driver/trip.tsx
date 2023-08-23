@@ -103,6 +103,127 @@ export default function Trips() {
             marginTop: Viewport.width * 0.02,
           }}
         />
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 10,
+            width: Viewport.width * 1,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: FontSizes.small,
+              width: Viewport.width * 0.15,
+              textAlign: "center",
+              fontWeight: "bold",
+              marginLeft: Viewport.width * 0.06,
+            }}
+          >
+            Trip No.
+          </Text>
+          <Text
+            style={{
+              fontSize: FontSizes.small,
+              width: Viewport.width * 0.15,
+              textAlign: "center",
+              fontWeight: "bold",
+              marginLeft: Viewport.width * 0.05,
+            }}
+          >
+            Time
+          </Text>
+          <Text
+            style={{
+              fontSize: FontSizes.small,
+              width: Viewport.width * 0.15,
+              textAlign: "center",
+              fontWeight: "bold",
+              marginLeft: Viewport.width * 0.12,
+            }}
+          >
+            Date
+          </Text>
+          <Text
+            style={{
+              fontSize: FontSizes.small,
+              width: Viewport.width * 0.23,
+              textAlign: "center",
+              fontWeight: "bold",
+              marginLeft: Viewport.width * 0.06,
+            }}
+          >
+            Destination
+          </Text>
+        </View>
+        <ScrollView>
+          {tripData.length === 0 ? (
+            <Text
+              style={{
+                fontSize: FontSizes.small,
+                textAlign: "center",
+                marginTop: 15,
+              }}
+            >
+              No vehicles available
+            </Text>
+          ) : (
+            tripData.map((trip, index) => (
+              <View
+                key={index}
+                style={{
+                  flexDirection: "row",
+                  backgroundColor: Colors.primaryColor2,
+                  marginTop: 10,
+                  paddingLeft: 20,
+                  width: Viewport.width * 1,
+                  height: Viewport.height * 0.08,
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    width: Viewport.width * 0.03,
+                    fontSize: FontSizes.small,
+                    marginLeft: Viewport.width * 0.07,
+                    textAlign: "center",
+                  }}
+                >
+                  {trip.trip_number}
+                </Text>
+                <Text
+                  style={{
+                    width: Viewport.width * 0.25,
+                    fontSize: FontSizes.small,
+                    marginLeft: Viewport.width * 0.07,
+                    textAlign: "center",
+                  }}
+                >
+                  {trip.time}
+                </Text>
+                <Text
+                  style={{
+                    width: Viewport.width * 0.25,
+                    fontSize: FontSizes.small,
+                    marginLeft: Viewport.width * 0.02,
+                    textAlign: "center",
+                  }}
+                >
+                  {trip.date}
+                </Text>
+                <Text
+                  style={{
+                    width: Viewport.width * 0.2,
+                    fontSize: FontSizes.small,
+                    textAlign: "center",
+                    marginLeft: Viewport.width * 0.02,
+                  }}
+                >
+                  {trip.destination}
+                </Text>
+              </View>
+            ))
+          )}
+        </ScrollView>
       </View>
     </>
   );
