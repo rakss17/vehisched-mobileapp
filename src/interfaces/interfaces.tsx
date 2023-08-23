@@ -39,6 +39,7 @@ export interface ButtonProps {
   defaultBG?: boolean;
   text: string;
   onPress?: () => void;
+  disabled?: any;
   transparentBG?: boolean;
   transparentText?: boolean;
   transparentBG2?: boolean;

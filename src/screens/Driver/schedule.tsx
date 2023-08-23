@@ -47,7 +47,7 @@ export default function Schedules() {
         setScheduleData(todayMockData);
         break;
       case "Upcoming":
-        setScheduleData([]);
+        setScheduleData(todayMockData);
         break;
       default:
         setScheduleData([]);
@@ -267,9 +267,12 @@ export default function Schedules() {
                   }}
                 >
                   <Button
-                    text="QR code"
+                    text={
+                      selectedStatus === "Upcoming" ? "Upcoming" : "QR code"
+                    }
                     defaultBG
                     onPress={() => handleShowQRCode(index)}
+                    disabled={selectedStatus === "Upcoming"}
                   />
                   {showQRCodeIndex === index && (
                     <Modal

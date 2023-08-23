@@ -62,4 +62,7 @@ export const ButtonStyle = StyleSheet.create({
     borderColor: Colors.primaryColor1,
     borderBottomWidth: 3,
   },
+  disabledButton: {
+    backgroundColor: "gray",
+  },
 });

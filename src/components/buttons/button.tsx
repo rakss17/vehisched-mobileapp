@@ -7,6 +7,7 @@ const Button: React.FC<ButtonProps> = ({
   text,
   defaultBG,
   onPress,
+  disabled,
   transparentBG,
   transparentText,
   transparentBG2,
@@ -21,8 +22,10 @@ const Button: React.FC<ButtonProps> = ({
         transparentBG && ButtonStyle.buttonBG2,
         transparentBG2 && ButtonStyle.transparentBG2,
         isHighlighted && ButtonStyle.borderBottom,
+        disabled && ButtonStyle.disabledButton,
       ]}
       onPress={onPress}
+      disabled={disabled}
     >
       <Text
         style={[
