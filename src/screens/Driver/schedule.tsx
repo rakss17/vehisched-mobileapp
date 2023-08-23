@@ -17,6 +17,17 @@ export default function Schedules() {
   const [scheduleData, setScheduleData] = useState<Schedule[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("Today");
   const [showQRCodeIndex, setShowQRCodeIndex] = useState<number | null>(null);
+  const [passengersModalVisible, setPassengersModalVisible] = useState(false);
+  const [selectedPassengers, setSelectedPassengers] = useState<string[]>([]);
+
+  const handleShowPassengersModal = (passengers: string[]) => {
+    setSelectedPassengers(passengers);
+    setPassengersModalVisible(true);
+  };
+
+  const handleClosePassengersModal = () => {
+    setPassengersModalVisible(false);
+  };
 
   const handleShowQRCode = (index: number) => {
     if (showQRCodeIndex === index) {
@@ -137,7 +148,6 @@ export default function Schedules() {
                   width: Viewport.width * 0.95,
                   height: Viewport.height * 0.4,
                   elevation: 4,
-                  gap: Viewport.height * 0.03,
                 }}
               >
                 <View
@@ -177,6 +187,7 @@ export default function Schedules() {
                         color: Colors.secondaryColor2,
                         fontWeight: "bold",
                         marginLeft: Viewport.width * 0.05,
+                        marginTop: Viewport.height * 0.03,
                       },
                     ]}
                   >
@@ -189,6 +200,7 @@ export default function Schedules() {
                         color: Colors.secondaryColor2,
                         fontWeight: "bold",
                         marginLeft: Viewport.width * 0.1,
+                        marginTop: Viewport.height * 0.03,
                       },
                     ]}
                   >
@@ -201,30 +213,59 @@ export default function Schedules() {
                       fontSize: FontSizes.small,
                       color: Colors.secondaryColor2,
                       marginLeft: Viewport.width * 0.05,
+                      marginTop: Viewport.height * 0.03,
                     },
                   ]}
                 >
                   <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
                   {schedule.destination}
                 </Text>
-                <Text
-                  style={[
-                    {
-                      fontSize: FontSizes.small,
-                      color: Colors.secondaryColor2,
-                      marginLeft: Viewport.width * 0.05,
-                    },
-                  ]}
+                <View
+                  style={{
+                    marginTop: Viewport.height * 0.03,
+                    height: Viewport.height * 0.09,
+                  }}
                 >
-                  <Text style={{ fontWeight: "bold" }}>Passengers: </Text>
-                  {schedule.requester_name},{" "}
-                  {schedule.passenger_name && schedule.passenger_name.length > 0
-                    ? schedule.passenger_name.length > 1
-                      ? schedule.passenger_name.join(", ")
-                      : schedule.passenger_name[0]
-                    : "No passenger(s)"}
-                </Text>
-                <View style={{ alignItems: "center" }}>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginLeft: Viewport.width * 0.05,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Passengers: </Text>
+                    {schedule.requester_name},{" "}
+                    {schedule.passenger_name &&
+                    schedule.passenger_name.length > 0 ? (
+                      schedule.passenger_name.length > 1 ? (
+                        <Text>
+                          {schedule.passenger_name.slice(0, 4).join(", ")}
+                          <Text
+                            onPress={() =>
+                              handleShowPassengersModal(schedule.passenger_name)
+                            }
+                            style={{ fontWeight: "normal" }}
+                          >
+                            {" "}
+                            and view more...
+                          </Text>
+                        </Text>
+                      ) : (
+                        schedule.passenger_name[0]
+                      )
+                    ) : (
+                      "No passenger(s)"
+                    )}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    alignItems: "center",
+                  }}
+                >
                   <Button
                     text="QR code"
                     defaultBG
@@ -279,6 +320,61 @@ export default function Schedules() {
           )}
         </ScrollView>
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={passengersModalVisible}
+        onRequestClose={handleClosePassengersModal}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 15,
+              borderRadius: 10,
+              width: Viewport.width * 0.8,
+              height: Viewport.height * 0.3,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                fontWeight: "bold",
+                marginBottom: 10,
+              }}
+            >
+              All Passengers
+            </Text>
+            <ScrollView>
+              {selectedPassengers.map((passenger, index) => (
+                <Text
+                  key={index}
+                  style={{
+                    fontSize: FontSizes.small,
+                    marginBottom: 5,
+                  }}
+                >
+                  {passenger}
+                </Text>
+              ))}
+            </ScrollView>
+            <Button
+              text="Close"
+              defaultBG
+              onPress={handleClosePassengersModal}
+            />
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
