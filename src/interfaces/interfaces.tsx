@@ -45,6 +45,7 @@ export interface ButtonProps {
   transparentBG2?: boolean;
   transparentText2?: boolean;
   isHighlighted?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
 export interface DropdownProps {

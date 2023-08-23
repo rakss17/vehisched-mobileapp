@@ -46,6 +46,9 @@ export default function Schedules() {
       case "Today":
         setScheduleData(todayMockData);
         break;
+      case "In Progress":
+        setScheduleData(todayMockData);
+        break;
       case "Upcoming":
         setScheduleData(todayMockData);
         break;
@@ -102,6 +105,13 @@ export default function Schedules() {
           transparentText2
           isHighlighted={selectedStatus === "Today"}
           onPress={() => handleButtonPress("Today")}
+        />
+        <Button
+          text="In progress"
+          transparentBG2
+          transparentText2
+          isHighlighted={selectedStatus === "In Progress"}
+          onPress={() => handleButtonPress("In Progress")}
         />
         <Button
           text="Upcoming"
@@ -268,11 +278,20 @@ export default function Schedules() {
                 >
                   <Button
                     text={
-                      selectedStatus === "Upcoming" ? "Upcoming" : "QR code"
+                      selectedStatus === "Upcoming"
+                        ? "Upcoming"
+                        : selectedStatus === "In Progress"
+                        ? "Completed?"
+                        : "QR code"
                     }
                     defaultBG
                     onPress={() => handleShowQRCode(index)}
                     disabled={selectedStatus === "Upcoming"}
+                    style={
+                      selectedStatus === "In Progress"
+                        ? { backgroundColor: "green" }
+                        : null
+                    }
                   />
                   {showQRCodeIndex === index && (
                     <Modal
