@@ -155,6 +155,7 @@ export default function Schedules() {
                     backgroundColor: Colors.primaryColor2,
                     marginTop: 20,
                     paddingLeft: 20,
+                    paddingRight: 20,
                     width: Viewport.width * 0.95,
                     height: Viewport.height * 0.4,
                     elevation: 4,
@@ -218,22 +219,23 @@ export default function Schedules() {
                     </Text>
                   </View>
                   <Text
-                    style={[
-                      {
-                        fontSize: FontSizes.small,
-                        color: Colors.secondaryColor2,
-                        marginLeft: Viewport.width * 0.05,
-                        marginTop: Viewport.height * 0.03,
-                      },
-                    ]}
+                    style={{
+                      fontSize: FontSizes.small,
+                      color: Colors.secondaryColor2,
+                      marginLeft: Viewport.width * 0.05,
+                      marginTop: Viewport.height * 0.03,
+                    }}
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
                   >
                     <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
                     {schedule.destination}
                   </Text>
+
                   <View
                     style={{
                       marginTop: Viewport.height * 0.03,
-                      height: Viewport.height * 0.09,
+                      height: Viewport.height * 0.08,
                     }}
                   >
                     <Text
