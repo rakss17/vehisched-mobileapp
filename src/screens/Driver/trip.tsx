@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, ScrollView, Modal } from "react-native";
+import { View, Text, ScrollView, Modal, TouchableOpacity } from "react-native";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import {
@@ -15,6 +15,9 @@ import { Schedule } from "../../interfaces/interfaces";
 export default function Trips() {
   const [tripData, setTripData] = useState<Schedule[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("Reschedule");
+  const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
+  const [selectedTrip, setSelectedTrip] = useState<Schedule[]>([]);
+
   const handleButtonPress = (status: string) => {
     setSelectedStatus(status);
     let filteredTrips: Schedule[] = [];
@@ -45,6 +48,15 @@ export default function Trips() {
   useEffect(() => {
     handleButtonPress("Reschedule");
   }, []);
+
+  const handleShowTripDetails = (trip: Schedule) => {
+    setSelectedTrip([trip]);
+    setIsTripDetailsShow(true);
+  };
+
+  const handleCloseTripDetails = () => {
+    setIsTripDetailsShow(false);
+  };
   return (
     <>
       <BackgroundColor
@@ -177,63 +189,193 @@ export default function Trips() {
             </Text>
           ) : (
             tripData.map((trip, index) => (
-              <View
+              <TouchableOpacity
+                onPress={() => handleShowTripDetails(trip)}
                 key={index}
-                style={{
-                  flexDirection: "row",
-                  backgroundColor: Colors.primaryColor2,
-                  marginTop: 10,
-                  paddingLeft: 20,
-                  width: Viewport.width * 1,
-                  height: Viewport.height * 0.08,
-                  alignItems: "center",
-                }}
               >
-                <Text
+                <View
                   style={{
-                    width: Viewport.width * 0.03,
-                    fontSize: FontSizes.small,
-                    marginLeft: Viewport.width * 0.07,
-                    textAlign: "center",
+                    flexDirection: "row",
+                    backgroundColor: Colors.primaryColor2,
+                    marginTop: 10,
+                    paddingLeft: 20,
+                    width: Viewport.width * 1,
+                    height: Viewport.height * 0.08,
+                    alignItems: "center",
                   }}
                 >
-                  {trip.trip_number}
-                </Text>
-                <Text
-                  style={{
-                    width: Viewport.width * 0.25,
-                    fontSize: FontSizes.small,
-                    marginLeft: Viewport.width * 0.07,
-                    textAlign: "center",
-                  }}
-                >
-                  {trip.time}
-                </Text>
-                <Text
-                  style={{
-                    width: Viewport.width * 0.25,
-                    fontSize: FontSizes.small,
-                    marginLeft: Viewport.width * 0.02,
-                    textAlign: "center",
-                  }}
-                >
-                  {trip.date}
-                </Text>
-                <Text
-                  style={{
-                    width: Viewport.width * 0.2,
-                    fontSize: FontSizes.small,
-                    textAlign: "center",
-                    marginLeft: Viewport.width * 0.02,
-                  }}
-                >
-                  {trip.destination}
-                </Text>
-              </View>
+                  <Text
+                    style={{
+                      width: Viewport.width * 0.06,
+                      fontSize: FontSizes.small,
+                      marginLeft: Viewport.width * 0.05,
+                      textAlign: "center",
+                    }}
+                  >
+                    {trip.trip_number}
+                  </Text>
+                  <Text
+                    style={{
+                      width: Viewport.width * 0.25,
+                      fontSize: FontSizes.small,
+                      marginLeft: Viewport.width * 0.07,
+                      textAlign: "center",
+                    }}
+                  >
+                    {trip.time}
+                  </Text>
+                  <Text
+                    style={{
+                      width: Viewport.width * 0.25,
+                      fontSize: FontSizes.small,
+                      marginLeft: Viewport.width * 0.02,
+                      textAlign: "center",
+                    }}
+                  >
+                    {trip.date}
+                  </Text>
+                  <Text
+                    style={{
+                      width: Viewport.width * 0.2,
+                      fontSize: FontSizes.small,
+                      textAlign: "center",
+                      marginLeft: Viewport.width * 0.02,
+                    }}
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
+                  >
+                    {trip.destination}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             ))
           )}
         </ScrollView>
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isTripDetailsShow}
+        onRequestClose={handleCloseTripDetails}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              paddingHorizontal: Viewport.width * 0.1,
+              paddingVertical: Viewport.height * 0.0,
+              borderRadius: 10,
+              width: Viewport.width * 0.9,
+              height: Viewport.height * 0.6,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              Trip details
+            </Text>
+            <ScrollView>
+              {selectedTrip.map((trip, index) => (
+                <View key={index}>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                        fontWeight: "bold",
+                      },
+                    ]}
+                  >
+                    Trip no. {trip.trip_number}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Requester's name:
+                    </Text>{" "}
+                    {trip.requester_name}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Passenger's name{"("}s{")"}:
+                    </Text>{" "}
+                    {trip.passenger_name.join(", ")}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
+                    {trip.date}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Time:</Text>{" "}
+                    {trip.time}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
+                    {trip.destination}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
