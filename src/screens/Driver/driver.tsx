@@ -183,7 +183,7 @@ export default function Driver() {
               paddingVertical: Viewport.height * 0.05,
               borderRadius: 10,
               width: Viewport.width * 0.9,
-              height: Viewport.height * 0.5,
+              height: Viewport.height * 0.6,
             }}
           >
             <Text

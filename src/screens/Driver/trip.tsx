@@ -270,7 +270,7 @@ export default function Trips() {
             style={{
               backgroundColor: "white",
               paddingHorizontal: Viewport.width * 0.1,
-              paddingVertical: Viewport.height * 0.0,
+              paddingVertical: Viewport.height * 0.05,
               borderRadius: 10,
               width: Viewport.width * 0.9,
               height: Viewport.height * 0.6,
