@@ -65,4 +65,12 @@ export const ButtonStyle = StyleSheet.create({
   disabledButton: {
     backgroundColor: "gray",
   },
+  largeSize: {
+    width: Viewport.width * 0.8,
+    height: Viewport.height * 0.3,
+    backgroundColor: Colors.primaryColor1,
+    borderRadius: 10,
+    display: "flex",
+    justifyContent: "center",
+  },
 });

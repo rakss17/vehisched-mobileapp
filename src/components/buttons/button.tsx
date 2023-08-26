@@ -14,6 +14,7 @@ const Button: React.FC<ButtonProps> = ({
   transparentText2,
   isHighlighted,
   style,
+  largeSize,
 }) => {
   return (
     <TouchableOpacity
@@ -25,6 +26,7 @@ const Button: React.FC<ButtonProps> = ({
         isHighlighted && ButtonStyle.borderBottom,
         disabled && ButtonStyle.disabledButton,
         style,
+        largeSize && ButtonStyle.largeSize,
       ]}
       onPress={onPress}
       disabled={disabled}

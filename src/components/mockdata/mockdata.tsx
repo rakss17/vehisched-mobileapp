@@ -409,3 +409,33 @@ export const todayMockData = [
     status: "Reschedule",
   },
 ];
+
+export const inProgressMockData = [
+  {
+    trip_number: 6,
+    requester_name: "Emily Johnson",
+    passenger_name: ["Grace Wilson", "Sophie White"],
+    time: "10:30 AM",
+    date: "08/23/2023",
+    destination: "Coffee Shop",
+    status: "Today",
+  },
+  {
+    trip_number: 7,
+    requester_name: "David Miller",
+    passenger_name: ["James Smith", "Oliver Davis", "Isabella Johnson"],
+    time: "02:00 PM",
+    date: "08/23/2023",
+    destination: "Shopping Mall",
+    status: "Today",
+  },
+  {
+    trip_number: 9,
+    requester_name: "Noah Wilson",
+    passenger_name: ["Ethan White", "Olivia Johnson"],
+    time: "07:15 PM",
+    date: "08/23/2023",
+    destination: "Restaurant",
+    status: "Today",
+  },
+];
