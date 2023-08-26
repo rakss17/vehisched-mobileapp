@@ -6,6 +6,7 @@ type RootStackParamList = {
   Landing: undefined;
   Requester: undefined;
   Driver: undefined;
+  GateGuard: undefined;
 };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;

@@ -37,6 +37,8 @@ export default function Landing() {
       navigation.navigate("Requester");
     } else if (data.username === "driver") {
       navigation.navigate("Driver");
+    } else if (data.username === "gateguard") {
+      navigation.navigate("GateGuard");
     }
   };
   return (
