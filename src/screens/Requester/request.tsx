@@ -15,12 +15,7 @@ import {
 } from "react-native";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
-import {
-  fetchedPendingData,
-  fetchedApprovedData,
-  fetchedCanceledData,
-  fetchedDeclinedData,
-} from "../../components/mockdata/mockdata";
+import { fetchedRequestData } from "../../components/mockdata/mockdata";
 import { Requests } from "../../interfaces/interfaces";
 import EllipsisMenu from "../../components/ellipsismenu/ellipsismenu";
 import PromptDialog from "../../components/modals/promptdialog";
@@ -36,26 +31,36 @@ export default function Request() {
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [isConfirmation2Show, setIsConfirmation2Show] = useState(false);
   const [isRequestDetailsShow, setIsRequestDetailsShow] = useState(false);
+
   const handleButtonPress = (status: string) => {
     setSelectedStatus(status);
+    let filteredStatus: Requests[] = [];
     switch (status) {
       case "Pending":
-        setRequestData(fetchedPendingData);
+        filteredStatus = fetchedRequestData.filter(
+          (request) => request.status === "Pending"
+        );
         break;
       case "Approved":
-        setRequestData(fetchedApprovedData);
+        filteredStatus = fetchedRequestData.filter(
+          (request) => request.status === "Approved"
+        );
         break;
       case "Canceled":
-        setRequestData(fetchedCanceledData);
+        filteredStatus = fetchedRequestData.filter(
+          (request) => request.status === "Canceled"
+        );
         break;
       case "Declined":
-        setRequestData(fetchedDeclinedData);
+        filteredStatus = fetchedRequestData.filter(
+          (request) => request.status === "Declined"
+        );
         break;
       default:
-        setRequestData([]);
+        filteredStatus = [];
         break;
     }
-    setSelectedStatus(status);
+    setRequestData(filteredStatus);
   };
   useEffect(() => {
     handleButtonPress("Pending");

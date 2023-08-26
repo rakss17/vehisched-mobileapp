@@ -57,7 +57,7 @@ export const vehiclesMockData: Vehicle[] = [
   },
 ];
 
-export const fetchedPendingData = [
+export const fetchedRequestData = [
   {
     request_number: "02",
     travel_date: "08/17/2023",
@@ -198,9 +198,6 @@ export const fetchedPendingData = [
     purpose: "Project discussion",
     urgent: false,
   },
-];
-
-export const fetchedApprovedData = [
   {
     request_number: "10",
     travel_date: "April 16, 2024",
@@ -257,9 +254,6 @@ export const fetchedApprovedData = [
     purpose: "Team event",
     urgent: false,
   },
-];
-
-export const fetchedCanceledData = [
   {
     request_number: "10",
     travel_date: "April 16, 2024",
@@ -274,9 +268,6 @@ export const fetchedCanceledData = [
     purpose: "Training session",
     urgent: false,
   },
-];
-
-export const fetchedDeclinedData = [
   {
     request_number: "10",
     travel_date: "April 16, 2024",
