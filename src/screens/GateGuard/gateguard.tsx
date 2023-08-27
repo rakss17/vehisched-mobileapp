@@ -31,22 +31,15 @@ export default function GateGuard() {
     setInProgressData(inProgressMockData);
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
-  const handleScanButtonPress = () => {
-    setScanButtonPressed(true);
+  const handleScanButtonPress = async () => {
+    const { status } = await BarCodeScanner.requestPermissionsAsync();
+    setHasPermission(status === "granted");
+    if (hasPermission) {
+      setScanButtonPressed(true);
+    }
   };
 
-  // if (!hasPermission) {
-  //   return <Text>Please grant camera permissions to app.</Text>;
-  // }
-
-  const handleBarCodeScanned = ({
+  const handleQRCodeScanned = ({
     type,
     data,
   }: {
@@ -100,7 +93,7 @@ export default function GateGuard() {
             >
               <BarCodeScanner
                 style={StyleSheet.absoluteFillObject}
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                onBarCodeScanned={scanned ? undefined : handleQRCodeScanned}
               />
             </View>
           </Modal>
