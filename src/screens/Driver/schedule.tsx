@@ -42,21 +42,28 @@ export default function Schedules() {
 
   const handleButtonPress = (status: string) => {
     setSelectedStatus(status);
+    let filteredSchedule: Schedule[] = [];
     switch (status) {
       case "Today":
-        setScheduleData(todayMockData);
+        filteredSchedule = todayMockData.filter(
+          (schedule) => schedule.status === "Today"
+        );
         break;
       case "In Progress":
-        setScheduleData(todayMockData);
+        filteredSchedule = todayMockData.filter(
+          (schedule) => schedule.status === "In Progress"
+        );
         break;
       case "Upcoming":
-        setScheduleData(todayMockData);
+        filteredSchedule = todayMockData.filter(
+          (schedule) => schedule.status === "Upcoming"
+        );
         break;
       default:
         setScheduleData([]);
         break;
     }
-    setSelectedStatus(status);
+    setScheduleData(filteredSchedule);
   };
   useEffect(() => {
     handleButtonPress("Today");
@@ -131,7 +138,7 @@ export default function Schedules() {
         <View
           style={[
             {
-              paddingBottom: Viewport.height * 0.35,
+              paddingBottom: Viewport.height * 0.38,
             },
             Styles.flexColumn,
           ]}
