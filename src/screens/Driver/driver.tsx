@@ -10,6 +10,7 @@ import {
 } from "../../styles/globalstyles/globalstyles";
 import { todayMockData } from "../../components/mockdata/mockdata";
 import { Schedule } from "../../interfaces/interfaces";
+import Button from "../../components/buttons/button";
 
 export default function Driver() {
   const [scheduleData, setScheduleData] = useState<Schedule[]>([]);
@@ -195,9 +196,14 @@ export default function Driver() {
             >
               Trip details
             </Text>
-            <ScrollView>
-              {selectedTrip.map((trip, index) => (
-                <View key={index}>
+
+            {selectedTrip.map((trip, index) => (
+              <View key={index}>
+                <ScrollView
+                  style={{
+                    height: Viewport.height * 0.43,
+                  }}
+                >
                   <Text
                     style={[
                       {
@@ -280,9 +286,22 @@ export default function Driver() {
                     <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
                     {trip.destination}
                   </Text>
+                </ScrollView>
+                <View
+                  style={{
+                    alignItems: "flex-end",
+                    marginTop: Viewport.height * 0.0,
+                  }}
+                >
+                  <Button
+                    text="Close"
+                    transparentBG
+                    transparentText2
+                    onPress={handleCloseTripDetails}
+                  />
                 </View>
-              ))}
-            </ScrollView>
+              </View>
+            ))}
           </View>
         </View>
       </Modal>

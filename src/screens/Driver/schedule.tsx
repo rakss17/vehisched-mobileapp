@@ -162,122 +162,128 @@ export default function Schedules() {
                   }}
                 >
                   <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.7,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        {
-                          fontSize: FontSizes.normal,
-                          color: Colors.secondaryColor2,
-                          fontWeight: "bold",
-                          marginTop: Viewport.height * 0.03,
-                          marginLeft: Viewport.width * 0.05,
-                        },
-                      ]}
-                    >
-                      Trip {schedule.trip_number}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.7,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        {
-                          fontSize: FontSizes.small,
-                          color: Colors.secondaryColor2,
-                          fontWeight: "bold",
-                          marginLeft: Viewport.width * 0.05,
-                          marginTop: Viewport.height * 0.03,
-                        },
-                      ]}
-                    >
-                      Date: {schedule.date}
-                    </Text>
-                    <Text
-                      style={[
-                        {
-                          fontSize: FontSizes.small,
-                          color: Colors.secondaryColor2,
-                          fontWeight: "bold",
-                          marginLeft: Viewport.width * 0.1,
-                          marginTop: Viewport.height * 0.03,
-                        },
-                      ]}
-                    >
-                      Time: {schedule.time}
-                    </Text>
-                  </View>
-                  <Text
                     style={{
-                      fontSize: FontSizes.small,
-                      color: Colors.secondaryColor2,
-                      marginLeft: Viewport.width * 0.05,
-                      marginTop: Viewport.height * 0.03,
+                      height: Viewport.height * 0.3,
                     }}
-                    numberOfLines={2}
-                    ellipsizeMode="tail"
                   >
-                    <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
-                    {schedule.destination}
-                  </Text>
+                    <View
+                      style={[
+                        {
+                          width: Viewport.width * 0.7,
+                        },
+                        Styles.flexRow,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          {
+                            fontSize: FontSizes.normal,
+                            color: Colors.secondaryColor2,
+                            fontWeight: "bold",
+                            marginTop: Viewport.height * 0.03,
+                            marginLeft: Viewport.width * 0.05,
+                          },
+                        ]}
+                      >
+                        Trip {schedule.trip_number}
+                      </Text>
+                    </View>
+                    <View
+                      style={[
+                        {
+                          width: Viewport.width * 0.7,
+                        },
+                        Styles.flexRow,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          {
+                            fontSize: FontSizes.small,
+                            color: Colors.secondaryColor2,
+                            fontWeight: "bold",
+                            marginLeft: Viewport.width * 0.05,
+                            marginTop: Viewport.height * 0.03,
+                          },
+                        ]}
+                      >
+                        Date: {schedule.date}
+                      </Text>
+                      <Text
+                        style={[
+                          {
+                            fontSize: FontSizes.small,
+                            color: Colors.secondaryColor2,
+                            fontWeight: "bold",
+                            marginLeft: Viewport.width * 0.1,
+                            marginTop: Viewport.height * 0.03,
+                          },
+                        ]}
+                      >
+                        Time: {schedule.time}
+                      </Text>
+                    </View>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginLeft: Viewport.width * 0.05,
+                        marginTop: Viewport.height * 0.03,
+                      }}
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
+                    >
+                      <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
+                      {schedule.destination}
+                    </Text>
 
-                  <View
-                    style={{
-                      marginTop: Viewport.height * 0.03,
-                      height: Viewport.height * 0.08,
-                    }}
-                  >
-                    <Text
-                      style={[
-                        {
-                          fontSize: FontSizes.small,
-                          color: Colors.secondaryColor2,
-                          marginLeft: Viewport.width * 0.05,
-                        },
-                      ]}
+                    <View
+                      style={{
+                        marginTop: Viewport.height * 0.03,
+                        height: Viewport.height * 0.08,
+                      }}
                     >
-                      <Text style={{ fontWeight: "bold" }}>Passengers: </Text>
-                      {schedule.requester_name},{" "}
-                      {schedule.passenger_name &&
-                      schedule.passenger_name.length > 0 ? (
-                        schedule.passenger_name.length > 1 ? (
-                          <Text>
-                            {schedule.passenger_name.slice(0, 4).join(", ")}
-                            <Text
-                              onPress={() =>
-                                handleShowPassengersModal(
-                                  schedule.passenger_name
-                                )
-                              }
-                              style={{ fontWeight: "normal" }}
-                            >
-                              {" "}
-                              and view more...
+                      <Text
+                        style={[
+                          {
+                            fontSize: FontSizes.small,
+                            color: Colors.secondaryColor2,
+                            marginLeft: Viewport.width * 0.05,
+                          },
+                        ]}
+                      >
+                        <Text style={{ fontWeight: "bold" }}>Passengers: </Text>
+                        {schedule.requester_name},{" "}
+                        {schedule.passenger_name &&
+                        schedule.passenger_name.length > 0 ? (
+                          schedule.passenger_name.length > 1 ? (
+                            <Text>
+                              {schedule.passenger_name.slice(0, 4).join(", ")}
+                              <Text
+                                onPress={() =>
+                                  handleShowPassengersModal(
+                                    schedule.passenger_name
+                                  )
+                                }
+                                style={{ fontWeight: "normal" }}
+                              >
+                                {" "}
+                                and view more...
+                              </Text>
                             </Text>
-                          </Text>
+                          ) : (
+                            schedule.passenger_name[0]
+                          )
                         ) : (
-                          schedule.passenger_name[0]
-                        )
-                      ) : (
-                        "No passenger(s)"
-                      )}
-                    </Text>
+                          "No passenger(s)"
+                        )}
+                      </Text>
+                    </View>
                   </View>
-
                   <View
                     style={{
                       alignItems: "center",
+                      marginTop: Viewport.height * 0.01,
                     }}
                   >
                     <Button
@@ -399,11 +405,18 @@ export default function Schedules() {
                 </Text>
               ))}
             </ScrollView>
-            <Button
-              text="Close"
-              defaultBG
-              onPress={handleClosePassengersModal}
-            />
+            <View
+              style={{
+                marginTop: Viewport.height * 0.0,
+              }}
+            >
+              <Button
+                text="Close"
+                transparentBG
+                transparentText2
+                onPress={handleClosePassengersModal}
+              />
+            </View>
           </View>
         </View>
       </Modal>

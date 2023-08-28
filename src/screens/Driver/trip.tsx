@@ -285,9 +285,14 @@ export default function Trips() {
             >
               Trip details
             </Text>
-            <ScrollView>
-              {selectedTrip.map((trip, index) => (
-                <View key={index}>
+
+            {selectedTrip.map((trip, index) => (
+              <View key={index}>
+                <ScrollView
+                  style={{
+                    height: Viewport.height * 0.43,
+                  }}
+                >
                   <Text
                     style={[
                       {
@@ -370,9 +375,22 @@ export default function Trips() {
                     <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
                     {trip.destination}
                   </Text>
+                </ScrollView>
+                <View
+                  style={{
+                    alignItems: "flex-end",
+                    marginTop: Viewport.height * 0.0,
+                  }}
+                >
+                  <Button
+                    text="Close"
+                    transparentBG
+                    transparentText2
+                    onPress={handleCloseTripDetails}
+                  />
                 </View>
-              ))}
-            </ScrollView>
+              </View>
+            ))}
           </View>
         </View>
       </Modal>

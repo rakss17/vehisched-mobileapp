@@ -23,6 +23,8 @@ import Confirmation from "../../components/modals/confirmation";
 
 export default function GateGuard() {
   const [inProgressData, setInProgressData] = useState<Schedule[]>([]);
+  const [selectedTrip, setSelectedTrip] = useState<Schedule[]>([]);
+  const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
@@ -54,6 +56,14 @@ export default function GateGuard() {
     setScanButtonPressed(false);
     setScanned(false);
   };
+  const handleShowTripDetails = (trip: Schedule) => {
+    setSelectedTrip([trip]);
+    setIsTripDetailsShow(true);
+  };
+  const handleCloseTripDetails = () => {
+    setIsTripDetailsShow(false);
+  };
+
   return (
     <>
       <BackgroundColor
@@ -86,7 +96,7 @@ export default function GateGuard() {
                 {
                   width: Viewport.width * 1,
                   height: Viewport.height * 1,
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  backgroundColor: Colors.secondaryColor2,
                 },
                 Styles.flexColumn,
               ]}
@@ -117,70 +127,216 @@ export default function GateGuard() {
           >
             In progress trips
           </Text>
-          {inProgressData.length === 0 ? (
+          <View style={{ paddingBottom: Viewport.height * 0.205 }}>
+            <ScrollView>
+              {inProgressData.length === 0 ? (
+                <Text
+                  style={{
+                    fontSize: FontSizes.small,
+                    textAlign: "center",
+                    marginTop: 15,
+                  }}
+                >
+                  No trips for today
+                </Text>
+              ) : (
+                inProgressData.map((inprogress, index) => (
+                  <TouchableOpacity
+                    onPress={() => handleShowTripDetails(inprogress)}
+                    key={index}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        backgroundColor: Colors.primaryColor2,
+                        marginTop: 10,
+                        paddingLeft: 20,
+                        width: Viewport.width * 1,
+                        height: Viewport.height * 0.08,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          width: Viewport.width * 0.1,
+                          fontSize: FontSizes.small,
+                          marginLeft: 25,
+                          textAlign: "center",
+                        }}
+                      >
+                        {inprogress.trip_number}
+                      </Text>
+                      <Text
+                        style={{
+                          width: Viewport.width * 0.25,
+                          fontSize: FontSizes.small,
+                          marginLeft: 55,
+                          textAlign: "center",
+                        }}
+                      >
+                        {inprogress.time}
+                      </Text>
+                      <Text
+                        style={{
+                          width: Viewport.width * 0.25,
+
+                          fontSize: FontSizes.small,
+                          textAlign: "center",
+                          marginLeft: 20,
+                        }}
+                      >
+                        {inprogress.destination}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isTripDetailsShow}
+        onRequestClose={handleCloseTripDetails}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              paddingHorizontal: Viewport.width * 0.1,
+              paddingVertical: Viewport.height * 0.05,
+              borderRadius: 10,
+              width: Viewport.width * 0.9,
+              height: Viewport.height * 0.6,
+            }}
+          >
             <Text
               style={{
-                fontSize: FontSizes.small,
+                fontSize: FontSizes.normal,
+                fontWeight: "bold",
                 textAlign: "center",
-                marginTop: 15,
               }}
             >
-              No trips for today
+              Trip details
             </Text>
-          ) : (
-            inProgressData.map((inprogress, index) => (
-              <TouchableOpacity
-                // onPress={() => handleShowTripDetails(schedule)}
-                key={index}
-              >
-                <View
+
+            {selectedTrip.map((trip, index) => (
+              <View key={index}>
+                <ScrollView
                   style={{
-                    flexDirection: "row",
-                    backgroundColor: Colors.primaryColor2,
-                    marginTop: 10,
-                    paddingLeft: 20,
-                    width: Viewport.width * 1,
-                    height: Viewport.height * 0.08,
-                    alignItems: "center",
+                    height: Viewport.height * 0.43,
                   }}
                 >
                   <Text
-                    style={{
-                      width: Viewport.width * 0.1,
-                      fontSize: FontSizes.small,
-                      marginLeft: 25,
-                      textAlign: "center",
-                    }}
-                  >
-                    {inprogress.trip_number}
-                  </Text>
-                  <Text
-                    style={{
-                      width: Viewport.width * 0.25,
-                      fontSize: FontSizes.small,
-                      marginLeft: 55,
-                      textAlign: "center",
-                    }}
-                  >
-                    {inprogress.time}
-                  </Text>
-                  <Text
-                    style={{
-                      width: Viewport.width * 0.25,
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
 
-                      fontSize: FontSizes.small,
-                      textAlign: "center",
-                      marginLeft: 20,
-                    }}
+                        marginTop: Viewport.height * 0.03,
+                        fontWeight: "bold",
+                      },
+                    ]}
                   >
-                    {inprogress.destination}
+                    Trip no. {trip.trip_number}
                   </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Requester's name:
+                    </Text>{" "}
+                    {trip.requester_name}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Passenger's name(s):
+                    </Text>{" "}
+                    {trip.passenger_name.join(", ")}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
+                    {trip.date}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Time:</Text>{" "}
+                    {trip.time}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
+                    {trip.destination}
+                  </Text>
+                </ScrollView>
+                <View
+                  style={{
+                    alignItems: "flex-end",
+                    marginTop: Viewport.height * 0.05,
+                  }}
+                >
+                  <Button
+                    text="Close"
+                    transparentBG
+                    transparentText2
+                    onPress={handleCloseTripDetails}
+                  />
                 </View>
-              </TouchableOpacity>
-            ))
-          )}
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
+      </Modal>
       <Confirmation
         visible={scanned}
         animationType="fade"

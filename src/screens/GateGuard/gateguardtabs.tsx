@@ -46,7 +46,7 @@ export function GateGuardTabs() {
         name="Logs"
         component={GateGuard}
         options={{
-          tabBarLabel: "Request logs",
+          tabBarLabel: "Recent logs",
           tabBarIcon: ({ color }) => (
             <FontAwesomeIcon icon={faClipboard} color={color} size={25} />
           ),
