@@ -112,6 +112,7 @@ export default function GateGuard() {
         <View
           style={{
             height: Viewport.height * 0.55,
+            paddingBottom: Viewport.height * 0.1,
           }}
         >
           <Text
@@ -127,72 +128,70 @@ export default function GateGuard() {
           >
             In progress trips
           </Text>
-          <View style={{ paddingBottom: Viewport.height * 0.205 }}>
-            <ScrollView>
-              {inProgressData.length === 0 ? (
-                <Text
-                  style={{
-                    fontSize: FontSizes.small,
-                    textAlign: "center",
-                    marginTop: 15,
-                  }}
+          <ScrollView>
+            {inProgressData.length === 0 ? (
+              <Text
+                style={{
+                  fontSize: FontSizes.small,
+                  textAlign: "center",
+                  marginTop: 15,
+                }}
+              >
+                No trips for today
+              </Text>
+            ) : (
+              inProgressData.map((inprogress, index) => (
+                <TouchableOpacity
+                  onPress={() => handleShowTripDetails(inprogress)}
+                  key={index}
                 >
-                  No trips for today
-                </Text>
-              ) : (
-                inProgressData.map((inprogress, index) => (
-                  <TouchableOpacity
-                    onPress={() => handleShowTripDetails(inprogress)}
-                    key={index}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      backgroundColor: Colors.primaryColor2,
+                      marginTop: Viewport.height * 0.01,
+                      paddingLeft: Viewport.width * 0.05,
+                      width: Viewport.width * 1,
+                      height: Viewport.height * 0.08,
+                      alignItems: "center",
+                    }}
                   >
-                    <View
+                    <Text
                       style={{
-                        flexDirection: "row",
-                        backgroundColor: Colors.primaryColor2,
-                        marginTop: 10,
-                        paddingLeft: 20,
-                        width: Viewport.width * 1,
-                        height: Viewport.height * 0.08,
-                        alignItems: "center",
+                        width: Viewport.width * 0.1,
+                        fontSize: FontSizes.small,
+                        marginLeft: Viewport.width * 0.06,
+                        textAlign: "center",
                       }}
                     >
-                      <Text
-                        style={{
-                          width: Viewport.width * 0.1,
-                          fontSize: FontSizes.small,
-                          marginLeft: 25,
-                          textAlign: "center",
-                        }}
-                      >
-                        {inprogress.trip_number}
-                      </Text>
-                      <Text
-                        style={{
-                          width: Viewport.width * 0.25,
-                          fontSize: FontSizes.small,
-                          marginLeft: 55,
-                          textAlign: "center",
-                        }}
-                      >
-                        {inprogress.time}
-                      </Text>
-                      <Text
-                        style={{
-                          width: Viewport.width * 0.25,
+                      {inprogress.trip_number}
+                    </Text>
+                    <Text
+                      style={{
+                        width: Viewport.width * 0.25,
+                        fontSize: FontSizes.small,
+                        marginLeft: Viewport.width * 0.1,
+                        textAlign: "center",
+                      }}
+                    >
+                      {inprogress.time}
+                    </Text>
+                    <Text
+                      style={{
+                        width: Viewport.width * 0.25,
 
-                          fontSize: FontSizes.small,
-                          textAlign: "center",
-                          marginLeft: 20,
-                        }}
-                      >
-                        {inprogress.destination}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))
-              )}
-            </ScrollView>
-          </View>
+                        fontSize: FontSizes.small,
+                        textAlign: "center",
+                        marginLeft: Viewport.width * 0.08,
+                      }}
+                    >
+                      {inprogress.destination}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))
+            )}
+          </ScrollView>
         </View>
       </View>
       <Modal
@@ -241,7 +240,6 @@ export default function GateGuard() {
                       {
                         fontSize: FontSizes.small,
                         color: Colors.secondaryColor2,
-
                         marginTop: Viewport.height * 0.03,
                         fontWeight: "bold",
                       },
@@ -269,7 +267,6 @@ export default function GateGuard() {
                       {
                         fontSize: FontSizes.small,
                         color: Colors.secondaryColor2,
-
                         marginTop: Viewport.height * 0.03,
                       },
                     ]}
@@ -284,7 +281,6 @@ export default function GateGuard() {
                       {
                         fontSize: FontSizes.small,
                         color: Colors.secondaryColor2,
-
                         marginTop: Viewport.height * 0.03,
                       },
                     ]}
@@ -297,7 +293,6 @@ export default function GateGuard() {
                       {
                         fontSize: FontSizes.small,
                         color: Colors.secondaryColor2,
-
                         marginTop: Viewport.height * 0.03,
                       },
                     ]}
@@ -310,7 +305,6 @@ export default function GateGuard() {
                       {
                         fontSize: FontSizes.small,
                         color: Colors.secondaryColor2,
-
                         marginTop: Viewport.height * 0.03,
                       },
                     ]}
@@ -322,7 +316,7 @@ export default function GateGuard() {
                 <View
                   style={{
                     alignItems: "flex-end",
-                    marginTop: Viewport.height * 0.05,
+                    marginTop: Viewport.height * 0.0,
                   }}
                 >
                   <Button
