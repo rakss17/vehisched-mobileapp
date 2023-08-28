@@ -70,19 +70,21 @@ export default function GateGuard() {
         style={{ width: Viewport.width * 1, height: Viewport.height * 0.04 }}
       />
       <Header />
-      <View style={Styles.container}>
-        <BackgroundColor
-          style={{
-            width: Viewport.width * 1,
-            height: Viewport.height * 0.01,
-            marginBottom: Viewport.height * 0.02,
-          }}
-        />
+      <View
+        style={[
+          {
+            flex: 1,
+            backgroundColor: Colors.secondaryColor1,
+          },
+          Styles.flexColumn,
+        ]}
+      >
         {!scanButtonPressed && !scanned && (
           <Button
             text="Scan Trip Ticket QR code"
             largeSize
             onPress={handleScanButtonPress}
+            style={{ marginTop: Viewport.height * 0.03 }}
           />
         )}
         {scanButtonPressed && hasPermission && (
@@ -111,8 +113,7 @@ export default function GateGuard() {
 
         <View
           style={{
-            height: Viewport.height * 0.55,
-            paddingBottom: Viewport.height * 0.1,
+            height: Viewport.height * 0.43,
           }}
         >
           <Text
