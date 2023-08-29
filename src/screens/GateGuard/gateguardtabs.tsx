@@ -8,6 +8,7 @@ import {
 import { faHome, faClipboard } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import GateGuard from "./gateguard";
+import RecentLogs from "./recentlogs";
 
 const Tab = createBottomTabNavigator();
 
@@ -43,8 +44,8 @@ export function GateGuardTabs() {
         }}
       />
       <Tab.Screen
-        name="Logs"
-        component={GateGuard}
+        name="Recent logs"
+        component={RecentLogs}
         options={{
           tabBarLabel: "Recent logs",
           tabBarIcon: ({ color }) => (
