@@ -202,4 +202,5 @@ export interface Schedule {
   passenger_name: string[];
   date: string;
   status: string;
+  vehicle?: string;
 }

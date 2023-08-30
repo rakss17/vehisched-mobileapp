@@ -17,7 +17,7 @@ import { BackgroundColor } from "../../styles/globalstyles/globalstyles";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { Schedule } from "../../interfaces/interfaces";
-import { inProgressMockData } from "../../components/mockdata/mockdata";
+import { todayMockData } from "../../components/mockdata/mockdata";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Confirmation from "../../components/modals/confirmation";
 
@@ -30,7 +30,7 @@ export default function GateGuard() {
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
 
   useEffect(() => {
-    setInProgressData(inProgressMockData);
+    setInProgressData(todayMockData);
   }, []);
 
   const handleScanButtonPress = async () => {
@@ -159,19 +159,17 @@ export default function GateGuard() {
                   >
                     <Text
                       style={{
-                        width: Viewport.width * 0.1,
+                        width: Viewport.width * 0.4,
                         fontSize: FontSizes.small,
-                        marginLeft: Viewport.width * 0.06,
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.trip_number}
+                      {inprogress.vehicle}
                     </Text>
                     <Text
                       style={{
                         width: Viewport.width * 0.25,
                         fontSize: FontSizes.small,
-                        marginLeft: Viewport.width * 0.1,
                         textAlign: "center",
                       }}
                     >
@@ -180,10 +178,8 @@ export default function GateGuard() {
                     <Text
                       style={{
                         width: Viewport.width * 0.25,
-
                         fontSize: FontSizes.small,
                         textAlign: "center",
-                        marginLeft: Viewport.width * 0.08,
                       }}
                     >
                       {inprogress.destination}
@@ -213,7 +209,7 @@ export default function GateGuard() {
             style={{
               backgroundColor: "white",
               paddingHorizontal: Viewport.width * 0.1,
-              paddingVertical: Viewport.height * 0.05,
+              paddingVertical: Viewport.height * 0.03,
               borderRadius: 10,
               width: Viewport.width * 0.9,
               height: Viewport.height * 0.6,
@@ -247,6 +243,18 @@ export default function GateGuard() {
                     ]}
                   >
                     Trip no. {trip.trip_number}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Vehicle:</Text>{" "}
+                    {trip.vehicle}
                   </Text>
                   <Text
                     style={[

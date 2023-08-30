@@ -21,9 +21,12 @@ import { todayMockData } from "../../components/mockdata/mockdata";
 
 export default function RecentLogs() {
   const [recentLogsData, setRecentLogsData] = useState<Schedule[]>([]);
+  const [selectedTrip, setSelectedTrip] = useState<Schedule[]>([]);
+  const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
 
   const fetchedRecentLogs = () => {
     let filteredStatus: Schedule[] = [];
+
     filteredStatus = todayMockData.filter(
       (completed) => completed.status === "Completed"
     );
@@ -35,6 +38,13 @@ export default function RecentLogs() {
     fetchedRecentLogs();
   }, []);
 
+  const handleShowTripDetails = (trip: Schedule) => {
+    setSelectedTrip([trip]);
+    setIsTripDetailsShow(true);
+  };
+  const handleCloseTripDetails = () => {
+    setIsTripDetailsShow(false);
+  };
   return (
     <>
       <BackgroundColor
@@ -78,7 +88,7 @@ export default function RecentLogs() {
               flexDirection: "row",
               width: Viewport.width * 1,
               justifyContent: "center",
-              gap: 10,
+              gap: Viewport.width * 0.25,
               marginTop: Viewport.height * 0.02,
             }}
           >
@@ -91,26 +101,6 @@ export default function RecentLogs() {
               }}
             >
               Vehicle
-            </Text>
-            <Text
-              style={{
-                width: Viewport.width * 0.2,
-                fontSize: FontSizes.small,
-                textAlign: "center",
-                fontWeight: "bold",
-              }}
-            >
-              Departure
-            </Text>
-            <Text
-              style={{
-                width: Viewport.width * 0.2,
-                fontSize: FontSizes.small,
-                textAlign: "center",
-                fontWeight: "bold",
-              }}
-            >
-              Return
             </Text>
             <Text
               style={{
@@ -137,7 +127,7 @@ export default function RecentLogs() {
             ) : (
               recentLogsData.map((recent, index) => (
                 <TouchableOpacity
-                  //   onPress={() => handleShowTripDetails(inprogress)}
+                  onPress={() => handleShowTripDetails(recent)}
                   key={index}
                 >
                   <View
@@ -153,28 +143,18 @@ export default function RecentLogs() {
                   >
                     <Text
                       style={{
-                        width: Viewport.width * 0.1,
+                        width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
                         marginLeft: Viewport.width * 0.06,
                         textAlign: "center",
                       }}
                     >
-                      {recent.trip_number}
+                      {recent.vehicle}
                     </Text>
-                    <Text
-                      style={{
-                        width: Viewport.width * 0.25,
-                        fontSize: FontSizes.small,
-                        marginLeft: Viewport.width * 0.1,
-                        textAlign: "center",
-                      }}
-                    >
-                      {recent.time}
-                    </Text>
-                    <Text
-                      style={{
-                        width: Viewport.width * 0.25,
 
+                    <Text
+                      style={{
+                        width: Viewport.width * 0.5,
                         fontSize: FontSizes.small,
                         textAlign: "center",
                         marginLeft: Viewport.width * 0.08,
@@ -189,6 +169,156 @@ export default function RecentLogs() {
           </ScrollView>
         </View>
       </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isTripDetailsShow}
+        onRequestClose={handleCloseTripDetails}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              paddingHorizontal: Viewport.width * 0.1,
+              paddingVertical: Viewport.height * 0.03,
+              borderRadius: 10,
+              width: Viewport.width * 0.9,
+              height: Viewport.height * 0.6,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: FontSizes.normal,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              Trip details
+            </Text>
+
+            {selectedTrip.map((trip, index) => (
+              <View key={index}>
+                <ScrollView
+                  style={{
+                    height: Viewport.height * 0.43,
+                  }}
+                >
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                        fontWeight: "bold",
+                      },
+                    ]}
+                  >
+                    Trip no. {trip.trip_number}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Vehicle:</Text>{" "}
+                    {trip.vehicle}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Requester's name:
+                    </Text>{" "}
+                    {trip.requester_name}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Passenger's name(s):
+                    </Text>{" "}
+                    {trip.passenger_name.join(", ")}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Departure:</Text>{" "}
+                    {trip.date}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Return:</Text>{" "}
+                    {trip.time}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Destination:</Text>{" "}
+                    {trip.destination}
+                  </Text>
+                </ScrollView>
+                <View
+                  style={{
+                    alignItems: "flex-end",
+                    marginTop: Viewport.height * 0.0,
+                  }}
+                >
+                  <Button
+                    text="Close"
+                    transparentBG
+                    transparentText2
+                    onPress={handleCloseTripDetails}
+                  />
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }

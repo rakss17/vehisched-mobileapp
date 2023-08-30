@@ -324,6 +324,7 @@ export const todayMockData = [
     time: "08:00 AM",
     date: "08/22/2023",
     destination: "Office",
+    vehicle: "GMC Canyon",
     status: "Reschedule",
   },
   {
@@ -332,15 +333,17 @@ export const todayMockData = [
     passenger_name: ["Alice Smith", "Bob Johnson"],
     time: "09:30 AM",
     date: "08/22/2023",
+    vehicle: "GMC Canyon",
     destination: "Client Meeting",
     status: "Reschedule",
   },
   {
     trip_number: 3,
     requester_name: "Jane Smith",
-    passenger_name: ["Eve Johnson"],
+    passenger_name: ["Olivia Davis", "Liam Wilson", "Emma White"],
     time: "12:15 PM",
     date: "08/22/2023",
+    vehicle: "GMC Canyon",
     destination: "Lunch",
     status: "Completed",
   },
@@ -360,6 +363,7 @@ export const todayMockData = [
     passenger_name: ["Noah Martin"],
     time: "06:00 PM",
     date: "08/22/2023",
+    vehicle: "RAM 1500",
     destination: "Home",
     status: "Completed",
   },
@@ -370,6 +374,7 @@ export const todayMockData = [
     time: "10:30 AM",
     date: "08/23/2023",
     destination: "Coffee Shop",
+    vehicle: "RAM 1500",
     status: "Today",
   },
   {
@@ -379,6 +384,7 @@ export const todayMockData = [
     time: "02:00 PM",
     date: "08/23/2023",
     destination: "Shopping Mall",
+    vehicle: "RAM 1500",
     status: "Today",
   },
   {
@@ -388,6 +394,7 @@ export const todayMockData = [
     time: "04:45 PM",
     date: "08/23/2023",
     destination: "Park",
+    vehicle: "RAM 1500",
     status: "Reschedule",
   },
   {
@@ -397,6 +404,7 @@ export const todayMockData = [
     time: "07:15 PM",
     date: "08/23/2023",
     destination: "Restaurant",
+    vehicle: "RAM 1500",
     status: "Today",
   },
   {
@@ -406,6 +414,7 @@ export const todayMockData = [
     time: "09:00 PM",
     date: "08/23/2023",
     destination: "Concert",
+    vehicle: "RAM 1500",
     status: "Reschedule",
   },
   {
@@ -415,6 +424,7 @@ export const todayMockData = [
     time: "11:30 AM",
     date: "08/24/2023",
     destination: "Gym",
+    vehicle: "RAM 1500",
     status: "Today",
   },
   {
@@ -424,6 +434,7 @@ export const todayMockData = [
     time: "01:45 PM",
     date: "08/24/2023",
     destination: "Doctor's Appointment",
+    vehicle: "RAM 1500",
     status: "Upcoming",
   },
   {
@@ -433,6 +444,7 @@ export const todayMockData = [
     time: "04:00 PM",
     date: "08/24/2023",
     destination: "Park",
+    vehicle: "RAM 1500",
     status: "In Progress",
   },
   {
@@ -442,6 +454,7 @@ export const todayMockData = [
     time: "06:30 PM",
     date: "08/24/2023",
     destination: "Friend's House",
+    vehicle: "RAM 1500",
     status: "In Progress",
   },
   {
@@ -451,63 +464,7 @@ export const todayMockData = [
     time: "08:15 PM",
     date: "08/24/2023",
     destination: "Movie Theater",
+    vehicle: "RAM 1500",
     status: "Upcoming",
-  },
-];
-
-export const inProgressMockData = [
-  {
-    trip_number: 6,
-    requester_name: "Emily Johnson",
-    passenger_name: ["Grace Wilson", "Sophie White"],
-    time: "10:30 AM",
-    date: "08/23/2023",
-    destination: "Coffee Shop",
-    status: "Today",
-  },
-  {
-    trip_number: 7,
-    requester_name: "David Miller",
-    passenger_name: ["James Smith", "Oliver Davis", "Isabella Johnson"],
-    time: "02:00 PM",
-    date: "08/23/2023",
-    destination: "Shopping Mall",
-    status: "Today",
-  },
-  {
-    trip_number: 9,
-    requester_name: "Noah Wilson",
-    passenger_name: ["Ethan White", "Olivia Johnson"],
-    time: "07:15 PM",
-    date: "08/23/2023",
-    destination: "Restaurant",
-    status: "Today",
-  },
-  {
-    trip_number: 9,
-    requester_name: "Noah Wilson",
-    passenger_name: ["Ethan White", "Olivia Johnson"],
-    time: "07:15 PM",
-    date: "08/23/2023",
-    destination: "Restaurant",
-    status: "Today",
-  },
-  {
-    trip_number: 9,
-    requester_name: "Noah Wilson",
-    passenger_name: ["Ethan White", "Olivia Johnson"],
-    time: "07:15 PM",
-    date: "08/23/2023",
-    destination: "Restaurant",
-    status: "Today",
-  },
-  {
-    trip_number: 9,
-    requester_name: "Noah Wilson",
-    passenger_name: ["Ethan White", "Olivia Johnson"],
-    time: "07:15 PM",
-    date: "08/23/2023",
-    destination: "Restaurant",
-    status: "Today",
   },
 ];
