@@ -5,14 +5,15 @@ import {
   FontSizes,
   Colors,
 } from "../../styles/globalstyles/globalstyles";
-import { faCar, faClipboardList } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faClock, faCarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import Requester from "./requester";
-import Request from "./request";
+import Driver from "./driver";
+import Schedules from "./schedule";
+import Trips from "./trip";
 
 const Tab = createBottomTabNavigator();
 
-export function RequesterTabs() {
+export function DriverTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -34,22 +35,32 @@ export function RequesterTabs() {
       }}
     >
       <Tab.Screen
-        name="Vehicles"
-        component={Requester}
+        name="Home"
+        component={Driver}
         options={{
-          tabBarLabel: "Vehicles",
+          tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
-            <FontAwesomeIcon icon={faCar} color={color} size={25} />
+            <FontAwesomeIcon icon={faHome} color={color} size={25} />
           ),
         }}
       />
       <Tab.Screen
-        name="Request"
-        component={Request}
+        name="Schedule"
+        component={Schedules}
         options={{
-          tabBarLabel: "Your request",
+          tabBarLabel: "Schedule",
           tabBarIcon: ({ color }) => (
-            <FontAwesomeIcon icon={faClipboardList} color={color} size={25} />
+            <FontAwesomeIcon icon={faClock} color={color} size={25} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Trip"
+        component={Trips}
+        options={{
+          tabBarLabel: "Trip",
+          tabBarIcon: ({ color }) => (
+            <FontAwesomeIcon icon={faCarAlt} color={color} size={25} />
           ),
         }}
       />

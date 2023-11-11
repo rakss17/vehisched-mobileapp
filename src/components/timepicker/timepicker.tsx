@@ -12,16 +12,23 @@ import {
   FontSizes,
   Viewport,
 } from "../../styles/globalstyles/globalstyles";
+import { TimePickerProps } from "../../interfaces/interfaces";
 
-interface TimePickerProps {
-  onTimeSelected: (hours: number, minutes: number, period: string) => void;
-}
-
-const TimePicker: React.FC<TimePickerProps> = ({ onTimeSelected }) => {
-  const [selectedHours, setSelectedHours] = useState<number | null>(null);
-  const [selectedMinutes, setSelectedMinutes] = useState<number | null>(null);
+const TimePicker: React.FC<TimePickerProps> = ({
+  onTimeSelected,
+  secondBG,
+  selectedHours: initialHours,
+  selectedMinutes: initialMinutes,
+  selectedPeriod: initialPeriod,
+}) => {
+  const [selectedHours, setSelectedHours] = useState<number | null>(
+    initialHours
+  );
+  const [selectedMinutes, setSelectedMinutes] = useState<number | null>(
+    initialMinutes
+  );
   const [selectedPeriod, setSelectedPeriod] = useState<"AM" | "PM" | null>(
-    null
+    initialPeriod
   );
   useEffect(() => {
     if (
@@ -82,87 +89,87 @@ const TimePicker: React.FC<TimePickerProps> = ({ onTimeSelected }) => {
   };
 
   return (
-    <TouchableOpacity>
-      <View style={styles.container}>
-        <View style={styles.pickerContainer}>
-          <View style={styles.timePicker}>
-            <TextInput
-              style={styles.input}
-              value={
-                selectedHours !== null
-                  ? formatNumberToTwoDigits(selectedHours)
-                  : ""
+    <View style={[styles.container, secondBG && styles.container2]}>
+      <View
+        style={[styles.pickerContainer, secondBG && styles.pickerContainer2]}
+      >
+        <View style={styles.timePicker}>
+          <TextInput
+            style={[styles.input, secondBG && styles.input2]}
+            value={
+              selectedHours !== null
+                ? formatNumberToTwoDigits(selectedHours)
+                : ""
+            }
+            placeholder="HH"
+            keyboardType="number-pad"
+            onChangeText={(text) => {
+              const newHours = parseInt(text, 10);
+              if (!isNaN(newHours) && newHours >= 0 && newHours <= 12) {
+                setSelectedHours(newHours);
               }
-              placeholder="HH"
-              keyboardType="number-pad"
-              onChangeText={(text) => {
-                const newHours = parseInt(text, 10);
-                if (!isNaN(newHours) && newHours >= 0 && newHours <= 12) {
-                  setSelectedHours(newHours);
-                }
-              }}
-            />
-          </View>
-          <View style={styles.arrowContainer}>
-            {renderArrowButton("hours", "up")}
-            {renderArrowButton("hours", "down")}
-          </View>
+            }}
+          />
+        </View>
+        <View style={styles.arrowContainer}>
+          {renderArrowButton("hours", "up")}
+          {renderArrowButton("hours", "down")}
+        </View>
 
-          <View style={styles.timePicker}>
-            <TextInput
-              style={styles.input}
-              value={
-                selectedMinutes !== null
-                  ? formatNumberToTwoDigits(selectedMinutes)
-                  : ""
+        <View style={styles.timePicker}>
+          <TextInput
+            style={[styles.input, secondBG && styles.input2]}
+            value={
+              selectedMinutes !== null
+                ? formatNumberToTwoDigits(selectedMinutes)
+                : ""
+            }
+            placeholder="MM"
+            keyboardType="number-pad"
+            onChangeText={(text) => {
+              const newMinutes = parseInt(text, 10);
+              if (!isNaN(newMinutes) && newMinutes >= 0 && newMinutes <= 59) {
+                setSelectedMinutes(newMinutes);
               }
-              placeholder="MM"
-              keyboardType="number-pad"
-              onChangeText={(text) => {
-                const newMinutes = parseInt(text, 10);
-                if (!isNaN(newMinutes) && newMinutes >= 0 && newMinutes <= 59) {
-                  setSelectedMinutes(newMinutes);
-                }
-              }}
-            />
-          </View>
-          <View style={styles.arrowContainer}>
-            {renderArrowButton("minutes", "up")}
-            {renderArrowButton("minutes", "down")}
-          </View>
-          <View style={styles.timePicker}>
-            <Text style={styles.pickerText}>
-              {selectedPeriod !== null ? selectedPeriod : "- -"}
-            </Text>
+            }}
+          />
+        </View>
+        <View style={styles.arrowContainer}>
+          {renderArrowButton("minutes", "up")}
+          {renderArrowButton("minutes", "down")}
+        </View>
+        <View style={styles.timePicker}>
+          <Text style={styles.pickerText}>
+            {selectedPeriod !== null ? selectedPeriod : "- -"}
+          </Text>
 
-            <View style={styles.arrowContainer}>
+          <View style={styles.arrowContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                togglePeriod();
+              }}
+            >
+              <Ionicons
+                name="chevron-up"
+                size={20}
+                color={Colors.primaryColor1}
+              />
               <TouchableOpacity
                 onPress={() => {
                   togglePeriod();
                 }}
               >
                 <Ionicons
-                  name="chevron-up"
+                  name="chevron-down"
                   size={20}
                   color={Colors.primaryColor1}
                 />
-                <TouchableOpacity
-                  onPress={() => {
-                    togglePeriod();
-                  }}
-                >
-                  <Ionicons
-                    name="chevron-down"
-                    size={20}
-                    color={Colors.primaryColor1}
-                  />
-                </TouchableOpacity>
               </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -177,10 +184,26 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 
+  container2: {
+    height: Viewport.height * 0.06,
+    width: Viewport.width * 0.6,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.primaryColor2,
+    borderRadius: 10,
+    gap: 10,
+    borderBottomWidth: 1,
+  },
+
   pickerContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
+  },
+  pickerContainer2: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 15,
   },
   timePicker: {
     height: Viewport.height * 0.06,
@@ -190,6 +213,7 @@ const styles = StyleSheet.create({
     gap: 10,
     display: "flex",
   },
+
   pickerText: {
     fontSize: FontSizes.normal,
   },
@@ -206,6 +230,11 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.normal,
     height: Viewport.height * 0.06,
     width: Viewport.width * 0.06,
+  },
+  input2: {
+    fontSize: FontSizes.normal,
+    height: Viewport.height * 0.06,
+    width: Viewport.width * 0.085,
   },
   arrowContainer: {
     gap: 0.05,

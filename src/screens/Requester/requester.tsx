@@ -13,11 +13,17 @@ import { Vehicle } from "../../interfaces/interfaces";
 import { vehiclesMockData } from "../../components/mockdata/mockdata";
 import SetTripModal from "../../components/modals/settrip";
 import RequestForm from "../../components/modals/requestform";
+import PromptDialog from "../../components/modals/promptdialog";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
   const [isRequestFormVisible, setIsRequestFormVisible] = useState(false);
+  const [isVehicleVip, setIsVehicleVip] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(
+    undefined
+  );
+
   const fetchedVehicleList = () => {
     setVehicles(vehiclesMockData);
   };
@@ -34,12 +40,23 @@ export default function Requester() {
     setIsSetTripVisible(false);
   };
 
-  const handleRequestFormVisible = () => {
-    setIsRequestFormVisible(true);
+  const handleRequestFormVisible = (vehicle: Vehicle) => {
+    if (vehicle.isVip) {
+      setIsVehicleVip(true);
+    } else {
+      setIsRequestFormVisible(true);
+    }
+
+    setSelectedVehicle(vehicle); // Set the selected vehicle here
   };
 
   const handleRequestFormClose = () => {
     setIsRequestFormVisible(false);
+    setIsVehicleVip(false);
+  };
+  const handleOnNextPressed = () => {
+    setIsVehicleVip(false);
+    setIsRequestFormVisible(true);
   };
   return (
     <>
@@ -89,7 +106,7 @@ export default function Requester() {
             ) : (
               vehicles.map((vehicle) => (
                 <TouchableOpacity
-                  onPress={handleRequestFormVisible}
+                  onPress={() => handleRequestFormVisible(vehicle)}
                   key={vehicle.id}
                   style={[
                     {
@@ -165,6 +182,21 @@ export default function Requester() {
         visible={isRequestFormVisible}
         transparent={true}
         onRequestClose={handleRequestFormClose}
+        selectedVehicle={selectedVehicle}
+      />
+      <PromptDialog
+        animationType="fade"
+        visible={isVehicleVip}
+        transparent={true}
+        onRequestClose={handleRequestFormClose}
+        header="Disclaimer:"
+        content="This vehicle is prioritized for the chancellor, and your reservation will be canceled once the chancellor 
+        uses it during your trip."
+        footer="Are you sure you want to use this vehicle?"
+        onNextPressed={handleOnNextPressed}
+        showHeader
+        showContent
+        showFooter
       />
     </>
   );

@@ -28,6 +28,7 @@ export const Colors = {
   primaryColor1: "#060E57",
   primaryColor2: "#D9D9D9",
   primaryColor3: "#AEAEAE",
+  primaryColor4: "#E8A51C",
   secondaryColor1: "#FFFFFF",
   secondaryColor2: "black",
   secondaryColor3: "#1F78FF",

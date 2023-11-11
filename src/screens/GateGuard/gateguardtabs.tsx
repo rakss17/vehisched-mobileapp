@@ -5,14 +5,14 @@ import {
   FontSizes,
   Colors,
 } from "../../styles/globalstyles/globalstyles";
-import { faCar, faClipboardList } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faClipboard } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import Requester from "./requester";
-import Request from "./request";
+import GateGuard from "./gateguard";
+import RecentLogs from "./recentlogs";
 
 const Tab = createBottomTabNavigator();
 
-export function RequesterTabs() {
+export function GateGuardTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -34,22 +34,22 @@ export function RequesterTabs() {
       }}
     >
       <Tab.Screen
-        name="Vehicles"
-        component={Requester}
+        name="Home"
+        component={GateGuard}
         options={{
-          tabBarLabel: "Vehicles",
+          tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
-            <FontAwesomeIcon icon={faCar} color={color} size={25} />
+            <FontAwesomeIcon icon={faHome} color={color} size={25} />
           ),
         }}
       />
       <Tab.Screen
-        name="Request"
-        component={Request}
+        name="Recent logs"
+        component={RecentLogs}
         options={{
-          tabBarLabel: "Your request",
+          tabBarLabel: "Recent logs",
           tabBarIcon: ({ color }) => (
-            <FontAwesomeIcon icon={faClipboardList} color={color} size={25} />
+            <FontAwesomeIcon icon={faClipboard} color={color} size={25} />
           ),
         }}
       />

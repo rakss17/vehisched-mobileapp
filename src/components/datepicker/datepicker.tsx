@@ -15,8 +15,14 @@ import { CalendarData, DatePickerProps } from "../../interfaces/interfaces";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
-const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+const DatePicker: React.FC<DatePickerProps> = ({
+  selectedDate: initialSelectedDate,
+  onDateSelected,
+  button2,
+}) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    initialSelectedDate
+  );
   const [displayedMonth, setDisplayedMonth] = useState(new Date());
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
@@ -42,6 +48,11 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
     const calendarData: CalendarData[] = [];
 
     const today = new Date();
+    const maxSelectableDate = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 2
+    );
     const daysInMonth = new Date(
       displayedMonth.getFullYear(),
       displayedMonth.getMonth() + 1,
@@ -58,6 +69,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
         key: `blank-${i}`,
         isToday: false,
         isSelected: null,
+        disabled: true, // Disable days before the current month
       });
     }
 
@@ -71,8 +83,15 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
       const isSelected =
         selectedDate &&
         currentDate.toDateString() === selectedDate.toDateString();
+      const isSelectable = currentDate >= maxSelectableDate;
 
-      calendarData.push({ key: i.toString(), day: i, isToday, isSelected });
+      calendarData.push({
+        key: i.toString(),
+        day: i,
+        isToday,
+        isSelected,
+        disabled: !isSelectable,
+      });
     }
 
     return calendarData;
@@ -99,7 +118,10 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
   return (
     <View style={styles.container}>
       <View style={styles.dropdownContainer}>
-        <TouchableOpacity onPress={toggleDropdown} style={styles.button}>
+        <TouchableOpacity
+          onPress={toggleDropdown}
+          style={[styles.button, button2 && styles.button2]}
+        >
           <Text style={styles.buttonText}>
             {selectedDate
               ? selectedDate
@@ -114,7 +136,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
           <FontAwesomeIcon style={styles.icon} icon={faCalendarAlt} size={23} />
         </TouchableOpacity>
         {isDropdownVisible && (
-          <View style={styles.dropdown}>
+          <View style={[styles.dropdown, button2 && styles.dropdown2]}>
             <View style={styles.monthHeader}>
               <TouchableOpacity onPress={() => handleMonthChange(-1)}>
                 <Text style={styles.arrow}>{"<"}</Text>
@@ -132,6 +154,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() =>
+                    !item.disabled &&
                     item.day &&
                     handleDatePress(
                       new Date(
@@ -145,12 +168,15 @@ const DatePicker: React.FC<DatePickerProps> = ({ onDateSelected }) => {
                     styles.dayCell,
                     item.isToday && styles.today,
                     item.isSelected && styles.selected,
+                    item.disabled && styles.disabled,
                   ]}
                 >
                   <Text
                     style={[
                       item.isToday && styles.todayText,
                       item.isSelected && styles.selectedText,
+                      item.disabled && styles.disabledText,
+                      item.isToday && styles.today,
                     ]}
                   >
                     {item.day && item.day > 0 ? item.day.toString() : ""}
@@ -188,10 +214,34 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     zIndex: 1,
   },
+  dropdown2: {
+    position: "absolute",
+    top: Viewport.height * 0.07,
+    left: Viewport.width * -0.1,
+    right: 0,
+    width: Viewport.width * 0.8,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "lightgray",
+    borderRadius: 10,
+    zIndex: 1,
+  },
   button: {
     width: Viewport.width * 0.5,
     height: Viewport.height * 0.06,
     backgroundColor: Colors.secondaryColor1,
+    gap: 15,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+  },
+  button2: {
+    width: Viewport.width * 0.6,
+    height: Viewport.height * 0.06,
+    backgroundColor: Colors.primaryColor2,
+    borderBottomWidth: 1,
     gap: 15,
     display: "flex",
     flexDirection: "row",
@@ -228,7 +278,7 @@ const styles = StyleSheet.create({
     borderColor: "white",
   },
   today: {
-    backgroundColor: Colors.primaryColor2,
+    color: Colors.primaryColor1,
     borderRadius: 10,
   },
   todayText: {
@@ -250,6 +300,13 @@ const styles = StyleSheet.create({
   dayNameText: {
     fontWeight: "bold",
     fontSize: 16,
+  },
+  disabled: {
+    backgroundColor: Colors.secondaryColor1,
+    borderRadius: 10,
+  },
+  disabledText: {
+    color: Colors.primaryColor3,
   },
 });
 
