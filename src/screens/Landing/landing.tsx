@@ -13,6 +13,7 @@ import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/buttons/button";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "../../interfaces/interfaces";
+import { SigninAPI } from "../../components/api/api";
 
 export default function Landing() {
   const [data, setData] = useState({
@@ -33,13 +34,7 @@ export default function Landing() {
   };
 
   const handleSignIn = () => {
-    if (data.username === "requester") {
-      navigation.navigate("Requester");
-    } else if (data.username === "driver") {
-      navigation.navigate("Driver");
-    } else if (data.username === "gateguard") {
-      navigation.navigate("GateGuard");
-    }
+    SigninAPI(data, navigation);
   };
   return (
     <>
