@@ -20,6 +20,7 @@ import { Schedule } from "../../interfaces/interfaces";
 import { todayMockData } from "../../components/mockdata/mockdata";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Confirmation from "../../components/modals/confirmation";
+import { tripScanned } from "../../components/api/api";
 
 export default function GateGuard() {
   const [inProgressData, setInProgressData] = useState<Schedule[]>([]);
@@ -49,6 +50,7 @@ export default function GateGuard() {
     data: string;
   }) => {
     setScanned(true);
+    tripScanned(data);
     console.log(`Data: ${data}`);
     console.log(`Type: ${type}`);
   };

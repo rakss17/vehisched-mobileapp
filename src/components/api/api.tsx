@@ -18,6 +18,7 @@ export async function SigninAPI(
     // setLoadingBarProgress(20);
     const response = await api.post("api/v1/accounts/token/login", data);
     const token = response.data.auth_token;
+    console.log("set token", token);
 
     await AsyncStorage.setItem("token", token);
 
@@ -45,4 +46,28 @@ export async function SigninAPI(
     // setError(true);
     console.log(error.response);
   }
+}
+
+export async function tripScanned(requestId: any) {
+  const token = await AsyncStorage.getItem("token");
+  console.log("tokeeeen", token);
+
+  api
+    .patch(
+      `/api/v1/trip/trip-scanned/${requestId}/`,
+      {},
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      console.log(response);
+      console.log("success");
+    })
+    .catch((error) => {
+      console.log(error.response);
+    });
 }
