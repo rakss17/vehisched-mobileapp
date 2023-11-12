@@ -51,6 +51,7 @@ export async function tripScanned(
   requestId: any,
   setScannedAuthorized: any,
   setScannedCompleted: any,
+  setScannedAlreadyCompleted: any,
   fetchOnTrips: (onTripsData: any) => void,
   setOnTripsData: any,
   setScanButtonPressed: any
@@ -72,12 +73,14 @@ export async function tripScanned(
       if (response.data.type === "Authorized") {
         setScanButtonPressed(false);
         setScannedAuthorized(true);
-        console.log(response.data);
         fetchOnTrips(setOnTripsData);
       } else if (response.data.type === "Completed") {
         setScanButtonPressed(false);
         setScannedCompleted(true);
-        console.log(response.data);
+        fetchOnTrips(setOnTripsData);
+      } else if (response.data.type === "Already Completed") {
+        setScanButtonPressed(false);
+        setScannedAlreadyCompleted(true);
         fetchOnTrips(setOnTripsData);
       }
     })

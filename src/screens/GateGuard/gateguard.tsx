@@ -29,6 +29,7 @@ export default function GateGuard() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scannedAuthorized, setScannedAuthorized] = useState(false);
   const [scannedCompleted, setScannedCompleted] = useState(false);
+  const [scannedAlreadyCompleted, setScannedAlreadyCompleted] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
 
   useEffect(() => {
@@ -50,10 +51,12 @@ export default function GateGuard() {
     type: string;
     data: string;
   }) => {
+    setScanButtonPressed(false);
     tripScanned(
       data,
       setScannedAuthorized,
       setScannedCompleted,
+      setScannedAlreadyCompleted,
       fetchOnTrips,
       setOnTripsData,
       setScanButtonPressed
@@ -63,6 +66,7 @@ export default function GateGuard() {
     setScanButtonPressed(false);
     setScannedAuthorized(false);
     setScannedCompleted(false);
+    setScannedAlreadyCompleted(false);
   };
   const handleShowTripDetails = (trip: Schedule) => {
     setSelectedTrip([trip]);
@@ -100,14 +104,17 @@ export default function GateGuard() {
           Styles.flexColumn,
         ]}
       >
-        {!scanButtonPressed && !scannedAuthorized && !scannedCompleted && (
-          <Button
-            text="Scan Trip Ticket QR code"
-            largeSize
-            onPress={handleScanButtonPress}
-            style={{ marginTop: Viewport.height * 0.03 }}
-          />
-        )}
+        {!scanButtonPressed &&
+          !scannedAuthorized &&
+          !scannedCompleted &&
+          !scannedAlreadyCompleted && (
+            <Button
+              text="Scan Trip Ticket QR code"
+              largeSize
+              onPress={handleScanButtonPress}
+              style={{ marginTop: Viewport.height * 0.03 }}
+            />
+          )}
         {scanButtonPressed && hasPermission && (
           <Modal
             animationType="fade"
@@ -399,6 +406,15 @@ export default function GateGuard() {
         animationType="fade"
         transparent={true}
         content="Trip Completed!"
+        onRequestClose={handleCloseScanner}
+        showContent
+        adjustedSize
+      />
+      <Confirmation
+        visible={scannedAlreadyCompleted}
+        animationType="fade"
+        transparent={true}
+        content="Trip Already Completed!"
         onRequestClose={handleCloseScanner}
         showContent
         adjustedSize
