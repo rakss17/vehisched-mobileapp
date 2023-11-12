@@ -49,9 +49,11 @@ export async function SigninAPI(
 
 export async function tripScanned(
   requestId: any,
-  setScanned: any,
+  setScannedAuthorized: any,
+  setScannedCompleted: any,
   fetchOnTrips: (onTripsData: any) => void,
-  setOnTripsData: any
+  setOnTripsData: any,
+  setScanButtonPressed: any
 ) {
   const token = await AsyncStorage.getItem("token");
 
@@ -67,8 +69,17 @@ export async function tripScanned(
       }
     )
     .then((response) => {
-      setScanned(true);
-      fetchOnTrips(setOnTripsData);
+      if (response.data.type === "Authorized") {
+        setScanButtonPressed(false);
+        setScannedAuthorized(true);
+        console.log(response.data);
+        fetchOnTrips(setOnTripsData);
+      } else if (response.data.type === "Completed") {
+        setScanButtonPressed(false);
+        setScannedCompleted(true);
+        console.log(response.data);
+        fetchOnTrips(setOnTripsData);
+      }
     })
     .catch((error) => {
       console.log(error.response);
@@ -85,9 +96,12 @@ export async function fetchOnTrips(setOnTripsData: any) {
       },
     });
 
-    setOnTripsData(response.data);
-
-    console.log(response.data);
+    if (Array.isArray(response.data)) {
+      setOnTripsData(response.data);
+    } else {
+      setOnTripsData([]);
+      console.log("Response data is not an array:", response.data);
+    }
   } catch (error) {
     console.log(error);
   }

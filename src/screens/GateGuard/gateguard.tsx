@@ -24,10 +24,11 @@ import { fetchOnTrips, tripScanned } from "../../components/api/api";
 
 export default function GateGuard() {
   const [onTripsData, setOnTripsData] = useState<any[]>([]);
-  const [selectedTrip, setSelectedTrip] = useState<Schedule[]>([]);
+  const [selectedTrip, setSelectedTrip] = useState<any[]>([]);
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [scanned, setScanned] = useState(false);
+  const [scannedAuthorized, setScannedAuthorized] = useState(false);
+  const [scannedCompleted, setScannedCompleted] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
 
   useEffect(() => {
@@ -49,11 +50,19 @@ export default function GateGuard() {
     type: string;
     data: string;
   }) => {
-    tripScanned(data, setScanned, fetchOnTrips, setOnTripsData);
+    tripScanned(
+      data,
+      setScannedAuthorized,
+      setScannedCompleted,
+      fetchOnTrips,
+      setOnTripsData,
+      setScanButtonPressed
+    );
   };
   const handleCloseScanner = () => {
     setScanButtonPressed(false);
-    setScanned(false);
+    setScannedAuthorized(false);
+    setScannedCompleted(false);
   };
   const handleShowTripDetails = (trip: Schedule) => {
     setSelectedTrip([trip]);
@@ -61,6 +70,19 @@ export default function GateGuard() {
   };
   const handleCloseTripDetails = () => {
     setIsTripDetailsShow(false);
+  };
+
+  const formatDateTime = (dateTimeString: any) => {
+    const dateTime = new Date(dateTimeString);
+    return dateTime.toLocaleString([], {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+  };
+
+  const formatTime = (timeString: any) => {
+    const time = new Date(`1970-01-01T${timeString}`);
+    return time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   };
 
   return (
@@ -78,7 +100,7 @@ export default function GateGuard() {
           Styles.flexColumn,
         ]}
       >
-        {!scanButtonPressed && !scanned && (
+        {!scanButtonPressed && !scannedAuthorized && !scannedCompleted && (
           <Button
             text="Scan Trip Ticket QR code"
             largeSize
@@ -104,7 +126,11 @@ export default function GateGuard() {
             >
               <BarCodeScanner
                 style={StyleSheet.absoluteFillObject}
-                onBarCodeScanned={scanned ? undefined : handleQRCodeScanned}
+                onBarCodeScanned={
+                  scannedAuthorized && scannedCompleted
+                    ? undefined
+                    : handleQRCodeScanned
+                }
               />
             </View>
           </Modal>
@@ -150,7 +176,7 @@ export default function GateGuard() {
                       flexDirection: "row",
                       backgroundColor: Colors.primaryColor2,
                       marginTop: Viewport.height * 0.01,
-                      paddingLeft: Viewport.width * 0.05,
+                      paddingLeft: Viewport.width * 0.01,
                       width: Viewport.width * 1,
                       height: Viewport.height * 0.08,
                       alignItems: "center",
@@ -163,7 +189,8 @@ export default function GateGuard() {
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.vehicle__plate_number}
+                      {inprogress.vehicle__plate_number}{" "}
+                      {inprogress.vehicle__model}
                     </Text>
                     <Text
                       style={{
@@ -172,16 +199,16 @@ export default function GateGuard() {
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.departure_time_from_office}
+                      {formatDateTime(inprogress.departure_time_from_office)}
                     </Text>
                     <Text
                       style={{
-                        width: Viewport.width * 0.25,
+                        width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.destination}
+                      {inprogress.destination.split(",")[0].trim()}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -253,7 +280,7 @@ export default function GateGuard() {
                     ]}
                   >
                     <Text style={{ fontWeight: "bold" }}>Vehicle:</Text>{" "}
-                    {trip.vehicle}
+                    {trip.vehicle__plate_number} {trip.vehicle__model}
                   </Text>
                   <Text
                     style={[
@@ -268,8 +295,22 @@ export default function GateGuard() {
                     <Text style={{ fontWeight: "bold" }}>
                       Requester's name:
                     </Text>{" "}
-                    {trip.requester_name}
+                    {trip.requester_name__first_name}
                   </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Driver's name:</Text>{" "}
+                    {trip.driver_name__first_name}
+                  </Text>
+
                   <Text
                     style={[
                       {
@@ -282,7 +323,10 @@ export default function GateGuard() {
                     <Text style={{ fontWeight: "bold" }}>
                       Passenger's name(s):
                     </Text>{" "}
-                    {trip.passenger_name.join(", ")}
+                    {trip.passenger_name
+                      .match(/'([^']+)'/g)
+                      .map((name: any) => name.slice(1, -1))
+                      .join(", ")}
                   </Text>
                   <Text
                     style={[
@@ -293,8 +337,10 @@ export default function GateGuard() {
                       },
                     ]}
                   >
-                    <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-                    {trip.date}
+                    <Text style={{ fontWeight: "bold" }}>
+                      Scheduled travel date:
+                    </Text>{" "}
+                    {trip.travel_date}, {formatTime(trip.travel_time)}
                   </Text>
                   <Text
                     style={[
@@ -305,8 +351,8 @@ export default function GateGuard() {
                       },
                     ]}
                   >
-                    <Text style={{ fontWeight: "bold" }}>Time:</Text>{" "}
-                    {trip.time}
+                    <Text style={{ fontWeight: "bold" }}>Departure:</Text>{" "}
+                    {formatDateTime(trip.departure_time_from_office)}
                   </Text>
                   <Text
                     style={[
@@ -340,10 +386,19 @@ export default function GateGuard() {
         </View>
       </Modal>
       <Confirmation
-        visible={scanned}
+        visible={scannedAuthorized}
         animationType="fade"
         transparent={true}
         content="Trip Authorized!"
+        onRequestClose={handleCloseScanner}
+        showContent
+        adjustedSize
+      />
+      <Confirmation
+        visible={scannedCompleted}
+        animationType="fade"
+        transparent={true}
+        content="Trip Completed!"
         onRequestClose={handleCloseScanner}
         showContent
         adjustedSize
