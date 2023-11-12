@@ -43,7 +43,7 @@ export async function SigninAPI(
     // setLoadingBarProgress(50);
     // setLoadingBarProgress(100);
     // setError(true);
-    console.log(error.response);
+    console.log("error", error);
   }
 }
 
@@ -103,6 +103,28 @@ export async function fetchOnTrips(setOnTripsData: any) {
       setOnTripsData(response.data);
     } else {
       setOnTripsData([]);
+      console.log("Response data is not an array:", response.data);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchRecentTrips(setRecentLogsData: any) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/trip/recent-trips-gateguard/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (Array.isArray(response.data)) {
+      setRecentLogsData(response.data);
+      console.log(response.data);
+    } else {
+      setRecentLogsData([]);
       console.log("Response data is not an array:", response.data);
     }
   } catch (error) {

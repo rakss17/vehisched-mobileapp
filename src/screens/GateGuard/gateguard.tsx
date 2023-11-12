@@ -358,8 +358,35 @@ export default function GateGuard() {
                       },
                     ]}
                   >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Scheduled return date:
+                    </Text>{" "}
+                    {trip.return_date}, {formatTime(trip.return_time)}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
                     <Text style={{ fontWeight: "bold" }}>Departure:</Text>{" "}
                     {formatDateTime(trip.departure_time_from_office)}
+                  </Text>
+
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Arrival:</Text> Not yet
+                    arrived
                   </Text>
                   <Text
                     style={[
