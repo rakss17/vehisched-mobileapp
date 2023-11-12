@@ -20,10 +20,10 @@ import { Schedule } from "../../interfaces/interfaces";
 import { todayMockData } from "../../components/mockdata/mockdata";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Confirmation from "../../components/modals/confirmation";
-import { tripScanned } from "../../components/api/api";
+import { fetchOnTrips, tripScanned } from "../../components/api/api";
 
 export default function GateGuard() {
-  const [inProgressData, setInProgressData] = useState<Schedule[]>([]);
+  const [onTripsData, setOnTripsData] = useState<any[]>([]);
   const [selectedTrip, setSelectedTrip] = useState<Schedule[]>([]);
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -31,7 +31,7 @@ export default function GateGuard() {
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
 
   useEffect(() => {
-    setInProgressData(todayMockData);
+    fetchOnTrips(setOnTripsData);
   }, []);
 
   const handleScanButtonPress = async () => {
@@ -49,10 +49,7 @@ export default function GateGuard() {
     type: string;
     data: string;
   }) => {
-    setScanned(true);
-    tripScanned(data);
-    console.log(`Data: ${data}`);
-    console.log(`Type: ${type}`);
+    tripScanned(data, setScanned, fetchOnTrips, setOnTripsData);
   };
   const handleCloseScanner = () => {
     setScanButtonPressed(false);
@@ -129,10 +126,10 @@ export default function GateGuard() {
               },
             ]}
           >
-            In progress trips
+            Ongoing Trips
           </Text>
           <ScrollView>
-            {inProgressData.length === 0 ? (
+            {onTripsData.length === 0 ? (
               <Text
                 style={{
                   fontSize: FontSizes.small,
@@ -140,10 +137,10 @@ export default function GateGuard() {
                   marginTop: 15,
                 }}
               >
-                No trips for today
+                No ongoing trips for today
               </Text>
             ) : (
-              inProgressData.map((inprogress, index) => (
+              onTripsData.map((inprogress, index) => (
                 <TouchableOpacity
                   onPress={() => handleShowTripDetails(inprogress)}
                   key={index}
@@ -166,7 +163,7 @@ export default function GateGuard() {
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.vehicle}
+                      {inprogress.vehicle__plate_number}
                     </Text>
                     <Text
                       style={{
@@ -175,7 +172,7 @@ export default function GateGuard() {
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.time}
+                      {inprogress.departure_time_from_office}
                     </Text>
                     <Text
                       style={{

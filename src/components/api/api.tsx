@@ -18,7 +18,6 @@ export async function SigninAPI(
     // setLoadingBarProgress(20);
     const response = await api.post("api/v1/accounts/token/login", data);
     const token = response.data.auth_token;
-    console.log("set token", token);
 
     await AsyncStorage.setItem("token", token);
 
@@ -48,9 +47,13 @@ export async function SigninAPI(
   }
 }
 
-export async function tripScanned(requestId: any) {
+export async function tripScanned(
+  requestId: any,
+  setScanned: any,
+  fetchOnTrips: (onTripsData: any) => void,
+  setOnTripsData: any
+) {
   const token = await AsyncStorage.getItem("token");
-  console.log("tokeeeen", token);
 
   api
     .patch(
@@ -64,10 +67,28 @@ export async function tripScanned(requestId: any) {
       }
     )
     .then((response) => {
-      console.log(response);
-      console.log("success");
+      setScanned(true);
+      fetchOnTrips(setOnTripsData);
     })
     .catch((error) => {
       console.log(error.response);
     });
+}
+
+export async function fetchOnTrips(setOnTripsData: any) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/trip/on-trips-gateguard/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    setOnTripsData(response.data);
+
+    console.log(response.data);
+  } catch (error) {
+    console.log(error);
+  }
 }
