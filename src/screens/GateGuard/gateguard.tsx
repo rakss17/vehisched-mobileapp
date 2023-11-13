@@ -20,17 +20,20 @@ import { Schedule } from "../../interfaces/interfaces";
 import { todayMockData } from "../../components/mockdata/mockdata";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Confirmation from "../../components/modals/confirmation";
+import { fetchOnTrips, tripScanned } from "../../components/api/api";
 
 export default function GateGuard() {
-  const [inProgressData, setInProgressData] = useState<Schedule[]>([]);
-  const [selectedTrip, setSelectedTrip] = useState<Schedule[]>([]);
+  const [onTripsData, setOnTripsData] = useState<any[]>([]);
+  const [selectedTrip, setSelectedTrip] = useState<any[]>([]);
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [scanned, setScanned] = useState(false);
+  const [scannedAuthorized, setScannedAuthorized] = useState(false);
+  const [scannedCompleted, setScannedCompleted] = useState(false);
+  const [scannedAlreadyCompleted, setScannedAlreadyCompleted] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
 
   useEffect(() => {
-    setInProgressData(todayMockData);
+    fetchOnTrips(setOnTripsData);
   }, []);
 
   const handleScanButtonPress = async () => {
@@ -48,13 +51,22 @@ export default function GateGuard() {
     type: string;
     data: string;
   }) => {
-    setScanned(true);
-    console.log(`Data: ${data}`);
-    console.log(`Type: ${type}`);
+    setScanButtonPressed(false);
+    tripScanned(
+      data,
+      setScannedAuthorized,
+      setScannedCompleted,
+      setScannedAlreadyCompleted,
+      fetchOnTrips,
+      setOnTripsData,
+      setScanButtonPressed
+    );
   };
   const handleCloseScanner = () => {
     setScanButtonPressed(false);
-    setScanned(false);
+    setScannedAuthorized(false);
+    setScannedCompleted(false);
+    setScannedAlreadyCompleted(false);
   };
   const handleShowTripDetails = (trip: Schedule) => {
     setSelectedTrip([trip]);
@@ -62,6 +74,19 @@ export default function GateGuard() {
   };
   const handleCloseTripDetails = () => {
     setIsTripDetailsShow(false);
+  };
+
+  const formatDateTime = (dateTimeString: any) => {
+    const dateTime = new Date(dateTimeString);
+    return dateTime.toLocaleString([], {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+  };
+
+  const formatTime = (timeString: any) => {
+    const time = new Date(`1970-01-01T${timeString}`);
+    return time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   };
 
   return (
@@ -79,14 +104,17 @@ export default function GateGuard() {
           Styles.flexColumn,
         ]}
       >
-        {!scanButtonPressed && !scanned && (
-          <Button
-            text="Scan Trip Ticket QR code"
-            largeSize
-            onPress={handleScanButtonPress}
-            style={{ marginTop: Viewport.height * 0.03 }}
-          />
-        )}
+        {!scanButtonPressed &&
+          !scannedAuthorized &&
+          !scannedCompleted &&
+          !scannedAlreadyCompleted && (
+            <Button
+              text="Scan Trip Ticket QR code"
+              largeSize
+              onPress={handleScanButtonPress}
+              style={{ marginTop: Viewport.height * 0.03 }}
+            />
+          )}
         {scanButtonPressed && hasPermission && (
           <Modal
             animationType="fade"
@@ -105,7 +133,11 @@ export default function GateGuard() {
             >
               <BarCodeScanner
                 style={StyleSheet.absoluteFillObject}
-                onBarCodeScanned={scanned ? undefined : handleQRCodeScanned}
+                onBarCodeScanned={
+                  scannedAuthorized && scannedCompleted
+                    ? undefined
+                    : handleQRCodeScanned
+                }
               />
             </View>
           </Modal>
@@ -127,10 +159,10 @@ export default function GateGuard() {
               },
             ]}
           >
-            In progress trips
+            Ongoing Trips
           </Text>
           <ScrollView>
-            {inProgressData.length === 0 ? (
+            {onTripsData.length === 0 ? (
               <Text
                 style={{
                   fontSize: FontSizes.small,
@@ -138,10 +170,10 @@ export default function GateGuard() {
                   marginTop: 15,
                 }}
               >
-                No trips for today
+                No ongoing trips for today
               </Text>
             ) : (
-              inProgressData.map((inprogress, index) => (
+              onTripsData.map((inprogress, index) => (
                 <TouchableOpacity
                   onPress={() => handleShowTripDetails(inprogress)}
                   key={index}
@@ -151,7 +183,7 @@ export default function GateGuard() {
                       flexDirection: "row",
                       backgroundColor: Colors.primaryColor2,
                       marginTop: Viewport.height * 0.01,
-                      paddingLeft: Viewport.width * 0.05,
+                      paddingLeft: Viewport.width * 0.01,
                       width: Viewport.width * 1,
                       height: Viewport.height * 0.08,
                       alignItems: "center",
@@ -164,7 +196,8 @@ export default function GateGuard() {
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.vehicle}
+                      {inprogress.vehicle__plate_number}{" "}
+                      {inprogress.vehicle__model}
                     </Text>
                     <Text
                       style={{
@@ -173,16 +206,16 @@ export default function GateGuard() {
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.time}
+                      {formatDateTime(inprogress.departure_time_from_office)}
                     </Text>
                     <Text
                       style={{
-                        width: Viewport.width * 0.25,
+                        width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
                         textAlign: "center",
                       }}
                     >
-                      {inprogress.destination}
+                      {inprogress.destination.split(",")[0].trim()}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -254,7 +287,7 @@ export default function GateGuard() {
                     ]}
                   >
                     <Text style={{ fontWeight: "bold" }}>Vehicle:</Text>{" "}
-                    {trip.vehicle}
+                    {trip.vehicle__plate_number} {trip.vehicle__model}
                   </Text>
                   <Text
                     style={[
@@ -269,8 +302,22 @@ export default function GateGuard() {
                     <Text style={{ fontWeight: "bold" }}>
                       Requester's name:
                     </Text>{" "}
-                    {trip.requester_name}
+                    {trip.requester_name__first_name}
                   </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Driver's name:</Text>{" "}
+                    {trip.driver_name__first_name}
+                  </Text>
+
                   <Text
                     style={[
                       {
@@ -283,7 +330,10 @@ export default function GateGuard() {
                     <Text style={{ fontWeight: "bold" }}>
                       Passenger's name(s):
                     </Text>{" "}
-                    {trip.passenger_name.join(", ")}
+                    {trip.passenger_name
+                      .match(/'([^']+)'/g)
+                      .map((name: any) => name.slice(1, -1))
+                      .join(", ")}
                   </Text>
                   <Text
                     style={[
@@ -294,8 +344,10 @@ export default function GateGuard() {
                       },
                     ]}
                   >
-                    <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-                    {trip.date}
+                    <Text style={{ fontWeight: "bold" }}>
+                      Scheduled travel date:
+                    </Text>{" "}
+                    {trip.travel_date}, {formatTime(trip.travel_time)}
                   </Text>
                   <Text
                     style={[
@@ -306,8 +358,35 @@ export default function GateGuard() {
                       },
                     ]}
                   >
-                    <Text style={{ fontWeight: "bold" }}>Time:</Text>{" "}
-                    {trip.time}
+                    <Text style={{ fontWeight: "bold" }}>
+                      Scheduled return date:
+                    </Text>{" "}
+                    {trip.return_date}, {formatTime(trip.return_time)}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Departure:</Text>{" "}
+                    {formatDateTime(trip.departure_time_from_office)}
+                  </Text>
+
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Arrival:</Text> Not yet
+                    arrived
                   </Text>
                   <Text
                     style={[
@@ -341,10 +420,28 @@ export default function GateGuard() {
         </View>
       </Modal>
       <Confirmation
-        visible={scanned}
+        visible={scannedAuthorized}
         animationType="fade"
         transparent={true}
         content="Trip Authorized!"
+        onRequestClose={handleCloseScanner}
+        showContent
+        adjustedSize
+      />
+      <Confirmation
+        visible={scannedCompleted}
+        animationType="fade"
+        transparent={true}
+        content="Trip Completed!"
+        onRequestClose={handleCloseScanner}
+        showContent
+        adjustedSize
+      />
+      <Confirmation
+        visible={scannedAlreadyCompleted}
+        animationType="fade"
+        transparent={true}
+        content="Trip Already Completed!"
         onRequestClose={handleCloseScanner}
         showContent
         adjustedSize

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -18,25 +18,19 @@ import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { Schedule } from "../../interfaces/interfaces";
 import { todayMockData } from "../../components/mockdata/mockdata";
+import { fetchRecentTrips } from "../../components/api/api";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function RecentLogs() {
-  const [recentLogsData, setRecentLogsData] = useState<Schedule[]>([]);
-  const [selectedTrip, setSelectedTrip] = useState<Schedule[]>([]);
+  const [recentLogsData, setRecentLogsData] = useState<any[]>([]);
+  const [selectedTrip, setSelectedTrip] = useState<any[]>([]);
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
 
-  const fetchedRecentLogs = () => {
-    let filteredStatus: Schedule[] = [];
-
-    filteredStatus = todayMockData.filter(
-      (completed) => completed.status === "Completed"
-    );
-
-    setRecentLogsData(filteredStatus);
-  };
-
-  useEffect(() => {
-    fetchedRecentLogs();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchRecentTrips(setRecentLogsData);
+    }, [])
+  );
 
   const handleShowTripDetails = (trip: Schedule) => {
     setSelectedTrip([trip]);
@@ -45,6 +39,20 @@ export default function RecentLogs() {
   const handleCloseTripDetails = () => {
     setIsTripDetailsShow(false);
   };
+
+  const formatDateTime = (dateTimeString: any) => {
+    const dateTime = new Date(dateTimeString);
+    return dateTime.toLocaleString([], {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+  };
+
+  const formatTime = (timeString: any) => {
+    const time = new Date(`1970-01-01T${timeString}`);
+    return time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  };
+
   return (
     <>
       <BackgroundColor
@@ -88,7 +96,7 @@ export default function RecentLogs() {
               flexDirection: "row",
               width: Viewport.width * 1,
               justifyContent: "center",
-              gap: Viewport.width * 0.25,
+              gap: Viewport.width * 0.1,
               marginTop: Viewport.height * 0.02,
             }}
           >
@@ -111,6 +119,16 @@ export default function RecentLogs() {
               }}
             >
               Destination
+            </Text>
+            <Text
+              style={{
+                width: Viewport.width * 0.25,
+                fontSize: FontSizes.small,
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Arrival
             </Text>
           </View>
           <ScrollView>
@@ -135,32 +153,40 @@ export default function RecentLogs() {
                       flexDirection: "row",
                       backgroundColor: Colors.primaryColor2,
                       marginTop: Viewport.height * 0.01,
-                      paddingLeft: Viewport.width * 0.05,
                       width: Viewport.width * 1,
                       height: Viewport.height * 0.08,
                       alignItems: "center",
+                      justifyContent: "space-around",
                     }}
                   >
                     <Text
                       style={{
                         width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
-                        marginLeft: Viewport.width * 0.06,
+
                         textAlign: "center",
                       }}
                     >
-                      {recent.vehicle}
+                      {recent.vehicle__plate_number} {recent.vehicle__model}
                     </Text>
 
                     <Text
                       style={{
-                        width: Viewport.width * 0.5,
+                        width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
                         textAlign: "center",
-                        marginLeft: Viewport.width * 0.08,
                       }}
                     >
-                      {recent.destination}
+                      {recent.destination.split(",")[0].trim()}
+                    </Text>
+                    <Text
+                      style={{
+                        width: Viewport.width * 0.3,
+                        fontSize: FontSizes.small,
+                        textAlign: "center",
+                      }}
+                    >
+                      {formatDateTime(recent.arrival_time_to_office)}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -233,7 +259,7 @@ export default function RecentLogs() {
                     ]}
                   >
                     <Text style={{ fontWeight: "bold" }}>Vehicle:</Text>{" "}
-                    {trip.vehicle}
+                    {trip.vehicle__plate_number} {trip.vehicle__model}
                   </Text>
                   <Text
                     style={[
@@ -248,7 +274,20 @@ export default function RecentLogs() {
                     <Text style={{ fontWeight: "bold" }}>
                       Requester's name:
                     </Text>{" "}
-                    {trip.requester_name}
+                    {trip.requester_name__first_name}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Driver's name:</Text>{" "}
+                    {trip.driver_name__first_name}
                   </Text>
                   <Text
                     style={[
@@ -262,8 +301,40 @@ export default function RecentLogs() {
                     <Text style={{ fontWeight: "bold" }}>
                       Passenger's name(s):
                     </Text>{" "}
-                    {trip.passenger_name.join(", ")}
+                    {trip.passenger_name
+                      .match(/'([^']+)'/g)
+                      .map((name: any) => name.slice(1, -1))
+                      .join(", ")}
                   </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Scheduled travel date:
+                    </Text>{" "}
+                    {trip.travel_date}, {formatTime(trip.travel_time)}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: FontSizes.small,
+                        color: Colors.secondaryColor2,
+                        marginTop: Viewport.height * 0.03,
+                      },
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>
+                      Scheduled return date:
+                    </Text>{" "}
+                    {trip.return_date}, {formatTime(trip.return_time)}
+                  </Text>
+
                   <Text
                     style={[
                       {
@@ -274,8 +345,9 @@ export default function RecentLogs() {
                     ]}
                   >
                     <Text style={{ fontWeight: "bold" }}>Departure:</Text>{" "}
-                    {trip.date}
+                    {formatDateTime(trip.departure_time_from_office)}
                   </Text>
+
                   <Text
                     style={[
                       {
@@ -285,8 +357,8 @@ export default function RecentLogs() {
                       },
                     ]}
                   >
-                    <Text style={{ fontWeight: "bold" }}>Return:</Text>{" "}
-                    {trip.time}
+                    <Text style={{ fontWeight: "bold" }}>Arrival:</Text>{" "}
+                    {formatDateTime(trip.arrival_time_to_office)}
                   </Text>
                   <Text
                     style={[

@@ -43,6 +43,91 @@ export async function SigninAPI(
     // setLoadingBarProgress(50);
     // setLoadingBarProgress(100);
     // setError(true);
-    console.log(error.response);
+    console.log("error", error);
+  }
+}
+
+export async function tripScanned(
+  requestId: any,
+  setScannedAuthorized: any,
+  setScannedCompleted: any,
+  setScannedAlreadyCompleted: any,
+  fetchOnTrips: (onTripsData: any) => void,
+  setOnTripsData: any,
+  setScanButtonPressed: any
+) {
+  const token = await AsyncStorage.getItem("token");
+
+  api
+    .patch(
+      `/api/v1/trip/trip-scanned/${requestId}/`,
+      {},
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      if (response.data.type === "Authorized") {
+        setScanButtonPressed(false);
+        setScannedAuthorized(true);
+        fetchOnTrips(setOnTripsData);
+      } else if (response.data.type === "Completed") {
+        setScanButtonPressed(false);
+        setScannedCompleted(true);
+        fetchOnTrips(setOnTripsData);
+      } else if (response.data.type === "Already Completed") {
+        setScanButtonPressed(false);
+        setScannedAlreadyCompleted(true);
+        fetchOnTrips(setOnTripsData);
+      }
+    })
+    .catch((error) => {
+      console.log(error.response);
+    });
+}
+
+export async function fetchOnTrips(setOnTripsData: any) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/trip/on-trips-gateguard/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (Array.isArray(response.data)) {
+      setOnTripsData(response.data);
+    } else {
+      setOnTripsData([]);
+      console.log("Response data is not an array:", response.data);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchRecentTrips(setRecentLogsData: any) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/trip/recent-trips-gateguard/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (Array.isArray(response.data)) {
+      setRecentLogsData(response.data);
+      console.log(response.data);
+    } else {
+      setRecentLogsData([]);
+      console.log("Response data is not an array:", response.data);
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
