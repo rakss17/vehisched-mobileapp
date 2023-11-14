@@ -1,34 +1,73 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, Modal, TouchableOpacity } from "react-native";
-import Header from "../../components/header/header";
-import { BackgroundColor } from "../../styles/globalstyles/globalstyles";
 import {
   Viewport,
   Styles,
   FontSizes,
   Colors,
 } from "../../styles/globalstyles/globalstyles";
-import { todayMockData } from "../../components/mockdata/mockdata";
-import { Schedule } from "../../interfaces/interfaces";
+import { BackgroundColor } from "../../styles/globalstyles/globalstyles";
+import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
+import { useFocusEffect } from "@react-navigation/native";
+import { fetchDriverOwnSchedule } from "../../components/api/api";
+import { useAppState } from "../../components/function/function";
 
 export default function Driver() {
-  const [scheduleData, setScheduleData] = useState<Schedule[]>([]);
+  const [originalScheduleData, setOriginalScheduleData] = useState<any[]>([]);
+  const [scheduleData, setScheduleData] = useState<any[]>([]);
+  const [selectedTrip, setSelectedTrip] = useState<any[]>([]);
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
-  const [selectedTrip, setSelectedTrip] = useState<Schedule[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>("Today");
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  useAppState(fetchDriverOwnSchedule, setOriginalScheduleData);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchDriverOwnSchedule(setOriginalScheduleData);
+    }, [])
+  );
 
   useEffect(() => {
-    const todayTrips = todayMockData.filter((trip) => trip.status === "Today");
-    setScheduleData(todayTrips);
-  }, []);
+    if (originalScheduleData.length > 0) {
+      handleButtonPress("Today");
+    }
+  }, [originalScheduleData]);
 
-  const handleShowTripDetails = (trip: Schedule) => {
+  const handleCloseTripDetails = () => {
+    setIsTripDetailsShow(false);
+  };
+
+  const handleShowTripDetails = (trip: any) => {
     setSelectedTrip([trip]);
     setIsTripDetailsShow(true);
   };
 
-  const handleCloseTripDetails = () => {
-    setIsTripDetailsShow(false);
+  const handleButtonPress = (status: string) => {
+    setSelectedStatus(status);
+    let filteredSchedule: any[] = [];
+    switch (status) {
+      case "Today":
+        filteredSchedule = originalScheduleData.filter(
+          (schedule) => schedule.travel_date === currentDate
+        );
+        break;
+      case "Ongoing":
+        filteredSchedule = originalScheduleData.filter(
+          (schedule) => schedule.vehicle_driver_status === "On Trip"
+        );
+        break;
+      case "Upcoming":
+        filteredSchedule = originalScheduleData.filter(
+          (schedule) => schedule.travel_date > currentDate
+        );
+        break;
+      default:
+        setScheduleData([]);
+        break;
+    }
+    setScheduleData(filteredSchedule);
   };
 
   return (
@@ -52,12 +91,44 @@ export default function Driver() {
                 fontSize: FontSizes.normal,
                 color: Colors.primaryColor1,
                 fontWeight: "bold",
-                marginTop: 30,
+                marginTop: Viewport.height * 0.2,
               },
             ]}
           >
-            Today's Trip
+            Schedules
           </Text>
+        </View>
+        <View
+          style={[
+            {
+              width: Viewport.width * 1,
+              justifyContent: "space-around",
+              marginTop: 10,
+            },
+            Styles.flexRow,
+          ]}
+        >
+          <Button
+            text="Today"
+            transparentBG2
+            transparentText2
+            isHighlighted={selectedStatus === "Today"}
+            onPress={() => handleButtonPress("Today")}
+          />
+          <Button
+            text="Ongoing"
+            transparentBG2
+            transparentText2
+            isHighlighted={selectedStatus === "Ongoing"}
+            onPress={() => handleButtonPress("Ongoing")}
+          />
+          <Button
+            text="Upcoming"
+            transparentBG2
+            transparentText2
+            isHighlighted={selectedStatus === "Upcoming"}
+            onPress={() => handleButtonPress("Upcoming")}
+          />
         </View>
         <BackgroundColor
           style={{
@@ -66,102 +137,79 @@ export default function Driver() {
             marginTop: Viewport.width * 0.02,
           }}
         />
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <Text
-            style={{
-              width: Viewport.width * 0.35,
-              fontSize: FontSizes.small,
-              paddingLeft: 50,
-              fontWeight: "bold",
-            }}
-          >
-            Trip No.
-          </Text>
-          <Text
-            style={{
-              width: Viewport.width * 0.35,
-              fontSize: FontSizes.small,
-              paddingLeft: 40,
-              fontWeight: "bold",
-            }}
-          >
-            Time
-          </Text>
-          <Text
-            style={{
-              width: Viewport.width * 0.35,
-              fontSize: FontSizes.small,
-              paddingLeft: 5,
-              fontWeight: "bold",
-            }}
-          >
-            Destination
-          </Text>
-        </View>
-        <ScrollView>
-          {scheduleData.length === 0 ? (
-            <Text
-              style={{
-                fontSize: FontSizes.small,
-                textAlign: "center",
-                marginTop: 15,
-              }}
-            >
-              No trips for today
-            </Text>
-          ) : (
-            scheduleData.map((schedule, index) => (
-              <TouchableOpacity
-                onPress={() => handleShowTripDetails(schedule)}
-                key={index}
+        <View
+          style={[
+            {
+              paddingBottom: Viewport.height * 0.38,
+            },
+            Styles.flexColumn,
+          ]}
+        >
+          <ScrollView>
+            {scheduleData.length === 0 ? (
+              <Text
+                style={{
+                  fontSize: FontSizes.small,
+                  textAlign: "center",
+                  marginTop: 15,
+                }}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    backgroundColor: Colors.primaryColor2,
-                    marginTop: 10,
-                    paddingLeft: 20,
-                    width: Viewport.width * 1,
-                    height: Viewport.height * 0.08,
-                    alignItems: "center",
-                  }}
+                No schedules available
+              </Text>
+            ) : (
+              scheduleData.map((schedule, index) => (
+                <TouchableOpacity
+                  onPress={() => handleShowTripDetails(schedule)}
+                  key={index}
                 >
-                  <Text
+                  <View
                     style={{
-                      width: Viewport.width * 0.1,
-                      fontSize: FontSizes.small,
-                      marginLeft: 25,
-                      textAlign: "center",
+                      flexDirection: "row",
+                      backgroundColor: Colors.primaryColor2,
+                      marginTop: 10,
+                      paddingLeft: 20,
+                      width: Viewport.width * 1,
+                      height: Viewport.height * 0.08,
+                      alignItems: "center",
                     }}
                   >
-                    {schedule.trip_number}
-                  </Text>
-                  <Text
-                    style={{
-                      width: Viewport.width * 0.25,
-                      fontSize: FontSizes.small,
-                      marginLeft: 55,
-                      textAlign: "center",
-                    }}
-                  >
-                    {schedule.time}
-                  </Text>
-                  <Text
-                    style={{
-                      width: Viewport.width * 0.25,
+                    <Text
+                      style={{
+                        width: Viewport.width * 0.1,
+                        fontSize: FontSizes.small,
+                        marginLeft: 25,
+                        textAlign: "center",
+                      }}
+                    >
+                      {schedule.trip_number}
+                    </Text>
+                    <Text
+                      style={{
+                        width: Viewport.width * 0.25,
+                        fontSize: FontSizes.small,
+                        marginLeft: 55,
+                        textAlign: "center",
+                      }}
+                    >
+                      {schedule.time}
+                    </Text>
+                    <Text
+                      style={{
+                        width: Viewport.width * 0.25,
 
-                      fontSize: FontSizes.small,
-                      textAlign: "center",
-                      marginLeft: 20,
-                    }}
-                  >
-                    {schedule.destination}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))
-          )}
-        </ScrollView>
+                        fontSize: FontSizes.small,
+                        textAlign: "center",
+                        marginLeft: 20,
+                      }}
+                    >
+                      {schedule.destination}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))
+            )}
+          </ScrollView>
+        </View>
       </View>
       <Modal
         animationType="fade"
@@ -245,7 +293,10 @@ export default function Driver() {
                     <Text style={{ fontWeight: "bold" }}>
                       Passenger's name(s):
                     </Text>{" "}
-                    {trip.passenger_name.join(", ")}
+                    {trip.passenger_name
+                      .match(/'([^']+)'/g)
+                      .map((name: any) => name.slice(1, -1))
+                      .join(", ")}
                   </Text>
                   <Text
                     style={[
@@ -258,7 +309,7 @@ export default function Driver() {
                     ]}
                   >
                     <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-                    {trip.date}
+                    {trip.travel_date}
                   </Text>
                   <Text
                     style={[
@@ -271,7 +322,7 @@ export default function Driver() {
                     ]}
                   >
                     <Text style={{ fontWeight: "bold" }}>Time:</Text>{" "}
-                    {trip.time}
+                    {trip.travel_time}
                   </Text>
                   <Text
                     style={[

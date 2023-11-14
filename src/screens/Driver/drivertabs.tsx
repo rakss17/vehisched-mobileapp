@@ -8,7 +8,6 @@ import {
 import { faHome, faClock, faCarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Driver from "./driver";
-import Schedules from "./schedule";
 import Trips from "./trip";
 
 const Tab = createBottomTabNavigator();
@@ -41,16 +40,6 @@ export function DriverTabs() {
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
             <FontAwesomeIcon icon={faHome} color={color} size={25} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Schedule"
-        component={Schedules}
-        options={{
-          tabBarLabel: "Schedule",
-          tabBarIcon: ({ color }) => (
-            <FontAwesomeIcon icon={faClock} color={color} size={25} />
           ),
         }}
       />

@@ -136,3 +136,24 @@ export async function fetchRecentTrips(setRecentLogsData: any) {
     console.log(error);
   }
 }
+
+export async function fetchDriverOwnSchedule(setScheduleData: any) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/trip/driver-own-schedule/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (Array.isArray(response.data)) {
+      // console.log(response.data);
+      setScheduleData(response.data);
+    } else {
+      setScheduleData([]);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
