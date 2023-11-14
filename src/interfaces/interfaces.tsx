@@ -22,6 +22,21 @@ export interface Vehicle {
   isVip: boolean;
 }
 
+export interface UserData {
+  id?: any;
+  username: string;
+  password?: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  email: string;
+  mobile_number: any;
+  role?: any;
+  status?: any;
+  user?: any;
+  office?: any;
+}
+
 export interface Requests {
   requester_name: string;
   office_dept: string;

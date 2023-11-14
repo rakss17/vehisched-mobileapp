@@ -1,5 +1,6 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
 
 export const serverSideUrl = "http://192.168.1.6:8000/media/";
 
@@ -12,7 +13,8 @@ export async function SigninAPI(
   navigation: any,
   setData: any,
   setErrorMessage: any,
-  setIsLoading: any
+  setIsLoading: any,
+  dispatch: any
 ) {
   try {
     const response = await api.post("api/v1/accounts/token/login", data);
@@ -26,7 +28,7 @@ export async function SigninAPI(
         "Content-Type": "application/json",
       },
     });
-
+    dispatch(fetchPersonalInfo(res.data));
     setData("");
     setErrorMessage("");
     setIsLoading(false);
@@ -46,6 +48,8 @@ export async function SigninAPI(
       navigation.navigate("Landing");
       setIsLoading(false);
     } else {
+      navigation.navigate("Landing");
+      setIsLoading(false);
       setErrorMessage("Server Error");
     }
   }

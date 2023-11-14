@@ -14,7 +14,9 @@ import Button from "../../components/buttons/button";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "../../interfaces/interfaces";
 import { SigninAPI } from "../../components/api/api";
-import LoadingScreen from "../../components/loadingscreen/loadingscreen";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../redux/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Landing() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +28,28 @@ export default function Landing() {
   });
 
   const navigation = useNavigation<NavigationProp>();
+  const dispatch = useDispatch();
+  const personalInfo = useSelector(
+    (state: RootState) => state.personalInfo.data
+  );
+  const role = personalInfo?.role;
+
+  useEffect(() => {
+    const fetchTokenAndNavigate = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        if (role === "driver") {
+          navigation.navigate("Driver");
+        } else if (role === "gate guard") {
+          navigation.navigate("GateGuard");
+        } else if (role === "requester" || role === "vip") {
+          navigation.navigate("Requester");
+        }
+      }
+    };
+
+    fetchTokenAndNavigate();
+  }, []);
 
   const handleOnChangeText = (value: any, fieldName: any) => {
     setData({ ...data, [fieldName]: value });
@@ -43,7 +67,14 @@ export default function Landing() {
 
   const handleSignIn = () => {
     setIsLoading(true);
-    SigninAPI(data, navigation, setData, setErrorMessage, setIsLoading);
+    SigninAPI(
+      data,
+      navigation,
+      setData,
+      setErrorMessage,
+      setIsLoading,
+      dispatch
+    );
   };
   return (
     <>
