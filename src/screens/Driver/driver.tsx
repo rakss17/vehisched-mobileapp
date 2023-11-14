@@ -11,7 +11,11 @@ import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { useFocusEffect } from "@react-navigation/native";
 import { fetchDriverOwnSchedule } from "../../components/api/api";
-import { useAppState } from "../../components/function/function";
+import {
+  formatDate,
+  formatTime,
+  useAppState,
+} from "../../components/function/function";
 
 export default function Driver() {
   const [originalScheduleData, setOriginalScheduleData] = useState<any[]>([]);
@@ -50,7 +54,9 @@ export default function Driver() {
     switch (status) {
       case "Today":
         filteredSchedule = originalScheduleData.filter(
-          (schedule) => schedule.travel_date === currentDate
+          (schedule) =>
+            schedule.travel_date === currentDate &&
+            schedule.vehicle_driver_status !== "On Trip"
         );
         break;
       case "Ongoing":
@@ -175,34 +181,51 @@ export default function Driver() {
                   >
                     <Text
                       style={{
-                        width: Viewport.width * 0.1,
+                        width: Viewport.width * 0.2,
+                        height: "auto",
                         fontSize: FontSizes.small,
-                        marginLeft: 25,
+                        marginLeft: 5,
                         textAlign: "center",
                       }}
                     >
-                      {schedule.trip_number}
+                      {schedule.vehicle__plate_number} {schedule.vehicle__model}
                     </Text>
-                    <Text
-                      style={{
-                        width: Viewport.width * 0.25,
-                        fontSize: FontSizes.small,
-                        marginLeft: 55,
-                        textAlign: "center",
-                      }}
-                    >
-                      {schedule.time}
-                    </Text>
+                    {selectedStatus === "Today" && (
+                      <Text
+                        style={{
+                          width: Viewport.width * 0.2,
+                          fontSize: FontSizes.small,
+                          marginLeft: 55,
+                          textAlign: "center",
+                        }}
+                      >
+                        {formatTime(schedule.travel_time)}
+                      </Text>
+                    )}
+                    {selectedStatus === "Upcoming" && (
+                      <Text
+                        style={{
+                          width: Viewport.width * 0.25,
+                          fontSize: FontSizes.small,
+                          marginLeft: 40,
+                          textAlign: "center",
+                        }}
+                      >
+                        {formatDate(schedule.travel_date)},{" "}
+                        {formatTime(schedule.travel_time)}
+                      </Text>
+                    )}
+
                     <Text
                       style={{
                         width: Viewport.width * 0.25,
 
                         fontSize: FontSizes.small,
                         textAlign: "center",
-                        marginLeft: 20,
+                        marginLeft: 30,
                       }}
                     >
-                      {schedule.destination}
+                      {schedule.destination.split(",")[0].trim()}
                     </Text>
                   </View>
                 </TouchableOpacity>

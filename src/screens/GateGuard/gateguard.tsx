@@ -20,6 +20,7 @@ import { Schedule } from "../../interfaces/interfaces";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Confirmation from "../../components/modals/confirmation";
 import { fetchOnTrips, tripScanned } from "../../components/api/api";
+import { formatDateTime, formatTime } from "../../components/function/function";
 
 export default function GateGuard() {
   const [onTripsData, setOnTripsData] = useState<any[]>([]);
@@ -73,19 +74,6 @@ export default function GateGuard() {
   };
   const handleCloseTripDetails = () => {
     setIsTripDetailsShow(false);
-  };
-
-  const formatDateTime = (dateTimeString: any) => {
-    const dateTime = new Date(dateTimeString);
-    return dateTime.toLocaleString([], {
-      dateStyle: "short",
-      timeStyle: "short",
-    });
-  };
-
-  const formatTime = (timeString: any) => {
-    const time = new Date(`1970-01-01T${timeString}`);
-    return time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   };
 
   return (
