@@ -17,7 +17,6 @@ import { BackgroundColor } from "../../styles/globalstyles/globalstyles";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { Schedule } from "../../interfaces/interfaces";
-import { todayMockData } from "../../components/mockdata/mockdata";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Confirmation from "../../components/modals/confirmation";
 import { fetchOnTrips, tripScanned } from "../../components/api/api";

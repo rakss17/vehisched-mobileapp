@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BackgroundColor,
   Styles,
@@ -14,8 +14,12 @@ import Button from "../../components/buttons/button";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "../../interfaces/interfaces";
 import { SigninAPI } from "../../components/api/api";
+import LoadingScreen from "../../components/loadingscreen/loadingscreen";
 
 export default function Landing() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
   const [data, setData] = useState({
     username: "",
     password: "",
@@ -27,14 +31,19 @@ export default function Landing() {
     setData({ ...data, [fieldName]: value });
   };
 
-  const [isChecked, setIsChecked] = useState(false);
-
   const handleCheckBoxToggle = () => {
     setIsChecked(!isChecked);
   };
 
+  useEffect(() => {
+    if (isLoading) {
+      navigation.navigate("LoadingScreen", { message: "Signing in" });
+    }
+  }, [isLoading]);
+
   const handleSignIn = () => {
-    SigninAPI(data, navigation);
+    setIsLoading(true);
+    SigninAPI(data, navigation, setData, setErrorMessage, setIsLoading);
   };
   return (
     <>
@@ -48,6 +57,7 @@ export default function Landing() {
           >
             Vehi-Sched
           </Text>
+
           <Text
             style={{
               fontSize: FontSizes.normal,
@@ -56,25 +66,40 @@ export default function Landing() {
           >
             Vehicle Scheduling for USTP Motor Pool
           </Text>
+
           <View
             style={{
               backgroundColor: Colors.primaryColor2,
               width: Viewport.width * 0.9,
-              height: Viewport.height * 0.5,
+              height: "auto",
               marginTop: 40,
               borderRadius: 10,
-              padding: 20,
+              paddingTop: 20,
+              paddingBottom: 55,
             }}
           >
             <View style={[{ gap: 10 }, Styles.flexColumn]}>
               <Text style={{ fontSize: FontSizes.normal }}>
                 Sign in to your account
               </Text>
+
+              {errorMessage && (
+                <Text
+                  style={{
+                    fontSize: FontSizes.small,
+                    color: Colors.errorColor,
+                  }}
+                >
+                  {errorMessage}
+                </Text>
+              )}
+
               <InputField1
                 icon={faUser}
                 value={data.username}
                 placeholder="Username"
                 onChangeText={(value) => handleOnChangeText(value, "username")}
+                autoCapitalize="none"
               />
               <InputField1
                 icon={faLock}
@@ -82,6 +107,7 @@ export default function Landing() {
                 placeholder="Password"
                 onChangeText={(value) => handleOnChangeText(value, "password")}
                 secureTextEntry
+                autoCapitalize="none"
               />
               <View style={{ paddingLeft: 170 }}>
                 <TouchableOpacity>

@@ -9,13 +9,12 @@ const api = axios.create({
 
 export async function SigninAPI(
   data: any,
-  navigation: any
-  //   dispatch: any,
-  //   setLoadingBarProgress: (progress: number) => void,
-  //   setError: any
+  navigation: any,
+  setData: any,
+  setErrorMessage: any,
+  setIsLoading: any
 ) {
   try {
-    // setLoadingBarProgress(20);
     const response = await api.post("api/v1/accounts/token/login", data);
     const token = response.data.auth_token;
 
@@ -27,23 +26,28 @@ export async function SigninAPI(
         "Content-Type": "application/json",
       },
     });
-    // setLoadingBarProgress(40);
 
-    // setLoadingBarProgress(70);
+    setData("");
+    setErrorMessage("");
+    setIsLoading(false);
     if (res.data.role === "requester" || res.data.role === "vip") {
       navigation.navigate("Requester");
+      setIsLoading(false);
     } else if (res.data.role === "driver") {
       navigation.navigate("Driver");
+      setIsLoading(false);
     } else if (res.data.role === "gate guard") {
       navigation.navigate("GateGuard");
+      setIsLoading(false);
     }
-    // setLoadingBarProgress(100);
   } catch (error: any) {
-    // setLoadingBarProgress(20);
-    // setLoadingBarProgress(50);
-    // setLoadingBarProgress(100);
-    // setError(true);
-    console.log("error", error);
+    if (error.message.includes("400")) {
+      setErrorMessage("Invalid Credentials");
+      navigation.navigate("Landing");
+      setIsLoading(false);
+    } else {
+      setErrorMessage("Server Error");
+    }
   }
 }
 
@@ -103,7 +107,6 @@ export async function fetchOnTrips(setOnTripsData: any) {
       setOnTripsData(response.data);
     } else {
       setOnTripsData([]);
-      console.log("Response data is not an array:", response.data);
     }
   } catch (error) {
     console.log(error);
@@ -122,10 +125,8 @@ export async function fetchRecentTrips(setRecentLogsData: any) {
 
     if (Array.isArray(response.data)) {
       setRecentLogsData(response.data);
-      console.log(response.data);
     } else {
       setRecentLogsData([]);
-      console.log("Response data is not an array:", response.data);
     }
   } catch (error) {
     console.log(error);

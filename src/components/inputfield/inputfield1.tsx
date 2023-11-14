@@ -11,6 +11,7 @@ export default function InputField1({
   secureTextEntry = false,
   icon,
   onChangeText,
+  autoCapitalize,
 }: InputFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -30,6 +31,7 @@ export default function InputField1({
           secureTextEntry && InputField1Styles.inputWithIcon,
         ]}
         onChangeText={onChangeText}
+        autoCapitalize={autoCapitalize}
       />
       {secureTextEntry && (
         <TouchableOpacity
