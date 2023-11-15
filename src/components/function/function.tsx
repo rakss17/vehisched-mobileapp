@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import { AppState, BackHandler } from "react-native";
 
-export const useAppState = (
-  fetchDriverOwnSchedule: Function,
-  setOriginalScheduleData: Function
-) => {
+export const useAppState = (fetchAPI: Function, setAPIData: Function) => {
   useEffect(() => {
     const handleBackPress = () => {
       AppState.currentState !== "background" &&
@@ -33,7 +30,7 @@ export const useAppState = (
 
   const handleAppStateChange = (nextAppState: any) => {
     if (nextAppState === "active") {
-      fetchDriverOwnSchedule(setOriginalScheduleData);
+      fetchAPI(setAPIData);
     }
   };
 };

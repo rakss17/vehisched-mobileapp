@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -24,7 +24,9 @@ import {
   formatDateTime,
   formatTime,
   formatDate,
+  useAppState,
 } from "../../components/function/function";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function GateGuard() {
   const [onTripsData, setOnTripsData] = useState<any[]>([]);
@@ -36,9 +38,13 @@ export default function GateGuard() {
   const [scannedAlreadyCompleted, setScannedAlreadyCompleted] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
 
-  useEffect(() => {
-    fetchOnTrips(setOnTripsData);
-  }, []);
+  useAppState(fetchOnTrips, setOnTripsData);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchOnTrips(setOnTripsData);
+    }, [])
+  );
 
   const handleScanButtonPress = async () => {
     const { status } = await BarCodeScanner.requestPermissionsAsync();

@@ -16,12 +16,15 @@ import {
   formatDateTime,
   formatDate,
   formatTime,
+  useAppState,
 } from "../../components/function/function";
 
 export default function RecentLogs() {
   const [recentLogsData, setRecentLogsData] = useState<any[]>([]);
   const [selectedTrip, setSelectedTrip] = useState<any[]>([]);
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
+
+  useAppState(fetchRecentTrips, setRecentLogsData);
 
   useFocusEffect(
     React.useCallback(() => {
