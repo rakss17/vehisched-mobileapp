@@ -13,6 +13,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { fetchDriverOwnSchedule } from "../../components/api/api";
 import {
   formatDate,
+  formatDateTime,
   formatTime,
   useAppState,
 } from "../../components/function/function";
@@ -144,6 +145,104 @@ export default function Driver() {
           }}
         />
         <View
+          style={{
+            flexDirection: "row",
+            marginTop: 10,
+            width: Viewport.width * 1,
+          }}
+        >
+          <Text
+            style={{
+              width: Viewport.width * 0.2,
+              height: "auto",
+              fontSize: FontSizes.small,
+              marginLeft: 25,
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Vehicle
+          </Text>
+          {selectedStatus === "Today" && (
+            <>
+              <Text
+                style={{
+                  width: Viewport.width * 0.2,
+                  fontSize: FontSizes.small,
+                  marginLeft: 50,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Time
+              </Text>
+              <Text
+                style={{
+                  fontSize: FontSizes.small,
+                  width: Viewport.width * 0.23,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  marginLeft: 40,
+                }}
+              >
+                Destination
+              </Text>
+            </>
+          )}
+          {selectedStatus === "Ongoing" && (
+            <>
+              <Text
+                style={{
+                  width: Viewport.width * 0.2,
+                  fontSize: FontSizes.small,
+                  marginLeft: 50,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Departure
+              </Text>
+              <Text
+                style={{
+                  fontSize: FontSizes.small,
+                  width: Viewport.width * 0.23,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  marginLeft: 40,
+                }}
+              >
+                Destination
+              </Text>
+            </>
+          )}
+          {selectedStatus === "Upcoming" && (
+            <>
+              <Text
+                style={{
+                  width: Viewport.width * 0.3,
+                  fontSize: FontSizes.small,
+                  marginLeft: 30,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Date & Time
+              </Text>
+              <Text
+                style={{
+                  fontSize: FontSizes.small,
+                  width: Viewport.width * 0.23,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  marginLeft: 25,
+                }}
+              >
+                Destination
+              </Text>
+            </>
+          )}
+        </View>
+        <View
           style={[
             {
               paddingBottom: Viewport.height * 0.38,
@@ -191,42 +290,80 @@ export default function Driver() {
                       {schedule.vehicle__plate_number} {schedule.vehicle__model}
                     </Text>
                     {selectedStatus === "Today" && (
-                      <Text
-                        style={{
-                          width: Viewport.width * 0.2,
-                          fontSize: FontSizes.small,
-                          marginLeft: 55,
-                          textAlign: "center",
-                        }}
-                      >
-                        {formatTime(schedule.travel_time)}
-                      </Text>
+                      <>
+                        <Text
+                          style={{
+                            width: Viewport.width * 0.2,
+                            fontSize: FontSizes.small,
+                            marginLeft: 55,
+                            textAlign: "center",
+                          }}
+                        >
+                          {formatTime(schedule.travel_time)}
+                        </Text>
+                        <Text
+                          style={{
+                            width: Viewport.width * 0.25,
+
+                            fontSize: FontSizes.small,
+                            textAlign: "center",
+                            marginLeft: 30,
+                          }}
+                        >
+                          {schedule.destination.split(",")[0].trim()}
+                        </Text>
+                      </>
+                    )}
+                    {selectedStatus === "Ongoing" && (
+                      <>
+                        <Text
+                          style={{
+                            width: Viewport.width * 0.3,
+                            fontSize: FontSizes.small,
+                            marginLeft: 30,
+                            textAlign: "center",
+                          }}
+                        >
+                          {formatDateTime(schedule.departure_time_from_office)}
+                        </Text>
+                        <Text
+                          style={{
+                            width: Viewport.width * 0.25,
+                            fontSize: FontSizes.small,
+                            textAlign: "center",
+                            marginLeft: 20,
+                          }}
+                        >
+                          {schedule.destination.split(",")[0].trim()}
+                        </Text>
+                      </>
                     )}
                     {selectedStatus === "Upcoming" && (
-                      <Text
-                        style={{
-                          width: Viewport.width * 0.25,
-                          fontSize: FontSizes.small,
-                          marginLeft: 40,
-                          textAlign: "center",
-                        }}
-                      >
-                        {formatDate(schedule.travel_date)},{" "}
-                        {formatTime(schedule.travel_time)}
-                      </Text>
+                      <>
+                        <Text
+                          style={{
+                            width: Viewport.width * 0.25,
+                            fontSize: FontSizes.small,
+                            marginLeft: 40,
+                            textAlign: "center",
+                          }}
+                        >
+                          {formatDate(schedule.travel_date)},{" "}
+                          {formatTime(schedule.travel_time)}
+                        </Text>
+                        <Text
+                          style={{
+                            width: Viewport.width * 0.25,
+
+                            fontSize: FontSizes.small,
+                            textAlign: "center",
+                            marginLeft: 30,
+                          }}
+                        >
+                          {schedule.destination.split(",")[0].trim()}
+                        </Text>
+                      </>
                     )}
-
-                    <Text
-                      style={{
-                        width: Viewport.width * 0.25,
-
-                        fontSize: FontSizes.small,
-                        textAlign: "center",
-                        marginLeft: 30,
-                      }}
-                    >
-                      {schedule.destination.split(",")[0].trim()}
-                    </Text>
                   </View>
                 </TouchableOpacity>
               ))
@@ -286,7 +423,7 @@ export default function Driver() {
                       },
                     ]}
                   >
-                    Trip no. {trip.trip_number}
+                    Trip no. {trip.id}
                   </Text>
                   <Text
                     style={[
@@ -301,7 +438,7 @@ export default function Driver() {
                     <Text style={{ fontWeight: "bold" }}>
                       Requester's name:
                     </Text>{" "}
-                    {trip.requester_name}
+                    {trip.requester_name__first_name}
                   </Text>
                   <Text
                     style={[
@@ -331,9 +468,30 @@ export default function Driver() {
                       },
                     ]}
                   >
-                    <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-                    {trip.travel_date}
+                    <Text style={{ fontWeight: "bold" }}>
+                      Scheduled travel date:
+                    </Text>{" "}
+                    {formatDate(trip.travel_date)},{" "}
+                    {formatTime(trip.travel_time)}
                   </Text>
+                  {selectedStatus === "Ongoing" && (
+                    <>
+                      <Text
+                        style={[
+                          {
+                            fontSize: FontSizes.small,
+                            color: Colors.secondaryColor2,
+
+                            marginTop: Viewport.height * 0.03,
+                          },
+                        ]}
+                      >
+                        <Text style={{ fontWeight: "bold" }}>Departure:</Text>{" "}
+                        {formatDateTime(trip.departure_time_from_office)}
+                      </Text>
+                    </>
+                  )}
+
                   <Text
                     style={[
                       {
@@ -344,8 +502,8 @@ export default function Driver() {
                       },
                     ]}
                   >
-                    <Text style={{ fontWeight: "bold" }}>Time:</Text>{" "}
-                    {trip.travel_time}
+                    <Text style={{ fontWeight: "bold" }}>Travel type:</Text>{" "}
+                    {trip.type__name}
                   </Text>
                   <Text
                     style={[
