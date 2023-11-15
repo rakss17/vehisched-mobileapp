@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, ScrollView, TouchableOpacity, Text, Modal } from "react-native";
+import {
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+  Modal,
+  RefreshControl,
+} from "react-native";
 import {
   Viewport,
   Styles,
@@ -23,6 +30,13 @@ export default function RecentLogs() {
   const [recentLogsData, setRecentLogsData] = useState<any[]>([]);
   const [selectedTrip, setSelectedTrip] = useState<any[]>([]);
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    fetchRecentTrips(setRecentLogsData, setRefreshing);
+  }, []);
 
   useAppState(fetchRecentTrips, setRecentLogsData);
 
@@ -118,7 +132,11 @@ export default function RecentLogs() {
               Arrival
             </Text>
           </View>
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
             {recentLogsData.length === 0 ? (
               <Text
                 style={{

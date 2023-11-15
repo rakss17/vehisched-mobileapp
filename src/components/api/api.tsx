@@ -97,7 +97,7 @@ export async function tripScanned(
     });
 }
 
-export async function fetchOnTrips(setOnTripsData: any) {
+export async function fetchOnTrips(setOnTripsData: any, setRefreshing?: any) {
   try {
     const token = await AsyncStorage.getItem("token");
     const response = await api.get("api/v1/trip/on-trips-gateguard/", {
@@ -109,15 +109,20 @@ export async function fetchOnTrips(setOnTripsData: any) {
 
     if (Array.isArray(response.data)) {
       setOnTripsData(response.data);
+      setRefreshing(false);
     } else {
       setOnTripsData([]);
+      setRefreshing(false);
     }
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function fetchRecentTrips(setRecentLogsData: any) {
+export async function fetchRecentTrips(
+  setRecentLogsData: any,
+  setRefreshing?: any
+) {
   try {
     const token = await AsyncStorage.getItem("token");
     const response = await api.get("api/v1/trip/recent-trips-gateguard/", {
@@ -129,8 +134,10 @@ export async function fetchRecentTrips(setRecentLogsData: any) {
 
     if (Array.isArray(response.data)) {
       setRecentLogsData(response.data);
+      setRefreshing(false);
     } else {
       setRecentLogsData([]);
+      setRefreshing(false);
     }
   } catch (error) {
     console.log(error);

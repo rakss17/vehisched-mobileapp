@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   Modal,
+  RefreshControl,
 } from "react-native";
 import {
   Viewport,
@@ -37,6 +38,13 @@ export default function GateGuard() {
   const [scannedCompleted, setScannedCompleted] = useState(false);
   const [scannedAlreadyCompleted, setScannedAlreadyCompleted] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    fetchOnTrips(setOnTripsData, setRefreshing);
+  }, []);
 
   useAppState(fetchOnTrips, setOnTripsData);
 
@@ -202,7 +210,11 @@ export default function GateGuard() {
               Destination
             </Text>
           </View>
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
             {onTripsData.length === 0 ? (
               <Text
                 style={{
