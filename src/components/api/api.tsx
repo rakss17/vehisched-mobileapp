@@ -148,10 +148,29 @@ export async function fetchDriverOwnSchedule(setScheduleData: any) {
     });
 
     if (Array.isArray(response.data)) {
-      // console.log(response.data);
       setScheduleData(response.data);
     } else {
       setScheduleData([]);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchDriverTrips(setOriginalTripData: any) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/trip/driver-trips-schedule/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (Array.isArray(response.data)) {
+      setOriginalTripData(response.data);
+    } else {
+      setOriginalTripData([]);
     }
   } catch (error) {
     console.log(error);
