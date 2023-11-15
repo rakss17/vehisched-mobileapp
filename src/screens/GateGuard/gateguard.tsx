@@ -20,7 +20,11 @@ import { Schedule } from "../../interfaces/interfaces";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Confirmation from "../../components/modals/confirmation";
 import { fetchOnTrips, tripScanned } from "../../components/api/api";
-import { formatDateTime, formatTime } from "../../components/function/function";
+import {
+  formatDateTime,
+  formatTime,
+  formatDate,
+} from "../../components/function/function";
 
 export default function GateGuard() {
   const [onTripsData, setOnTripsData] = useState<any[]>([]);
@@ -148,6 +152,50 @@ export default function GateGuard() {
           >
             Ongoing Trips
           </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 10,
+              width: Viewport.width * 1,
+            }}
+          >
+            <Text
+              style={{
+                width: Viewport.width * 0.2,
+                height: "auto",
+                fontSize: FontSizes.small,
+                marginLeft: 25,
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Vehicle
+            </Text>
+
+            <Text
+              style={{
+                width: Viewport.width * 0.2,
+                fontSize: FontSizes.small,
+                marginLeft: 50,
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Departure
+            </Text>
+
+            <Text
+              style={{
+                fontSize: FontSizes.small,
+                width: Viewport.width * 0.23,
+                textAlign: "center",
+                fontWeight: "bold",
+                marginLeft: 40,
+              }}
+            >
+              Destination
+            </Text>
+          </View>
           <ScrollView>
             {onTripsData.length === 0 ? (
               <Text
@@ -178,7 +226,7 @@ export default function GateGuard() {
                   >
                     <Text
                       style={{
-                        width: Viewport.width * 0.4,
+                        width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
                         textAlign: "center",
                       }}
@@ -191,6 +239,7 @@ export default function GateGuard() {
                         width: Viewport.width * 0.25,
                         fontSize: FontSizes.small,
                         textAlign: "center",
+                        marginLeft: 25,
                       }}
                     >
                       {formatDateTime(inprogress.departure_time_from_office)}
@@ -200,6 +249,7 @@ export default function GateGuard() {
                         width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
                         textAlign: "center",
+                        marginLeft: 15,
                       }}
                     >
                       {inprogress.destination.split(",")[0].trim()}
@@ -262,7 +312,7 @@ export default function GateGuard() {
                       },
                     ]}
                   >
-                    Trip no. {trip.trip_number}
+                    Trip no. {trip.id}
                   </Text>
                   <Text
                     style={[
@@ -334,7 +384,8 @@ export default function GateGuard() {
                     <Text style={{ fontWeight: "bold" }}>
                       Scheduled travel date:
                     </Text>{" "}
-                    {trip.travel_date}, {formatTime(trip.travel_time)}
+                    {formatDate(trip.travel_date)},{" "}
+                    {formatTime(trip.travel_time)}
                   </Text>
                   <Text
                     style={[
@@ -348,7 +399,8 @@ export default function GateGuard() {
                     <Text style={{ fontWeight: "bold" }}>
                       Scheduled return date:
                     </Text>{" "}
-                    {trip.return_date}, {formatTime(trip.return_time)}
+                    {formatDate(trip.return_date)},{" "}
+                    {formatTime(trip.return_time)}
                   </Text>
                   <Text
                     style={[

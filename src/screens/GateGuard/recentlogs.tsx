@@ -10,9 +10,13 @@ import { BackgroundColor } from "../../styles/globalstyles/globalstyles";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { Schedule } from "../../interfaces/interfaces";
-import { todayMockData } from "../../components/mockdata/mockdata";
 import { fetchRecentTrips } from "../../components/api/api";
 import { useFocusEffect } from "@react-navigation/native";
+import {
+  formatDateTime,
+  formatDate,
+  formatTime,
+} from "../../components/function/function";
 
 export default function RecentLogs() {
   const [recentLogsData, setRecentLogsData] = useState<any[]>([]);
@@ -31,19 +35,6 @@ export default function RecentLogs() {
   };
   const handleCloseTripDetails = () => {
     setIsTripDetailsShow(false);
-  };
-
-  const formatDateTime = (dateTimeString: any) => {
-    const dateTime = new Date(dateTimeString);
-    return dateTime.toLocaleString([], {
-      dateStyle: "short",
-      timeStyle: "short",
-    });
-  };
-
-  const formatTime = (timeString: any) => {
-    const time = new Date(`1970-01-01T${timeString}`);
-    return time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   };
 
   return (
@@ -239,7 +230,7 @@ export default function RecentLogs() {
                       },
                     ]}
                   >
-                    Trip no. {trip.trip_number}
+                    Trip no. {trip.id}
                   </Text>
                   <Text
                     style={[
@@ -311,7 +302,8 @@ export default function RecentLogs() {
                     <Text style={{ fontWeight: "bold" }}>
                       Scheduled travel date:
                     </Text>{" "}
-                    {trip.travel_date}, {formatTime(trip.travel_time)}
+                    {formatDate(trip.travel_date)},{" "}
+                    {formatTime(trip.travel_time)}
                   </Text>
                   <Text
                     style={[
@@ -325,7 +317,8 @@ export default function RecentLogs() {
                     <Text style={{ fontWeight: "bold" }}>
                       Scheduled return date:
                     </Text>{" "}
-                    {trip.return_date}, {formatTime(trip.return_time)}
+                    {formatDate(trip.return_date)},{" "}
+                    {formatTime(trip.return_time)}
                   </Text>
 
                   <Text
