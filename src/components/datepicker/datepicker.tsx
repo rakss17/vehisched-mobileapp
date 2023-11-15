@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     left: Viewport.width * -0.1,
     right: 0,
     width: Viewport.width * 0.8,
-    backgroundColor: "white",
+    backgroundColor: Colors.primaryColor2,
     borderWidth: 1,
     borderColor: "lightgray",
     borderRadius: 10,
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   button2: {
     width: Viewport.width * 0.6,
     height: Viewport.height * 0.06,
-    backgroundColor: Colors.primaryColor2,
+    backgroundColor: "transparent",
     borderBottomWidth: 1,
     gap: 15,
     display: "flex",
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "white",
+    borderColor: Colors.primaryColor2,
   },
   today: {
     color: Colors.primaryColor1,
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   disabled: {
-    backgroundColor: Colors.secondaryColor1,
+    backgroundColor: "transparent",
     borderRadius: 10,
   },
   disabledText: {

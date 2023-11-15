@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     width: Viewport.width * 0.6,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.primaryColor2,
+    backgroundColor: "transparent",
     borderRadius: 10,
     gap: 10,
     borderBottomWidth: 1,

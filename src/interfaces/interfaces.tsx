@@ -74,6 +74,7 @@ export interface DropdownProps {
   menuAdjusted?: boolean;
   showText?: boolean;
   text?: string;
+  dropdownText2?: any;
 }
 
 export interface InputFieldProps {

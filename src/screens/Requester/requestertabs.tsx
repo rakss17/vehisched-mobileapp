@@ -5,7 +5,7 @@ import {
   FontSizes,
   Colors,
 } from "../../styles/globalstyles/globalstyles";
-import { faCar, faClipboardList } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Requester from "./requester";
 import Request from "./request";
@@ -31,15 +31,16 @@ export function RequesterTabs() {
         tabBarIconStyle: {
           marginBottom: -10,
         },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tab.Screen
-        name="Vehicles"
+        name="Home"
         component={Requester}
         options={{
-          tabBarLabel: "Vehicles",
+          tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
-            <FontAwesomeIcon icon={faCar} color={color} size={25} />
+            <FontAwesomeIcon icon={faHome} color={color} size={25} />
           ),
         }}
       />
