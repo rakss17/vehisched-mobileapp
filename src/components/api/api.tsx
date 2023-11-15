@@ -109,10 +109,14 @@ export async function fetchOnTrips(setOnTripsData: any, setRefreshing?: any) {
 
     if (Array.isArray(response.data)) {
       setOnTripsData(response.data);
-      setRefreshing(false);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     } else {
       setOnTripsData([]);
-      setRefreshing(false);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     }
   } catch (error) {
     console.log(error);
@@ -134,10 +138,14 @@ export async function fetchRecentTrips(
 
     if (Array.isArray(response.data)) {
       setRecentLogsData(response.data);
-      setRefreshing(false);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     } else {
       setRecentLogsData([]);
-      setRefreshing(false);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     }
   } catch (error) {
     console.log(error);
@@ -159,10 +167,14 @@ export async function fetchDriverOwnSchedule(
 
     if (Array.isArray(response.data)) {
       setScheduleData(response.data);
-      setRefreshing(false);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     } else {
       setScheduleData([]);
-      setRefreshing(false);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     }
   } catch (error) {
     console.log(error);
@@ -184,10 +196,14 @@ export async function fetchDriverTrips(
 
     if (Array.isArray(response.data)) {
       setOriginalTripData(response.data);
-      setRefreshing(false);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     } else {
       setOriginalTripData([]);
-      setRefreshing(false);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     }
   } catch (error) {
     console.log(error);
