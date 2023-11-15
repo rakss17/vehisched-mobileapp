@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, Modal, TouchableOpacity } from "react-native";
+import {
+  RefreshControl,
+  View,
+  Text,
+  ScrollView,
+  Modal,
+  TouchableOpacity,
+} from "react-native";
 import {
   Viewport,
   Styles,
@@ -25,6 +32,13 @@ export default function Driver() {
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("Today");
   const currentDate = new Date().toISOString().split("T")[0];
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    fetchDriverOwnSchedule(setOriginalScheduleData, setRefreshing);
+  }, []);
 
   useAppState(fetchDriverOwnSchedule, setOriginalScheduleData);
 
@@ -82,6 +96,7 @@ export default function Driver() {
       <BackgroundColor
         style={{ width: Viewport.width * 1, height: Viewport.height * 0.04 }}
       />
+
       <Header />
       <View style={Styles.container}>
         <View
@@ -250,7 +265,11 @@ export default function Driver() {
             Styles.flexColumn,
           ]}
         >
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
             {scheduleData.length === 0 ? (
               <Text
                 style={{

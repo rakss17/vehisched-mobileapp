@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, Modal, TouchableOpacity } from "react-native";
+import {
+  RefreshControl,
+  View,
+  Text,
+  ScrollView,
+  Modal,
+  TouchableOpacity,
+} from "react-native";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import {
@@ -25,6 +32,13 @@ export default function Trips() {
   const [selectedStatus, setSelectedStatus] = useState<string>("Rescheduled");
   const [isTripDetailsShow, setIsTripDetailsShow] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    fetchDriverTrips(setOriginalTripData, setRefreshing);
+  }, []);
 
   useAppState(fetchDriverTrips, setOriginalTripData);
 
@@ -191,7 +205,11 @@ export default function Trips() {
             </Text>
           </>
         </View>
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           {tripData.length === 0 ? (
             <Text
               style={{

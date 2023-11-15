@@ -137,7 +137,10 @@ export async function fetchRecentTrips(setRecentLogsData: any) {
   }
 }
 
-export async function fetchDriverOwnSchedule(setScheduleData: any) {
+export async function fetchDriverOwnSchedule(
+  setScheduleData: any,
+  setRefreshing?: any
+) {
   try {
     const token = await AsyncStorage.getItem("token");
     const response = await api.get("api/v1/trip/driver-own-schedule/", {
@@ -149,15 +152,20 @@ export async function fetchDriverOwnSchedule(setScheduleData: any) {
 
     if (Array.isArray(response.data)) {
       setScheduleData(response.data);
+      setRefreshing(false);
     } else {
       setScheduleData([]);
+      setRefreshing(false);
     }
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function fetchDriverTrips(setOriginalTripData: any) {
+export async function fetchDriverTrips(
+  setOriginalTripData: any,
+  setRefreshing?: any
+) {
   try {
     const token = await AsyncStorage.getItem("token");
     const response = await api.get("api/v1/trip/driver-trips-schedule/", {
@@ -169,8 +177,10 @@ export async function fetchDriverTrips(setOriginalTripData: any) {
 
     if (Array.isArray(response.data)) {
       setOriginalTripData(response.data);
+      setRefreshing(false);
     } else {
       setOriginalTripData([]);
+      setRefreshing(false);
     }
   } catch (error) {
     console.log(error);
