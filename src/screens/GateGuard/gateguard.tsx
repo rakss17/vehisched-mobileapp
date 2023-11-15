@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   Modal,
+  RefreshControl,
 } from "react-native";
 import {
   Viewport,
@@ -17,10 +18,16 @@ import { BackgroundColor } from "../../styles/globalstyles/globalstyles";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { Schedule } from "../../interfaces/interfaces";
-import { todayMockData } from "../../components/mockdata/mockdata";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import Confirmation from "../../components/modals/confirmation";
 import { fetchOnTrips, tripScanned } from "../../components/api/api";
+import {
+  formatDateTime,
+  formatTime,
+  formatDate,
+  useAppState,
+} from "../../components/function/function";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function GateGuard() {
   const [onTripsData, setOnTripsData] = useState<any[]>([]);
@@ -31,10 +38,21 @@ export default function GateGuard() {
   const [scannedCompleted, setScannedCompleted] = useState(false);
   const [scannedAlreadyCompleted, setScannedAlreadyCompleted] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
 
-  useEffect(() => {
-    fetchOnTrips(setOnTripsData);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    fetchOnTrips(setOnTripsData, setRefreshing);
   }, []);
+
+  useAppState(fetchOnTrips, setOnTripsData);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchOnTrips(setOnTripsData);
+    }, [])
+  );
 
   const handleScanButtonPress = async () => {
     const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -74,19 +92,6 @@ export default function GateGuard() {
   };
   const handleCloseTripDetails = () => {
     setIsTripDetailsShow(false);
-  };
-
-  const formatDateTime = (dateTimeString: any) => {
-    const dateTime = new Date(dateTimeString);
-    return dateTime.toLocaleString([], {
-      dateStyle: "short",
-      timeStyle: "short",
-    });
-  };
-
-  const formatTime = (timeString: any) => {
-    const time = new Date(`1970-01-01T${timeString}`);
-    return time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   };
 
   return (
@@ -161,7 +166,55 @@ export default function GateGuard() {
           >
             Ongoing Trips
           </Text>
-          <ScrollView>
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 10,
+              width: Viewport.width * 1,
+            }}
+          >
+            <Text
+              style={{
+                width: Viewport.width * 0.2,
+                height: "auto",
+                fontSize: FontSizes.small,
+                marginLeft: 25,
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Vehicle
+            </Text>
+
+            <Text
+              style={{
+                width: Viewport.width * 0.2,
+                fontSize: FontSizes.small,
+                marginLeft: 50,
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Departure
+            </Text>
+
+            <Text
+              style={{
+                fontSize: FontSizes.small,
+                width: Viewport.width * 0.23,
+                textAlign: "center",
+                fontWeight: "bold",
+                marginLeft: 40,
+              }}
+            >
+              Destination
+            </Text>
+          </View>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
             {onTripsData.length === 0 ? (
               <Text
                 style={{
@@ -191,7 +244,7 @@ export default function GateGuard() {
                   >
                     <Text
                       style={{
-                        width: Viewport.width * 0.4,
+                        width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
                         textAlign: "center",
                       }}
@@ -204,6 +257,7 @@ export default function GateGuard() {
                         width: Viewport.width * 0.25,
                         fontSize: FontSizes.small,
                         textAlign: "center",
+                        marginLeft: 25,
                       }}
                     >
                       {formatDateTime(inprogress.departure_time_from_office)}
@@ -213,6 +267,7 @@ export default function GateGuard() {
                         width: Viewport.width * 0.3,
                         fontSize: FontSizes.small,
                         textAlign: "center",
+                        marginLeft: 15,
                       }}
                     >
                       {inprogress.destination.split(",")[0].trim()}
@@ -275,7 +330,7 @@ export default function GateGuard() {
                       },
                     ]}
                   >
-                    Trip no. {trip.trip_number}
+                    Trip no. {trip.id}
                   </Text>
                   <Text
                     style={[
@@ -347,7 +402,8 @@ export default function GateGuard() {
                     <Text style={{ fontWeight: "bold" }}>
                       Scheduled travel date:
                     </Text>{" "}
-                    {trip.travel_date}, {formatTime(trip.travel_time)}
+                    {formatDate(trip.travel_date)},{" "}
+                    {formatTime(trip.travel_time)}
                   </Text>
                   <Text
                     style={[
@@ -361,7 +417,8 @@ export default function GateGuard() {
                     <Text style={{ fontWeight: "bold" }}>
                       Scheduled return date:
                     </Text>{" "}
-                    {trip.return_date}, {formatTime(trip.return_time)}
+                    {formatDate(trip.return_date)},{" "}
+                    {formatTime(trip.return_time)}
                   </Text>
                   <Text
                     style={[

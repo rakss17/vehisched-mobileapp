@@ -9,11 +9,13 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "../../interfaces/interfaces";
 import Dropdown from "../dropdown/dropdown";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Header() {
   const navigation = useNavigation<NavigationProp>();
   const handleDropdown = (options: string) => {
     if (options === "Sign Out") {
+      AsyncStorage.removeItem("token");
       navigation.navigate("Landing");
     } else {
       alert("Under Development");

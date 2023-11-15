@@ -1,5 +1,6 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
 
 export const serverSideUrl = "http://192.168.1.6:8000/media/";
 
@@ -9,13 +10,13 @@ const api = axios.create({
 
 export async function SigninAPI(
   data: any,
-  navigation: any
-  //   dispatch: any,
-  //   setLoadingBarProgress: (progress: number) => void,
-  //   setError: any
+  navigation: any,
+  setData: any,
+  setErrorMessage: any,
+  setIsLoading: any,
+  dispatch: any
 ) {
   try {
-    // setLoadingBarProgress(20);
     const response = await api.post("api/v1/accounts/token/login", data);
     const token = response.data.auth_token;
 
@@ -27,23 +28,30 @@ export async function SigninAPI(
         "Content-Type": "application/json",
       },
     });
-    // setLoadingBarProgress(40);
-
-    // setLoadingBarProgress(70);
+    dispatch(fetchPersonalInfo(res.data));
+    setData("");
+    setErrorMessage("");
+    setIsLoading(false);
     if (res.data.role === "requester" || res.data.role === "vip") {
       navigation.navigate("Requester");
+      setIsLoading(false);
     } else if (res.data.role === "driver") {
       navigation.navigate("Driver");
+      setIsLoading(false);
     } else if (res.data.role === "gate guard") {
       navigation.navigate("GateGuard");
+      setIsLoading(false);
     }
-    // setLoadingBarProgress(100);
   } catch (error: any) {
-    // setLoadingBarProgress(20);
-    // setLoadingBarProgress(50);
-    // setLoadingBarProgress(100);
-    // setError(true);
-    console.log("error", error);
+    if (error.message.includes("400")) {
+      setErrorMessage("Invalid Credentials");
+      navigation.navigate("Landing");
+      setIsLoading(false);
+    } else {
+      navigation.navigate("Landing");
+      setIsLoading(false);
+      setErrorMessage("Server Error");
+    }
   }
 }
 
@@ -89,7 +97,7 @@ export async function tripScanned(
     });
 }
 
-export async function fetchOnTrips(setOnTripsData: any) {
+export async function fetchOnTrips(setOnTripsData: any, setRefreshing?: any) {
   try {
     const token = await AsyncStorage.getItem("token");
     const response = await api.get("api/v1/trip/on-trips-gateguard/", {
@@ -101,16 +109,24 @@ export async function fetchOnTrips(setOnTripsData: any) {
 
     if (Array.isArray(response.data)) {
       setOnTripsData(response.data);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     } else {
       setOnTripsData([]);
-      console.log("Response data is not an array:", response.data);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     }
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function fetchRecentTrips(setRecentLogsData: any) {
+export async function fetchRecentTrips(
+  setRecentLogsData: any,
+  setRefreshing?: any
+) {
   try {
     const token = await AsyncStorage.getItem("token");
     const response = await api.get("api/v1/trip/recent-trips-gateguard/", {
@@ -122,10 +138,72 @@ export async function fetchRecentTrips(setRecentLogsData: any) {
 
     if (Array.isArray(response.data)) {
       setRecentLogsData(response.data);
-      console.log(response.data);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     } else {
       setRecentLogsData([]);
-      console.log("Response data is not an array:", response.data);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchDriverOwnSchedule(
+  setScheduleData: any,
+  setRefreshing?: any
+) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/trip/driver-own-schedule/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (Array.isArray(response.data)) {
+      setScheduleData(response.data);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
+    } else {
+      setScheduleData([]);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchDriverTrips(
+  setOriginalTripData: any,
+  setRefreshing?: any
+) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/trip/driver-trips-schedule/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (Array.isArray(response.data)) {
+      setOriginalTripData(response.data);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
+    } else {
+      setOriginalTripData([]);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
     }
   } catch (error) {
     console.log(error);

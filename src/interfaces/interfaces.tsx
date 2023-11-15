@@ -2,11 +2,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ReactNode } from "react";
 import { ViewStyle, StyleProp } from "react-native";
 
-type RootStackParamList = {
+export type RootStackParamList = {
   Landing: undefined;
   Requester: undefined;
   Driver: undefined;
   GateGuard: undefined;
+  LoadingScreen: { message: string };
 };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -19,6 +20,21 @@ export interface Vehicle {
   vehicle_image: any;
   status: string;
   isVip: boolean;
+}
+
+export interface UserData {
+  id?: any;
+  username: string;
+  password?: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  email: string;
+  mobile_number: any;
+  role?: any;
+  status?: any;
+  user?: any;
+  office?: any;
 }
 
 export interface Requests {
@@ -66,6 +82,7 @@ export interface InputFieldProps {
   secureTextEntry?: boolean;
   icon?: any;
   onChangeText?: (text: string) => void;
+  autoCapitalize?: any;
 }
 
 export interface BackgroundColorProps {
