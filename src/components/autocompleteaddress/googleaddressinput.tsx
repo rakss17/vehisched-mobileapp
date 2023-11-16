@@ -1,15 +1,16 @@
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { handlePlaceSelect } from "../api/api";
 import { useEffect, useState, useRef } from "react";
+import { AutoCompleteAddressGoogleStyle } from "../../styles/components/googleaddressinput/googleaddressinput";
 
 interface AutoCompleteAddressGoogleProps {
-  travel_date: any;
-  travel_time: any;
+  travel_date?: any;
+  travel_time?: any;
   setData: (data: any) => void;
   setAddressData: (addressData: any) => void;
-  isDisabled: any;
-  category: any;
-  removeDestinationError: () => void;
+  isDisabled?: any;
+  category?: any;
+  //   removeDestinationError: () => void;
 }
 
 export default function AutoCompleteAddressGoogle({
@@ -19,11 +20,11 @@ export default function AutoCompleteAddressGoogle({
   setAddressData,
   isDisabled,
   category,
-  removeDestinationError,
-}: AutoCompleteAddressGoogleProps) {
+}: //   removeDestinationError,
+AutoCompleteAddressGoogleProps) {
   const [travel_date, setTravelDate] = useState(travelDateProp);
   const [travel_time, setTravelTime] = useState(travelTimeProp);
-  const apiKey = process.env.GOOGLE_MAP_API_KEY;
+  const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY;
 
   const onPlaceSelectedRef = useRef<(data: any, details: any | null) => void>(
     () => {}
@@ -39,7 +40,7 @@ export default function AutoCompleteAddressGoogle({
         setAddressData,
         category
       );
-      removeDestinationError();
+      //   removeDestinationError();
     };
   }, [
     travel_date,
@@ -47,7 +48,7 @@ export default function AutoCompleteAddressGoogle({
     setData,
     setAddressData,
     category,
-    removeDestinationError,
+    // removeDestinationError,
   ]);
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function AutoCompleteAddressGoogle({
 
   return (
     <GooglePlacesAutocomplete
+      styles={AutoCompleteAddressGoogleStyle}
       placeholder="Search"
       //   disabled={isDisabled}
       onPress={(data, details = null) =>
@@ -68,6 +70,7 @@ export default function AutoCompleteAddressGoogle({
         types: ["establishment", "geocode"],
         components: "country:PH",
       }}
+      onFail={(error) => console.error(error)}
     />
   );
 }

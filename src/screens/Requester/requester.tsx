@@ -25,6 +25,8 @@ import Dropdown from "../../components/dropdown/dropdown";
 import DatePicker from "../../components/datepicker/datepicker";
 import TimePicker from "../../components/timepicker/timepicker";
 import { useFocusEffect } from "@react-navigation/native";
+import AutoCompleteAddress from "../../components/autocompleteaddress/autocompleteaddress";
+import AutoCompleteAddressGoogle from "../../components/autocompleteaddress/googleaddressinput";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -36,13 +38,16 @@ export default function Requester() {
   );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [tripData, setTripData] = useState<any>({
-    fromDate: "",
-    fromTime: "",
-    toDate: "",
-    toTime: "",
-    noOfPassenger: 0,
+    travel_date: "",
+    travel_time: "",
+    return_date: "",
+    return_time: "",
+    capacity: 0,
   });
-
+  const [addressData, setAddressData] = useState<any>({
+    destination: "",
+    distance: null,
+  });
   const [selectedTime, setSelectedTime] = useState<{
     hours: number | null;
     minutes: number | null;
@@ -66,7 +71,7 @@ export default function Requester() {
     });
     setTripData((prevData: any) => ({
       ...prevData,
-      fromDate: formattedDate,
+      travel_date: formattedDate,
     }));
   };
 
@@ -83,7 +88,7 @@ export default function Requester() {
 
     setTripData((prevData: any) => ({
       ...prevData,
-      fromTime: `${formattedHours}:${formattedMinutes} ${period}`,
+      travel_time: `${formattedHours}:${formattedMinutes} ${period}`,
     }));
   };
 
@@ -95,7 +100,7 @@ export default function Requester() {
     });
     setTripData((prevData: any) => ({
       ...prevData,
-      toDate: formattedDate,
+      return_date: formattedDate,
     }));
   };
 
@@ -258,6 +263,22 @@ export default function Requester() {
                   Styles.flexColumn,
                 ]}
               >
+                <View style={[{ gap: 10 }, Styles.flexRow]}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: Colors.primaryColor1,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Destination:{" "}
+                  </Text>
+
+                  <AutoCompleteAddressGoogle
+                    setData={setTripData}
+                    setAddressData={setAddressData}
+                  />
+                </View>
                 <View style={[{ gap: 30 }, Styles.flexRow]}>
                   <Text
                     style={{
@@ -318,7 +339,7 @@ export default function Requester() {
                   </Text>
                   <TextInput
                     keyboardType="numeric"
-                    value={tripData.noOfPassenger.toString()}
+                    value={tripData.capacity.toString()}
                     style={{
                       backgroundColor: Colors.secondaryColor1,
                       width: Viewport.width * 0.2,
@@ -331,7 +352,7 @@ export default function Requester() {
                     onChangeText={(text) =>
                       setTripData({
                         ...tripData,
-                        noOfPassenger: parseInt(text, 10) || 0,
+                        capacity: parseInt(text, 10) || 0,
                       })
                     }
                   />
