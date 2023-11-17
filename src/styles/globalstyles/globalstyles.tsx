@@ -72,4 +72,7 @@ export const Styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  textError: {
+    color: "red",
+  },
 });

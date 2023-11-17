@@ -7,7 +7,9 @@ import { DropdownProps } from "../../interfaces/interfaces";
 import { Viewport } from "../../styles/globalstyles/globalstyles";
 
 export default function Dropdown(props: DropdownProps) {
-  const [selectedOption, setSelectedOption] = useState(props.options[0]);
+  const [selectedOption, setSelectedOption] = useState(
+    props.selectedCategory || props.options[0]
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const handleMenuToggle = () => {

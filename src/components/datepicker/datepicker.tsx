@@ -151,6 +151,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
               data={generateCalendar()}
               keyExtractor={(item) => item.key}
               numColumns={7}
+              scrollEnabled={false}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() =>
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   dropdown2: {
     position: "absolute",
     top: Viewport.height * 0.07,
-    left: Viewport.width * -0.1,
+    left: Viewport.width * -0.15,
     right: 0,
     width: Viewport.width * 0.8,
     backgroundColor: Colors.primaryColor2,

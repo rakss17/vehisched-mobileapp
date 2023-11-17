@@ -64,6 +64,7 @@ export interface ButtonProps {
   isHighlighted?: boolean;
   style?: StyleProp<ViewStyle>;
   largeSize?: boolean;
+  isSelected?: any;
 }
 
 export interface DropdownProps {
@@ -75,6 +76,7 @@ export interface DropdownProps {
   showText?: boolean;
   text?: string;
   dropdownText2?: any;
+  selectedCategory?: any;
 }
 
 export interface InputFieldProps {

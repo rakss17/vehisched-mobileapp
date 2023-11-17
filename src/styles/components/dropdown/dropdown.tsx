@@ -15,7 +15,7 @@ export const DropdownStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: Viewport.width * 0.4,
-    height: Viewport.height * 0.05,
+    height: Viewport.height * 0.06,
     backgroundColor: Colors.primaryColor1,
     borderBottomWidth: 2,
     color: "white",

@@ -8,7 +8,7 @@ interface AutoCompleteAddressGoogleProps {
   travel_time?: any;
   setData: (data: any) => void;
   setAddressData: (addressData: any) => void;
-  isDisabled?: any;
+  isDisabled?: boolean;
   category?: any;
   //   removeDestinationError: () => void;
 }
@@ -59,11 +59,11 @@ AutoCompleteAddressGoogleProps) {
   return (
     <GooglePlacesAutocomplete
       styles={AutoCompleteAddressGoogleStyle}
-      placeholder="Search"
-      //   disabled={isDisabled}
+      placeholder="Search....."
       onPress={(data, details = null) =>
         onPlaceSelectedRef.current(data, details)
       }
+      disableScroll={true}
       query={{
         key: apiKey,
         language: "en",
@@ -71,6 +71,9 @@ AutoCompleteAddressGoogleProps) {
         components: "country:PH",
       }}
       onFail={(error) => console.error(error)}
+      textInputProps={{
+        editable: isDisabled,
+      }}
     />
   );
 }
