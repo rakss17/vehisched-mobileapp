@@ -503,16 +503,18 @@ export default function Requester() {
                             delete updatedErrors[0];
                             setErrorMessages(updatedErrors);
                             setTripData({
-                              travel_date: null,
-                              travel_time: null,
-                              return_date: null,
-                              return_time: null,
+                              travel_date: "",
+                              travel_time: "",
+                              return_date: "",
+                              return_time: "",
                               category: "Round Trip",
                             });
                             setAddressData({
                               destination: "",
                               distance: null,
                             });
+                            setIsAutocompleteEditable(false);
+                            setIsTravelDateSelected(true);
                           }}
                           style={{
                             width: Viewport.width * 0.26,
@@ -534,16 +536,18 @@ export default function Requester() {
                             delete updatedErrors[0];
                             setErrorMessages(updatedErrors);
                             setTripData({
-                              travel_date: null,
-                              travel_time: null,
-                              return_date: null,
-                              return_time: null,
+                              travel_date: "",
+                              travel_time: "",
+                              return_date: "",
+                              return_time: "",
                               category: "Round Trip",
                             });
                             setAddressData({
                               destination: "",
                               distance: null,
                             });
+                            setIsAutocompleteEditable(false);
+                            setIsTravelDateSelected(true);
                           }}
                           style={{
                             width: Viewport.width * 0.26,
@@ -566,16 +570,18 @@ export default function Requester() {
                             delete updatedErrors[0];
                             setErrorMessages(updatedErrors);
                             setTripData({
-                              travel_date: null,
-                              travel_time: null,
-                              return_date: null,
-                              return_time: null,
+                              travel_date: "",
+                              travel_time: "",
+                              return_date: "",
+                              return_time: "",
                               category: "One-way",
                             });
                             setAddressData({
                               destination: "",
                               distance: null,
                             });
+                            setIsAutocompleteEditable(false);
+                            setIsTravelDateSelected(true);
                           }}
                           style={{
                             width: Viewport.width * 0.26,
@@ -596,16 +602,18 @@ export default function Requester() {
                             delete updatedErrors[0];
                             setErrorMessages(updatedErrors);
                             setTripData({
-                              travel_date: null,
-                              travel_time: null,
-                              return_date: null,
-                              return_time: null,
+                              travel_date: "",
+                              travel_time: "",
+                              return_date: "",
+                              return_time: "",
                               category: "One-way",
                             });
                             setAddressData({
                               destination: "",
                               distance: null,
                             });
+                            setIsAutocompleteEditable(false);
+                            setIsTravelDateSelected(true);
                           }}
                           style={{
                             width: Viewport.width * 0.26,
