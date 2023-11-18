@@ -288,3 +288,39 @@ export async function handlePlaceSelect(
     console.log("Error:", error);
   }
 }
+
+export async function fetchRequestAPI(
+  setRequestFilteredData: any,
+  setRefreshing?: any
+) {
+  const token = await AsyncStorage.getItem("token");
+  api
+    .get("api/v1/request/fetch-post/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      const responseData = Array.isArray(response.data)
+        ? response.data
+        : [response.data];
+
+      const updatedData = responseData.map((item) => {
+        if (item.passenger_name) {
+          const validJson = item.passenger_name.replace(/'/g, '"');
+          const passengerNamesArray = JSON.parse(validJson);
+          item.passenger_name = passengerNamesArray.join(", ");
+        }
+        return item;
+      });
+
+      setRequestFilteredData(updatedData);
+      if (setRefreshing) {
+        setRefreshing(false);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching request list:", error);
+    });
+}

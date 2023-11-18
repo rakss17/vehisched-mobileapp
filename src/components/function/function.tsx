@@ -41,8 +41,12 @@ export const formatTime = (timeString: any) => {
 };
 
 export const formatDate = (inputDate: any) => {
-  const datePart = inputDate.split("-");
-  return `${datePart[1]}/${datePart[2]}/${datePart[0]}`;
+  if (inputDate) {
+    const datePart = inputDate.split("-");
+    return `${datePart[1]}/${datePart[2]}/${datePart[0]}`;
+  } else {
+    return "";
+  }
 };
 
 export const formatDateTime = (dateTimeString: any) => {

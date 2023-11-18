@@ -11,7 +11,7 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
@@ -21,38 +21,66 @@ import EllipsisMenu from "../../components/ellipsismenu/ellipsismenu";
 import PromptDialog from "../../components/modals/promptdialog";
 import Confirmation from "../../components/modals/confirmation";
 import RequestDetails from "../../components/modals/requestdetails";
+import { fetchRequestAPI } from "../../components/api/api";
+import { formatDate } from "../../components/function/function";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Request() {
-  const [requestData, setRequestData] = useState<Requests[]>([]);
-  const [selectedRequest, setSelectedRequest] = useState<Requests | null>(null);
+  const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
+  const [requestData, setRequestData] = useState<any[]>([]);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("Pending");
   const [isCancelModalShow, setIsCancelModalShow] = useState(false);
   const [isDeleteModalShow, setIsDeleteModalShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [isConfirmation2Show, setIsConfirmation2Show] = useState(false);
   const [isRequestDetailsShow, setIsRequestDetailsShow] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    fetchRequestAPI(setOriginalRequestData, setRefreshing);
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchRequestAPI(setOriginalRequestData);
+    }, [])
+  );
+
+  useEffect(() => {
+    if (originalRequestData.length > 0) {
+      handleButtonPress("Pending");
+    }
+  }, [originalRequestData]);
 
   const handleButtonPress = (status: string) => {
     setSelectedStatus(status);
-    let filteredStatus: Requests[] = [];
+    let filteredStatus: any[] = [];
     switch (status) {
       case "Pending":
-        filteredStatus = fetchedRequestData.filter(
+        filteredStatus = originalRequestData.filter(
           (request) => request.status === "Pending"
         );
         break;
       case "Approved":
-        filteredStatus = fetchedRequestData.filter(
+        filteredStatus = originalRequestData.filter(
           (request) => request.status === "Approved"
         );
         break;
+      case "Completed":
+        filteredStatus = originalRequestData.filter(
+          (request) => request.status === "Completed"
+        );
+        break;
       case "Canceled":
-        filteredStatus = fetchedRequestData.filter(
+        filteredStatus = originalRequestData.filter(
           (request) => request.status === "Canceled"
         );
         break;
       case "Declined":
-        filteredStatus = fetchedRequestData.filter(
+        filteredStatus = originalRequestData.filter(
           (request) => request.status === "Declined"
         );
         break;
@@ -146,6 +174,13 @@ export default function Request() {
           onPress={() => handleButtonPress("Approved")}
         />
         <Button
+          text="Completed"
+          transparentBG2
+          transparentText2
+          isHighlighted={selectedStatus === "Completed"}
+          onPress={() => handleButtonPress("Completed")}
+        />
+        <Button
           text="Canceled"
           transparentBG2
           transparentText2
@@ -172,14 +207,20 @@ export default function Request() {
         <Text style={styles.tableHeader2}>Travel Date</Text>
         <Text style={styles.tableHeader3}>Vehicle</Text>
       </View>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {requestData.length === 0 ? (
           <Text style={styles.noText}>No vehicles available</Text>
         ) : (
           requestData.map((request, index) => (
             <View key={index} style={styles.tableRow}>
-              <Text style={styles.tableCell1}>{request.request_number}</Text>
-              <Text style={styles.tableCell2}>{request.travel_date}</Text>
+              <Text style={styles.tableCell1}>{request.request_id}</Text>
+              <Text style={styles.tableCell2}>
+                {formatDate(request.travel_date)}
+              </Text>
               <Text style={styles.tableCell3}>{request.vehicle}</Text>
 
               <View style={styles.tableCell4}>

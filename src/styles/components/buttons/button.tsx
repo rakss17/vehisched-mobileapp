@@ -38,7 +38,7 @@ export const ButtonStyle = StyleSheet.create({
     textAlign: "center",
   },
   transparentBG2: {
-    width: Viewport.width * 0.3,
+    width: Viewport.width * 0.2,
     height: Viewport.height * 0.06,
     backgroundColor: "transparent",
     display: "flex",
@@ -48,12 +48,12 @@ export const ButtonStyle = StyleSheet.create({
   },
   transparentText2: {
     color: Colors.primaryColor1,
-    fontSize: FontSizes.small,
+    fontSize: 13,
     textAlign: "center",
     fontWeight: "bold",
   },
   borderBottom: {
-    width: Viewport.width * 0.3,
+    width: Viewport.width * 0.2,
     height: Viewport.height * 0.06,
     backgroundColor: "transparent",
     display: "flex",
