@@ -37,6 +37,7 @@ export default function GateGuard() {
   const [scannedAuthorized, setScannedAuthorized] = useState(false);
   const [scannedCompleted, setScannedCompleted] = useState(false);
   const [scannedAlreadyCompleted, setScannedAlreadyCompleted] = useState(false);
+  const [scannedTripNotFound, setScannedTripNotFound] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -75,6 +76,7 @@ export default function GateGuard() {
       setScannedAuthorized,
       setScannedCompleted,
       setScannedAlreadyCompleted,
+      setScannedTripNotFound,
       fetchOnTrips,
       setOnTripsData,
       setScanButtonPressed
@@ -85,6 +87,7 @@ export default function GateGuard() {
     setScannedAuthorized(false);
     setScannedCompleted(false);
     setScannedAlreadyCompleted(false);
+    setScannedTripNotFound(false);
   };
   const handleShowTripDetails = (trip: Schedule) => {
     setSelectedTrip([trip]);
@@ -499,6 +502,15 @@ export default function GateGuard() {
         animationType="fade"
         transparent={true}
         content="Trip Already Completed!"
+        onRequestClose={handleCloseScanner}
+        showContent
+        adjustedSize
+      />
+      <Confirmation
+        visible={scannedTripNotFound}
+        animationType="fade"
+        transparent={true}
+        content="Trip Not Found!"
         onRequestClose={handleCloseScanner}
         showContent
         adjustedSize

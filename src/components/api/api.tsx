@@ -2,10 +2,10 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
 
-export const serverSideUrl = "http://192.168.1.6:8000/media/";
+export const serverSideUrl = "http://192.168.1.8:8000/media/";
 
 const api = axios.create({
-  baseURL: "http://192.168.1.6:8000/",
+  baseURL: "http://192.168.1.8:8000/",
 });
 
 export async function SigninAPI(
@@ -60,6 +60,7 @@ export async function tripScanned(
   setScannedAuthorized: any,
   setScannedCompleted: any,
   setScannedAlreadyCompleted: any,
+  setScannedTripNotFound: any,
   fetchOnTrips: (onTripsData: any) => void,
   setOnTripsData: any,
   setScanButtonPressed: any
@@ -94,6 +95,11 @@ export async function tripScanned(
     })
     .catch((error) => {
       console.log(error.response);
+      if (error.response.status === 404) {
+        setScanButtonPressed(false);
+        setScannedTripNotFound(true);
+        fetchOnTrips(setOnTripsData);
+      }
     });
 }
 
