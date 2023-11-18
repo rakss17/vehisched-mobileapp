@@ -83,15 +83,26 @@ export default function Requester() {
     setTimeout(() => {
       setRefreshing(false);
       setErrorMessages([]);
-      setDatePickerKeyFrom((prevKey) => prevKey + 1);
-      setDatePickerKeyTo((prevKey) => prevKey + 1);
-      setTimePickerKeyFrom((prevKey) => prevKey + 1);
-      setTimePickerKeyTo((prevKey) => prevKey + 1);
-      setDatePickerKeyFromOneWay((prevKey) => prevKey + 1);
-      setDatePickerKeyToOneWay((prevKey) => prevKey + 1);
+      if (tripData.category === "Round Trip") {
+        setDatePickerKeyFrom((prevKey) => prevKey + 1);
+        setDatePickerKeyTo((prevKey) => prevKey + 1);
+        setTimePickerKeyFrom((prevKey) => prevKey + 1);
+        setTimePickerKeyTo((prevKey) => prevKey + 1);
+        setDatePickerKeyFromOneWay((prevKey) => prevKey - 1);
+        setDatePickerKeyToOneWay((prevKey) => prevKey - 1);
+      } else if (tripData.category === "One-way") {
+        setDatePickerKeyFrom((prevKey) => prevKey - 1);
+        setDatePickerKeyTo((prevKey) => prevKey - 1);
+        setTimePickerKeyFrom((prevKey) => prevKey - 1);
+        setTimePickerKeyTo((prevKey) => prevKey - 1);
+        setDatePickerKeyFromOneWay((prevKey) => prevKey + 1);
+        setDatePickerKeyToOneWay((prevKey) => prevKey + 1);
+      }
+
       setIsAutocompleteEditable(false);
       setIsTravelDateSelected(true);
       setSelectedTravelCategory("Round Trip");
+      setSelectedTravelType("");
       setTripData({
         travel_date: "",
         travel_time: "",
@@ -796,6 +807,9 @@ export default function Requester() {
                                     category: "One-way - Drop",
                                   }));
                                   setSelectedTravelType("Drop");
+                                  const updatedErrors = { ...errorMessages };
+                                  delete updatedErrors[0]?.categoryError;
+                                  setErrorMessages(updatedErrors);
                                 }}
                                 style={{
                                   width: Viewport.width * 0.26,
@@ -813,6 +827,9 @@ export default function Requester() {
                                     category: "One-way - Drop",
                                   }));
                                   setSelectedTravelType("Drop");
+                                  const updatedErrors = { ...errorMessages };
+                                  delete updatedErrors[0]?.categoryError;
+                                  setErrorMessages(updatedErrors);
                                 }}
                                 style={{
                                   width: Viewport.width * 0.26,
@@ -832,6 +849,9 @@ export default function Requester() {
                                     category: "One-way - Fetch",
                                   }));
                                   setSelectedTravelType("Fetch");
+                                  const updatedErrors = { ...errorMessages };
+                                  delete updatedErrors[0]?.categoryError;
+                                  setErrorMessages(updatedErrors);
                                 }}
                                 style={{
                                   width: Viewport.width * 0.26,
@@ -849,6 +869,9 @@ export default function Requester() {
                                     category: "One-way - Fetch",
                                   }));
                                   setSelectedTravelType("Fetch");
+                                  const updatedErrors = { ...errorMessages };
+                                  delete updatedErrors[0]?.categoryError;
+                                  setErrorMessages(updatedErrors);
                                 }}
                                 style={{
                                   width: Viewport.width * 0.26,
