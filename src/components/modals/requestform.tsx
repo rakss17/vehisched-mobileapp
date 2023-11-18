@@ -17,6 +17,9 @@ import TimePicker from "../timepicker/timepicker";
 import UploadButton from "../buttons/upload";
 import DownloadButton from "../buttons/download";
 import Confirmation from "./confirmation";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { formatDate, formatTime } from "../function/function";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -24,20 +27,9 @@ const RequestForm: React.FC<ModalProps> = ({
   animationType,
   onRequestClose,
   selectedVehicle,
+  tripData,
+  addressData,
 }) => {
-  const [requestFormData, setRequestFormatData] =
-    useState<RequestFormDataProps>({
-      requester_name: "",
-      office_dept: "",
-      number_of_passenger: 0,
-      passenger_name: [],
-      destination: "",
-      date: "",
-      time: "",
-      purpose: "",
-      urgent: false,
-      vehicle: "",
-    });
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
     Array(numberOfPassengers).fill("")
@@ -69,6 +61,27 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isTextErrorShow, setIsTextErrorShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [exceedsCapacity, setExceedsCapacity] = useState(false);
+  const personalInfo = useSelector(
+    (state: RootState) => state.personalInfo.data
+  );
+  const firstName = personalInfo?.first_name;
+  const lastName = personalInfo?.last_name;
+  const middleName = personalInfo?.middle_name;
+  const userID = personalInfo?.id;
+  const office = personalInfo?.office;
+
+  const [requestFormData, setRequestFormatData] = useState<any>({
+    requester_name: userID,
+    office: office,
+    number_of_passenger: 0,
+    passenger_name: [],
+    destination: "",
+    date: "",
+    time: "",
+    purpose: "",
+    urgent: false,
+    vehicle: "",
+  });
 
   const handleDistanceCalculated = (distance: any) => {
     setDistanceToUSTPFormatted(distance);
@@ -80,7 +93,7 @@ const RequestForm: React.FC<ModalProps> = ({
   };
 
   const handleAddressCalculated = (address: string) => {
-    setRequestFormatData((prevData) => ({
+    setRequestFormatData((prevData: any) => ({
       ...prevData,
       destination: address,
     }));
@@ -88,7 +101,7 @@ const RequestForm: React.FC<ModalProps> = ({
 
   const handleOfficeChange = (selectedOption: string) => {
     setSelectedOffice(selectedOption);
-    setRequestFormatData((prevData) => ({
+    setRequestFormatData((prevData: any) => ({
       ...prevData,
       office_dept: selectedOption,
     }));
@@ -145,7 +158,7 @@ const RequestForm: React.FC<ModalProps> = ({
     ) {
       return;
     }
-    setRequestFormatData((prevData) => ({
+    setRequestFormatData((prevData: any) => ({
       ...prevData,
       vehicle: selectedVehicle?.vehicle_name,
     }));
@@ -266,7 +279,7 @@ const RequestForm: React.FC<ModalProps> = ({
     updatedPassengerData[index] = value;
     setPassengerData(updatedPassengerData);
 
-    setRequestFormatData((prevData) => ({
+    setRequestFormatData((prevData: any) => ({
       ...prevData,
       passenger_name: updatedPassengerData,
     }));
@@ -282,7 +295,7 @@ const RequestForm: React.FC<ModalProps> = ({
     ) {
       setNumberOfPassengers(parsedNumber);
       setPassengerData(Array(parsedNumber).fill(""));
-      setRequestFormatData((prevData) => ({
+      setRequestFormatData((prevData: any) => ({
         ...prevData,
         number_of_passenger: parsedNumber,
       }));
@@ -290,7 +303,7 @@ const RequestForm: React.FC<ModalProps> = ({
     } else {
       setNumberOfPassengers(0);
       setPassengerData([]);
-      setRequestFormatData((prevData) => ({
+      setRequestFormatData((prevData: any) => ({
         ...prevData,
         number_of_passenger: 0,
       }));
@@ -304,7 +317,7 @@ const RequestForm: React.FC<ModalProps> = ({
       month: "2-digit",
       day: "2-digit",
     });
-    setRequestFormatData((prevData) => ({
+    setRequestFormatData((prevData: any) => ({
       ...prevData,
       date: formattedDate,
     }));
@@ -322,7 +335,7 @@ const RequestForm: React.FC<ModalProps> = ({
     const formattedHours = formatNumberToTwoDigits(hours);
     const formattedMinutes = formatNumberToTwoDigits(minutes);
 
-    setRequestFormatData((prevData) => ({
+    setRequestFormatData((prevData: any) => ({
       ...prevData,
       time: `${formattedHours}:${formattedMinutes} ${period}`,
     }));
@@ -357,7 +370,8 @@ const RequestForm: React.FC<ModalProps> = ({
         <View
           style={[
             {
-              flex: 1,
+              height: Viewport.height * 1,
+              width: Viewport.width * 1,
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               zIndex: 1,
             },
@@ -369,66 +383,151 @@ const RequestForm: React.FC<ModalProps> = ({
               {
                 backgroundColor: Colors.primaryColor2,
                 width: Viewport.width * 0.9,
-                height: Viewport.height * 0.65,
-                gap: 20,
+                height: Viewport.height * 0.6,
+                paddingBottom: Viewport.height * 0.03,
                 borderRadius: 10,
+                gap: 20,
               },
               Styles.flexColumn,
             ]}
           >
             {isFirstFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  alignItems: "center",
-                  gap: 20,
-                }}
-              >
-                <View style={{}}>
+              <>
+                <ScrollView>
                   <Text
                     style={{
                       fontSize: FontSizes.normal,
-
+                      marginTop: Viewport.height * 0.02,
                       fontWeight: "bold",
+                      textAlign: "center",
                     }}
                   >
-                    What's your name and office/dept?
+                    Request Form
                   </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
+                  {isTextErrorShow && (
+                    <Text
+                      style={{ color: "#F30F0F", fontSize: FontSizes.small }}
+                    >
+                      Please fill-out the fields!
+                    </Text>
+                  )}
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
                   >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the fields!
-                  </Text>
-                )}
-
-                <InputField2
-                  value={requestFormData.requester_name}
-                  onChangeText={(text) =>
-                    setRequestFormatData({
-                      ...requestFormData,
-                      requester_name: text,
-                    })
-                  }
-                  placeholderText="Requester's name"
-                  capitalizeWords={true}
-                />
-                <Dropdown
-                  showBG
-                  menuAdjusted
-                  showText
-                  text={selectedOffice}
-                  onCategoryChange={handleOfficeChange}
-                  options={["CITC", "COT", "CEA", "CSM", "CSTE", "SHS"]}
-                />
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Requester's name:{" "}
+                      </Text>
+                      {lastName}, {firstName} {middleName}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>Office: {""}</Text>
+                      {office}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Travel date: {""}
+                      </Text>
+                      {formatDate(tripData.travel_date)}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Travel time: {""}
+                      </Text>
+                      {formatTime(tripData.travel_time)}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Return date: {""}
+                      </Text>
+                      {formatDate(tripData.return_date)}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Return time: {""}
+                      </Text>
+                      {formatTime(tripData.return_time)}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>Vehicle: {""}</Text>
+                      {selectedVehicle?.plate_number} {selectedVehicle?.model}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Destination: {""}
+                      </Text>
+                      {addressData.destination}
+                    </Text>
+                  </View>
+                </ScrollView>
                 <View style={[{ gap: 60, marginTop: 20 }, Styles.flexRow]}>
                   <Button
                     onPress={() => handleButtonPress("Close")}
@@ -442,7 +541,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     text="Next"
                   />
                 </View>
-              </View>
+              </>
             )}
             {isSecondFormShow && (
               <View
@@ -470,7 +569,8 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
+                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
+                    {selectedVehicle?.model}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -549,7 +649,8 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
+                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
+                    {selectedVehicle?.model}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -646,7 +747,8 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
+                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
+                    {selectedVehicle?.model}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -712,7 +814,8 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
+                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
+                    {selectedVehicle?.model}
                   </Text>
                 </View>
                 {isTextErrorShow && (
@@ -842,7 +945,8 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
+                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
+                    {selectedVehicle?.model}
                   </Text>
                 </View>
 
@@ -899,7 +1003,8 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
+                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
+                    {selectedVehicle?.model}
                   </Text>
                 </View>
 

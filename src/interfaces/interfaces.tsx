@@ -102,11 +102,13 @@ export interface ModalProps {
   content?: string;
   footer?: string;
   onNextPressed?: () => void;
-  selectedVehicle?: Vehicle | undefined;
+  selectedVehicle?: any | undefined;
   adjustedSize?: boolean;
   showHeader?: boolean;
   showContent?: boolean;
   showFooter?: boolean;
+  tripData?: any;
+  addressData?: any;
 }
 export interface CalendarData {
   key: string;

@@ -1143,6 +1143,8 @@ export default function Requester() {
         transparent={true}
         onRequestClose={handleRequestFormClose}
         selectedVehicle={selectedVehicle}
+        tripData={tripData}
+        addressData={addressData}
       />
       <PromptDialog
         animationType="fade"
