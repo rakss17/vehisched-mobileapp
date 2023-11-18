@@ -220,7 +220,7 @@ export async function handlePlaceSelect(
   place: any,
   travel_date: any,
   travel_time: any,
-  setData: (data: any) => void,
+  setTripData: (data: any) => void,
   setAddressData: (addressData: any) => void,
   category: any
 ) {
@@ -232,6 +232,7 @@ export async function handlePlaceSelect(
         travel_time: travel_time,
       },
     });
+
     if (category === "Round Trip") {
       const distanceString = response.data.distance;
       const distance = parseFloat(distanceString);
@@ -259,7 +260,7 @@ export async function handlePlaceSelect(
     ) {
       const [return_date, return_time] =
         response.data.estimated_return_time.split("T");
-      setData((prevData: any) => ({
+      setTripData((prevData: any) => ({
         ...prevData,
         return_date: return_date,
         return_time: return_time,
@@ -322,5 +323,55 @@ export async function fetchRequestAPI(
     })
     .catch((error) => {
       console.error("Error fetching request list:", error);
+    });
+}
+
+export async function checkVehicleAvailability(
+  setVehicles: any,
+  preferred_start_travel_date: any,
+  preferred_start_travel_time: any,
+  preferred_end_travel_date: any,
+  preferred_end_travel_time: any,
+  preferred_capacity: any,
+  // setLoadingBarProgress: any,
+  setSelectedCategory: any
+) {
+  const token = await AsyncStorage.getItem("token");
+  api
+    .get("/api/v1/trip/check-vehicle-availability/", {
+      params: {
+        preferred_start_travel_date: preferred_start_travel_date,
+        preferred_start_travel_time: preferred_start_travel_time,
+        preferred_end_travel_date: preferred_end_travel_date,
+        preferred_end_travel_time: preferred_end_travel_time,
+        preferred_capacity: preferred_capacity,
+      },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      // setLoadingBarProgress(50);
+      setVehicles(response.data);
+      // setLoadingBarProgress(100);
+      setSelectedCategory("Available Vehicle");
+    })
+    .catch((error) => {
+      // if (error.response && error.response.data) {
+      //   setLoadingBarProgress(50);
+      //   setLoadingBarProgress(100);
+      //   const errorMessage = error.response.data.error || "An error occurred.";
+      //   toast.error(errorMessage, {
+      //     position: toast.POSITION.TOP_CENTER,
+      //     autoClose: false,
+      //   });
+      // } else {
+      //   toast.error("An unknown error occurred.", {
+      //     position: toast.POSITION.TOP_CENTER,
+      //     autoClose: false,
+      //   });
+      // }
+      // console.log("Error fetching vehicle list:", error);
     });
 }

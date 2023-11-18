@@ -26,14 +26,15 @@ export const AutoCompleteAddressGoogleStyle = StyleSheet.create({
   listView: {
     position: "absolute",
     top: 50,
-    zIndex: 10,
-    width: Viewport.width * 0.6,
+    zIndex: 99999,
+    width: Viewport.width * 0.8,
   },
   row: {
     backgroundColor: Colors.primaryColor2,
     padding: 13,
     height: "auto",
     flexDirection: "row",
-    width: Viewport.width * 0.6,
+    width: Viewport.width * 0.8,
+    zIndex: 99999,
   },
 });

@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  SafeAreaView,
-  Platform,
-  KeyboardAvoidingView,
+  RefreshControl,
 } from "react-native";
 import {
   BackgroundColor,
@@ -29,13 +27,18 @@ import DatePicker from "../../components/datepicker/datepicker";
 import TimePicker from "../../components/timepicker/timepicker";
 import AutoCompleteAddressGoogle from "../../components/autocompleteaddress/googleaddressinput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import {
+  checkVehicleAvailability,
+  serverSideUrl,
+} from "../../components/api/api";
+import { format, parse } from "date-fns";
 
 export default function Requester() {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
   const [isRequestFormVisible, setIsRequestFormVisible] = useState(false);
   const [isVehicleVip, setIsVehicleVip] = useState(false);
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(
+  const [selectedVehicle, setSelectedVehicle] = useState<any | undefined>(
     undefined
   );
   const [isAutocompleteEditable, setIsAutocompleteEditable] = useState(false);
@@ -43,18 +46,17 @@ export default function Requester() {
   const [selectedTravelCategory, setSelectedTravelCategory] = useState<
     string | null
   >("Round Trip");
-  const [selectedTravelType, setSelectedTravelType] = useState<string | null>(
-    ""
-  );
+  const [selectedTravelType, setSelectedTravelType] = useState<string | null>();
   const [errorMessages, setErrorMessages] = useState<any[]>([]);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
     travel_time: "",
     return_date: "",
     return_time: "",
-    capacity: 0,
-    category: "",
+    capacity: null,
+    category: "Round Trip",
   });
+  const [isTravelDateSelected, setIsTravelDateSelected] = useState(true);
   const [addressData, setAddressData] = useState<any>({
     destination: "",
     distance: null,
@@ -68,6 +70,39 @@ export default function Requester() {
     minutes: null,
     period: null,
   });
+  const [datePickerKeyFrom, setDatePickerKeyFrom] = useState(0);
+  const [datePickerKeyTo, setDatePickerKeyTo] = useState(1);
+  const [timePickerKeyFrom, setTimePickerKeyFrom] = useState(2);
+  const [timePickerKeyTo, setTimePickerKeyTo] = useState(3);
+  const [datePickerKeyFromOneWay, setDatePickerKeyFromOneWay] = useState(4);
+  const [datePickerKeyToOneWay, setDatePickerKeyToOneWay] = useState(5);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      setErrorMessages([]);
+      setDatePickerKeyFrom((prevKey) => prevKey + 1);
+      setDatePickerKeyTo((prevKey) => prevKey + 1);
+      setTimePickerKeyFrom((prevKey) => prevKey + 1);
+      setTimePickerKeyTo((prevKey) => prevKey + 1);
+      setDatePickerKeyFromOneWay((prevKey) => prevKey + 1);
+      setDatePickerKeyToOneWay((prevKey) => prevKey + 1);
+      setIsAutocompleteEditable(false);
+      setIsTravelDateSelected(true);
+      setSelectedTravelCategory("Round Trip");
+      setTripData({
+        travel_date: "",
+        travel_time: "",
+        return_date: "",
+        return_time: "",
+        capacity: null,
+        category: "Round Trip",
+      });
+    }, 1000);
+  }, []);
+
   useEffect(() => {
     setSelectedCategory("Set Trip");
   }, []);
@@ -76,19 +111,41 @@ export default function Requester() {
   //     setSelectedCategory("Set Trip");
   //   }, [])
   // );
+  const checkAutocompleteDisability = () => {
+    if (tripData.travel_date !== "" && tripData.travel_time !== "") {
+      setIsAutocompleteEditable(true);
+      setIsTravelDateSelected(false);
+    }
+  };
+
   const handleFromDateSelected = (selectedDate: Date) => {
-    const formattedDate = selectedDate.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
+    // const formattedDate = selectedDate.toLocaleDateString(undefined, {
+    //   year: "numeric",
+    //   month: "2-digit",
+    //   day: "2-digit",
+    // });
+    const formattedDate = selectedDate
+      ? format(selectedDate, "yyyy-MM-dd")
+      : null;
     setTripData((prevData: any) => ({
       ...prevData,
       travel_date: formattedDate,
     }));
-    const updatedErrors = { ...errorMessages };
-    delete updatedErrors[0]?.travelDateError;
-    setErrorMessages(updatedErrors);
+    if (tripData.category === "Round Trip") {
+      const updatedErrors = { ...errorMessages };
+      delete updatedErrors[0]?.travelDateError;
+      setErrorMessages(updatedErrors);
+      checkAutocompleteDisability();
+    } else if (
+      tripData.category === "One-way" ||
+      tripData.category === "One-way - Fetch" ||
+      tripData.category === "One-way - Drop"
+    ) {
+      const updatedErrors = { ...errorMessages };
+      delete updatedErrors[0]?.travelDateOnewayError;
+      setErrorMessages(updatedErrors);
+      checkAutocompleteDisability();
+    }
   };
 
   const handleFromTimeSelected = (
@@ -101,22 +158,39 @@ export default function Requester() {
     };
     const formattedHours = formatNumberToTwoDigits(hours);
     const formattedMinutes = formatNumberToTwoDigits(minutes);
+    const combinedFormatted = `${formattedHours}:${formattedMinutes} ${period}`;
+    const date = parse(combinedFormatted, "hh:mm aa", new Date());
 
+    const formatted24Hour = format(date, "HH:mm");
+    checkAutocompleteDisability();
     setTripData((prevData: any) => ({
       ...prevData,
-      travel_time: `${formattedHours}:${formattedMinutes} ${period}`,
+      travel_time: formatted24Hour,
     }));
-    const updatedErrors = { ...errorMessages };
-    delete updatedErrors[0]?.travelTimeError;
-    setErrorMessages(updatedErrors);
+    if (tripData.category === "Round Trip") {
+      const updatedErrors = { ...errorMessages };
+      delete updatedErrors[0]?.travelTimeError;
+      setErrorMessages(updatedErrors);
+    } else if (
+      tripData.category === "One-way" ||
+      tripData.category === "One-way - Fetch" ||
+      tripData.category === "One-way - Drop"
+    ) {
+      const updatedErrors = { ...errorMessages };
+      delete updatedErrors[0]?.travelTimeOnewayError;
+      setErrorMessages(updatedErrors);
+    }
   };
 
   const handleToDateSelected = (selectedDate: Date) => {
-    const formattedDate = selectedDate.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
+    // const formattedDate = selectedDate.toLocaleDateString(undefined, {
+    //   year: "numeric",
+    //   month: "2-digit",
+    //   day: "2-digit",
+    // });
+    const formattedDate = selectedDate
+      ? format(selectedDate, "yyyy-MM-dd")
+      : null;
     setTripData((prevData: any) => ({
       ...prevData,
       return_date: formattedDate,
@@ -136,23 +210,19 @@ export default function Requester() {
     };
     const formattedHours = formatNumberToTwoDigits(hours);
     const formattedMinutes = formatNumberToTwoDigits(minutes);
+    const combinedFormatted = `${formattedHours}:${formattedMinutes} ${period}`;
+    const date = parse(combinedFormatted, "hh:mm aa", new Date());
+
+    const formatted24Hour = format(date, "HH:mm");
 
     setTripData((prevData: any) => ({
       ...prevData,
-      return_time: `${formattedHours}:${formattedMinutes} ${period}`,
+      return_time: formatted24Hour,
     }));
     const updatedErrors = { ...errorMessages };
     delete updatedErrors[0]?.returnTimeError;
     setErrorMessages(updatedErrors);
   };
-
-  const fetchedVehicleList = () => {
-    setVehicles(vehiclesMockData);
-  };
-
-  useEffect(() => {
-    fetchedVehicleList();
-  }, []);
 
   const handleSetTrip = () => {
     let validationErrors: { [key: string]: string } = {};
@@ -221,7 +291,7 @@ export default function Requester() {
           tripData.category !== "One-way - Fetch" &&
           tripData.category !== "One-way - Drop"
         ) {
-          validationErrors.categoryError = "This field is required";
+          validationErrors.categoryError = "Please select a travel type";
         }
 
         if (!addressData.destination) {
@@ -233,7 +303,21 @@ export default function Requester() {
     const errorArray = [validationErrors];
 
     setErrorMessages(errorArray);
-    console.log(tripData);
+    if (Object.keys(validationErrors).length === 0) {
+      checkVehicleAvailability(
+        setVehicles,
+        tripData.travel_date,
+        tripData.travel_time,
+        tripData.return_date,
+        tripData.return_time,
+        tripData.capacity,
+        setSelectedCategory
+      );
+      console.log("sulod", tripData);
+      console.log("sulod", addressData);
+    }
+    console.log("gawas", tripData);
+    console.log("gawas", addressData);
   };
 
   const handleSetTripClose = () => {
@@ -364,16 +448,23 @@ export default function Requester() {
                   width: Viewport.width * 1.0,
                   height: Viewport.height * 1.0,
                 }}
+                keyboardShouldPersistTaps="handled"
                 scrollEnabled={true}
                 enableAutomaticScroll={true}
                 enableOnAndroid={true}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
               >
                 <View
                   style={[
                     {
                       backgroundColor: Colors.secondaryColor1,
 
-                      gap: 20,
+                      gap: 10,
                       paddingTop: Viewport.height * 0.01,
                       marginBottom: Viewport.height * 0.0,
                       paddingBottom: Viewport.height * 0.1,
@@ -381,6 +472,11 @@ export default function Requester() {
                     Styles.flexColumn,
                   ]}
                 >
+                  {errorMessages[0]?.all && (
+                    <Text style={Styles.textError}>
+                      {errorMessages[0]?.all}
+                    </Text>
+                  )}
                   <View style={[{ gap: 20 }, Styles.flexRow]}>
                     <Text
                       style={{
@@ -402,6 +498,21 @@ export default function Requester() {
                               category: "Round Trip",
                             });
                             setSelectedTravelCategory("Round Trip");
+                            setSelectedTravelType("");
+                            const updatedErrors = { ...errorMessages };
+                            delete updatedErrors[0];
+                            setErrorMessages(updatedErrors);
+                            setTripData({
+                              travel_date: null,
+                              travel_time: null,
+                              return_date: null,
+                              return_time: null,
+                              category: "Round Trip",
+                            });
+                            setAddressData({
+                              destination: "",
+                              distance: null,
+                            });
                           }}
                           style={{
                             width: Viewport.width * 0.26,
@@ -418,6 +529,21 @@ export default function Requester() {
                               category: "Round Trip",
                             });
                             setSelectedTravelCategory("Round Trip");
+                            setSelectedTravelType("");
+                            const updatedErrors = { ...errorMessages };
+                            delete updatedErrors[0];
+                            setErrorMessages(updatedErrors);
+                            setTripData({
+                              travel_date: null,
+                              travel_time: null,
+                              return_date: null,
+                              return_time: null,
+                              category: "Round Trip",
+                            });
+                            setAddressData({
+                              destination: "",
+                              distance: null,
+                            });
                           }}
                           style={{
                             width: Viewport.width * 0.26,
@@ -428,20 +554,34 @@ export default function Requester() {
                           transparentText
                         />
                       )}
-                      {selectedTravelCategory === "One Way" ? (
+                      {selectedTravelCategory === "One-way" ? (
                         <Button
                           onPress={() => {
                             setTripData({
                               ...tripData,
-                              category: "One Way",
+                              category: "One-way",
                             });
-                            setSelectedTravelCategory("One Way");
+                            setSelectedTravelCategory("One-way");
+                            const updatedErrors = { ...errorMessages };
+                            delete updatedErrors[0];
+                            setErrorMessages(updatedErrors);
+                            setTripData({
+                              travel_date: null,
+                              travel_time: null,
+                              return_date: null,
+                              return_time: null,
+                              category: "One-way",
+                            });
+                            setAddressData({
+                              destination: "",
+                              distance: null,
+                            });
                           }}
                           style={{
                             width: Viewport.width * 0.26,
                             height: Viewport.height * 0.055,
                           }}
-                          text="One Way"
+                          text="One-way"
                           defaultBG
                         />
                       ) : (
@@ -449,26 +589,43 @@ export default function Requester() {
                           onPress={() => {
                             setTripData({
                               ...tripData,
-                              category: "One Way",
+                              category: "One-way",
                             });
-                            setSelectedTravelCategory("One Way");
+                            setSelectedTravelCategory("One-way");
+                            const updatedErrors = { ...errorMessages };
+                            delete updatedErrors[0];
+                            setErrorMessages(updatedErrors);
+                            setTripData({
+                              travel_date: null,
+                              travel_time: null,
+                              return_date: null,
+                              return_time: null,
+                              category: "One-way",
+                            });
+                            setAddressData({
+                              destination: "",
+                              distance: null,
+                            });
                           }}
                           style={{
                             width: Viewport.width * 0.26,
                             height: Viewport.height * 0.055,
                           }}
-                          text="One Way"
+                          text="One-way"
                           transparentBG
                           transparentText
                         />
                       )}
                     </View>
                   </View>
+
                   {selectedTravelCategory === "Round Trip" && (
                     <>
                       <View
                         style={[
-                          { gap: 10, marginLeft: Viewport.width * 0.02 },
+                          {
+                            width: Viewport.width * 1,
+                          },
                           Styles.flexRow,
                         ]}
                       >
@@ -477,19 +634,46 @@ export default function Requester() {
                             fontSize: 18,
                             color: Colors.primaryColor1,
                             fontWeight: "bold",
+                            marginBottom: Viewport.height * 0.05,
+                            paddingLeft: Viewport.width * 0.02,
                           }}
                         >
                           Destination:{" "}
                         </Text>
-
-                        <AutoCompleteAddressGoogle
-                          setData={setTripData}
-                          setAddressData={setAddressData}
-                          isDisabled={isAutocompleteEditable}
-                        />
-                        <Text style={Styles.textError}>
-                          {errorMessages[0]?.destinationError}
-                        </Text>
+                        <View
+                          style={[
+                            {
+                              gap: 10,
+                              width: Viewport.width * 0.6,
+                            },
+                            Styles.flexColumn,
+                          ]}
+                        >
+                          <AutoCompleteAddressGoogle
+                            travel_date={tripData.travel_date}
+                            travel_time={tripData.travel_time}
+                            setData={setTripData}
+                            setAddressData={setAddressData}
+                            isDisabled={isAutocompleteEditable}
+                            category={tripData.category}
+                          />
+                          {isTravelDateSelected ? (
+                            <Text
+                              style={[
+                                { paddingLeft: Viewport.width * 0.08 },
+                                Styles.textError,
+                              ]}
+                            >
+                              Select travel date and time first
+                            </Text>
+                          ) : (
+                            <Text
+                              style={[{ paddingLeft: 30 }, Styles.textError]}
+                            >
+                              {errorMessages[0]?.destinationError}
+                            </Text>
+                          )}
+                        </View>
                       </View>
 
                       <View style={[{ gap: 30 }, Styles.flexRow]}>
@@ -505,6 +689,7 @@ export default function Requester() {
                         </Text>
                         <View style={[{ gap: 10 }, Styles.flexColumn]}>
                           <DatePicker
+                            key={datePickerKeyFrom}
                             button2
                             onDateSelected={handleFromDateSelected}
                           />
@@ -515,6 +700,7 @@ export default function Requester() {
                           )}
 
                           <TimePicker
+                            key={timePickerKeyFrom}
                             secondBG
                             onTimeSelected={handleFromTimeSelected}
                             selectedHours={selectedTime.hours}
@@ -542,6 +728,7 @@ export default function Requester() {
                         </Text>
                         <View style={[{ gap: 10 }, Styles.flexColumn]}>
                           <DatePicker
+                            key={datePickerKeyTo}
                             button2
                             onDateSelected={handleToDateSelected}
                           />
@@ -551,6 +738,7 @@ export default function Requester() {
                             </Text>
                           )}
                           <TimePicker
+                            key={timePickerKeyTo}
                             secondBG
                             onTimeSelected={handleToTimeSelected}
                             selectedHours={selectedTime.hours}
@@ -566,9 +754,14 @@ export default function Requester() {
                       </View>
                     </>
                   )}
-                  {selectedTravelCategory === "One Way" && (
+                  {selectedTravelCategory === "One-way" && (
                     <>
-                      <View style={[{ gap: 20 }, Styles.flexRow]}>
+                      <View
+                        style={[
+                          { gap: 20, justifyContent: "flex-start" },
+                          Styles.flexRow,
+                        ]}
+                      >
                         <Text
                           style={{
                             fontSize: 18,
@@ -579,106 +772,161 @@ export default function Requester() {
                         >
                           Type:{" "}
                         </Text>
-                        <View
-                          style={[
-                            { gap: 20, paddingRight: 10 },
-                            Styles.flexRow,
-                          ]}
-                        >
-                          {selectedTravelType === "Drop" ? (
-                            <Button
-                              onPress={() => {
-                                setTripData((prevData: any) => ({
-                                  ...prevData,
+                        <View style={[{ gap: 5 }, Styles.flexColumn]}>
+                          <View
+                            style={[
+                              { gap: 20, paddingRight: 10 },
+                              Styles.flexRow,
+                            ]}
+                          >
+                            {selectedTravelType === "Drop" ? (
+                              <Button
+                                onPress={() => {
+                                  setTripData((prevData: any) => ({
+                                    ...prevData,
 
-                                  category: "One Way - Drop",
-                                }));
-                                setSelectedTravelType("Drop");
-                              }}
-                              style={{
-                                width: Viewport.width * 0.26,
-                                height: Viewport.height * 0.055,
-                              }}
-                              text="Drop"
-                              defaultBG
-                            />
-                          ) : (
-                            <Button
-                              onPress={() => {
-                                setTripData((prevData: any) => ({
-                                  ...prevData,
+                                    category: "One-way - Drop",
+                                  }));
+                                  setSelectedTravelType("Drop");
+                                }}
+                                style={{
+                                  width: Viewport.width * 0.26,
+                                  height: Viewport.height * 0.055,
+                                }}
+                                text="Drop"
+                                defaultBG
+                              />
+                            ) : (
+                              <Button
+                                onPress={() => {
+                                  setTripData((prevData: any) => ({
+                                    ...prevData,
 
-                                  category: "One Way - Drop",
-                                }));
-                                setSelectedTravelType("Drop");
-                              }}
-                              style={{
-                                width: Viewport.width * 0.26,
-                                height: Viewport.height * 0.055,
-                              }}
-                              text="Drop"
-                              transparentBG
-                              transparentText
-                            />
-                          )}
-                          {selectedTravelType === "Fetch" ? (
-                            <Button
-                              onPress={() => {
-                                setTripData((prevData: any) => ({
-                                  ...prevData,
+                                    category: "One-way - Drop",
+                                  }));
+                                  setSelectedTravelType("Drop");
+                                }}
+                                style={{
+                                  width: Viewport.width * 0.26,
+                                  height: Viewport.height * 0.055,
+                                }}
+                                text="Drop"
+                                transparentBG
+                                transparentText
+                              />
+                            )}
+                            {selectedTravelType === "Fetch" ? (
+                              <Button
+                                onPress={() => {
+                                  setTripData((prevData: any) => ({
+                                    ...prevData,
 
-                                  category: "One Way - Fetch",
-                                }));
-                                setSelectedTravelType("Fetch");
-                              }}
-                              style={{
-                                width: Viewport.width * 0.26,
-                                height: Viewport.height * 0.055,
-                              }}
-                              text="Fetch"
-                              defaultBG
-                            />
-                          ) : (
-                            <Button
-                              onPress={() => {
-                                setTripData((prevData: any) => ({
-                                  ...prevData,
+                                    category: "One-way - Fetch",
+                                  }));
+                                  setSelectedTravelType("Fetch");
+                                }}
+                                style={{
+                                  width: Viewport.width * 0.26,
+                                  height: Viewport.height * 0.055,
+                                }}
+                                text="Fetch"
+                                defaultBG
+                              />
+                            ) : (
+                              <Button
+                                onPress={() => {
+                                  setTripData((prevData: any) => ({
+                                    ...prevData,
 
-                                  category: "One Way - Fetch",
-                                }));
-                                setSelectedTravelType("Fetch");
-                              }}
-                              style={{
-                                width: Viewport.width * 0.26,
-                                height: Viewport.height * 0.055,
-                              }}
-                              text="Fetch"
-                              transparentBG
-                              transparentText
-                            />
+                                    category: "One-way - Fetch",
+                                  }));
+                                  setSelectedTravelType("Fetch");
+                                }}
+                                style={{
+                                  width: Viewport.width * 0.26,
+                                  height: Viewport.height * 0.055,
+                                }}
+                                text="Fetch"
+                                transparentBG
+                                transparentText
+                              />
+                            )}
+                          </View>
+                          {errorMessages[0]?.categoryError && (
+                            <Text style={Styles.textError}>
+                              {errorMessages[0]?.categoryError}
+                            </Text>
                           )}
                         </View>
                       </View>
                       <View
                         style={[
-                          { gap: 10, marginLeft: Viewport.width * 0.02 },
+                          {
+                            width: Viewport.width * 1,
+                          },
                           Styles.flexRow,
                         ]}
                       >
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            color: Colors.primaryColor1,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Your Location:{" "}
-                        </Text>
+                        {selectedTravelType?.includes("Drop") ? (
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: Colors.primaryColor1,
+                              fontWeight: "bold",
+                              marginBottom: Viewport.height * 0.05,
+                              paddingLeft: Viewport.width * 0.02,
+                            }}
+                          >
+                            Destination:{" "}
+                          </Text>
+                        ) : (
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              color: Colors.primaryColor1,
+                              fontWeight: "bold",
+                              marginBottom: Viewport.height * 0.05,
+                              paddingLeft: Viewport.width * 0.01,
+                            }}
+                          >
+                            Your Location:{" "}
+                          </Text>
+                        )}
 
-                        <AutoCompleteAddressGoogle
-                          setData={setTripData}
-                          setAddressData={setAddressData}
-                        />
+                        <View
+                          style={[
+                            {
+                              gap: 10,
+                              width: Viewport.width * 0.6,
+                            },
+                            Styles.flexColumn,
+                          ]}
+                        >
+                          <AutoCompleteAddressGoogle
+                            travel_date={tripData.travel_date}
+                            travel_time={tripData.travel_time}
+                            setData={setTripData}
+                            setAddressData={setAddressData}
+                            isDisabled={isAutocompleteEditable}
+                            category={tripData.category}
+                          />
+                          {isTravelDateSelected ? (
+                            <Text
+                              style={[
+                                { paddingLeft: Viewport.width * 0.08 },
+                                Styles.textError,
+                              ]}
+                            >
+                              Select travel date and time first
+                            </Text>
+                          ) : (
+                            <Text
+                              style={[{ paddingLeft: 30 }, Styles.textError]}
+                            >
+                              {errorMessages[0]?.destinationError}
+                            </Text>
+                          )}
+                        </View>
                       </View>
                       <View style={[{ gap: 40 }, Styles.flexRow]}>
                         <Text
@@ -694,16 +942,28 @@ export default function Requester() {
                         </Text>
                         <View style={[{ gap: 10 }, Styles.flexColumn]}>
                           <DatePicker
+                            key={datePickerKeyFromOneWay}
                             button2
                             onDateSelected={handleFromDateSelected}
                           />
+                          {errorMessages[0]?.travelDateOnewayError && (
+                            <Text style={Styles.textError}>
+                              {errorMessages[0]?.travelDateOnewayError}
+                            </Text>
+                          )}
                           <TimePicker
+                            key={datePickerKeyToOneWay}
                             secondBG
                             onTimeSelected={handleFromTimeSelected}
                             selectedHours={selectedTime.hours}
                             selectedMinutes={selectedTime.minutes}
                             selectedPeriod={selectedTime.period}
                           />
+                          {errorMessages[0]?.travelTimeOnewayError && (
+                            <Text style={Styles.textError}>
+                              {errorMessages[0]?.travelTimeOnewayError}
+                            </Text>
+                          )}
                         </View>
                       </View>
                     </>
@@ -721,7 +981,7 @@ export default function Requester() {
                     <View style={Styles.flexColumn}>
                       <TextInput
                         keyboardType="numeric"
-                        value={tripData.capacity.toString()}
+                        value={tripData ? tripData.capacity : null}
                         style={{
                           backgroundColor: Colors.secondaryColor1,
                           width: Viewport.width * 0.2,
@@ -734,7 +994,7 @@ export default function Requester() {
                         onChangeText={(text) => {
                           setTripData({
                             ...tripData,
-                            capacity: parseInt(text, 10) || 0,
+                            capacity: text,
                           });
                           if (text) {
                             const updatedErrors = { ...errorMessages };
@@ -769,10 +1029,10 @@ export default function Requester() {
                 {vehicles.length === 0 ? (
                   <Text>No vehicles available</Text>
                 ) : (
-                  vehicles.map((vehicle) => (
+                  vehicles.map((vehicle, index) => (
                     <TouchableOpacity
                       onPress={() => handleRequestFormVisible(vehicle)}
-                      key={vehicle.id}
+                      key={index}
                       style={[
                         {
                           width: Viewport.width * 0.95,
@@ -801,7 +1061,7 @@ export default function Requester() {
                             fontSize: FontSizes.normal,
                           }}
                         >
-                          {vehicle.vehicle_name}
+                          {vehicle.plate_number} {vehicle.model}
                         </Text>
                         <View>
                           <Text
@@ -818,7 +1078,7 @@ export default function Requester() {
                               textAlign: "left",
                             }}
                           >
-                            Type: {vehicle.vehicle_type}
+                            Type: {vehicle.type}
                           </Text>
                         </View>
                       </View>
@@ -828,7 +1088,7 @@ export default function Requester() {
                           height: Viewport.height * 0.15,
                         }}
                         resizeMode="cover"
-                        source={vehicle.vehicle_image}
+                        source={{ uri: serverSideUrl + vehicle.image }}
                       />
                     </TouchableOpacity>
                   ))
