@@ -213,7 +213,7 @@ export default function Request() {
         }
       >
         {requestData.length === 0 ? (
-          <Text style={styles.noText}>No vehicles available</Text>
+          <Text style={styles.noText}>No request found</Text>
         ) : (
           requestData.map((request, index) => (
             <View key={index} style={styles.tableRow}>

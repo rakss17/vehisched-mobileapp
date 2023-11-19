@@ -88,6 +88,7 @@ export default function Requester() {
     setTimeout(() => {
       setRefreshing(false);
       setErrorMessages([]);
+      setVehicles([]);
       if (tripData.category === "Round Trip") {
         setDatePickerKeyFrom((prevKey) => prevKey + 1);
         setDatePickerKeyTo((prevKey) => prevKey + 1);
@@ -115,6 +116,10 @@ export default function Requester() {
         return_time: "",
         capacity: null,
         category: "Round Trip",
+      });
+      setAddressData({
+        destination: "",
+        distance: null,
       });
     }, 1000);
   }, []);
@@ -323,6 +328,7 @@ export default function Requester() {
         setSelectedCategory
       );
     }
+    console.log(tripData);
   };
 
   const handleSetTripClose = () => {
@@ -1162,6 +1168,11 @@ export default function Requester() {
         selectedVehicle={selectedVehicle}
         tripData={tripData}
         addressData={addressData}
+        setVehicles={setVehicles}
+        setTripData={setTripData}
+        setAddressData={setAddressData}
+        setSelectedTravelCategory={setSelectedTravelCategory}
+        setSelectedTravelType={setSelectedTravelType}
       />
       <PromptDialog
         animationType="fade"

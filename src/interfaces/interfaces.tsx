@@ -109,6 +109,11 @@ export interface ModalProps {
   showFooter?: boolean;
   tripData?: any;
   addressData?: any;
+  setVehicles?: React.Dispatch<React.SetStateAction<any[]>>;
+  setTripData?: React.Dispatch<React.SetStateAction<any[]>>;
+  setAddressData?: React.Dispatch<React.SetStateAction<any[]>>;
+  setSelectedTravelCategory?: React.Dispatch<React.SetStateAction<any>>;
+  setSelectedTravelType?: React.Dispatch<React.SetStateAction<any>>;
 }
 export interface CalendarData {
   key: string;

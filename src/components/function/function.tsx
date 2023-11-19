@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AppState, BackHandler } from "react-native";
+import { parse, format } from "date-fns";
 
 export const useAppState = (fetchAPI: Function, setAPIData: Function) => {
   useEffect(() => {
@@ -33,6 +34,19 @@ export const useAppState = (fetchAPI: Function, setAPIData: Function) => {
       fetchAPI(setAPIData);
     }
   };
+};
+
+export const format12to24HourFormat = (timeString: any) => {
+  if (timeString) {
+    if (timeString.split(":").length < 3) {
+      const time = parse(timeString, "hh:mm aa", new Date());
+      return format(time, "HH:mm");
+    } else {
+      return timeString;
+    }
+  } else {
+    return "";
+  }
 };
 
 export const formatTime = (timeString: any) => {

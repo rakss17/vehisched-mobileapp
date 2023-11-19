@@ -123,6 +123,19 @@ const RequestDetails: React.FC<ModalProps & { requestData: any | null }> = ({
                   ]}
                 >
                   <Text style={{ fontSize: FontSizes.small }}>
+                    <Text style={{ fontWeight: "bold" }}>Distance: </Text>
+                    {requestData?.distance} km
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    {
+                      width: Viewport.width * 0.75,
+                    },
+                    Styles.flexRow,
+                  ]}
+                >
+                  <Text style={{ fontSize: FontSizes.small }}>
                     <Text style={{ fontWeight: "bold" }}>
                       No. of passenger{"("}s{")"}:{" "}
                     </Text>
@@ -168,6 +181,32 @@ const RequestDetails: React.FC<ModalProps & { requestData: any | null }> = ({
                 >
                   <Text style={{ fontSize: FontSizes.small }}>
                     <Text style={{ fontWeight: "bold" }}>Travel time: </Text>
+                    {formatTime(requestData?.travel_time)}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    {
+                      width: Viewport.width * 0.75,
+                    },
+                    Styles.flexRow,
+                  ]}
+                >
+                  <Text style={{ fontSize: FontSizes.small }}>
+                    <Text style={{ fontWeight: "bold" }}>Return date: </Text>
+                    {formatDate(requestData?.return_date)}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    {
+                      width: Viewport.width * 0.75,
+                    },
+                    Styles.flexRow,
+                  ]}
+                >
+                  <Text style={{ fontSize: FontSizes.small }}>
+                    <Text style={{ fontWeight: "bold" }}>Return time: </Text>
                     {formatTime(requestData?.return_time)}
                   </Text>
                 </View>

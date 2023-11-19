@@ -408,3 +408,77 @@ export async function checkVehicleAvailability(
       // console.log("Error fetching vehicle list:", error);
     });
 }
+
+export async function postRequestFromAPI(
+  data: any,
+  setIsConfirmationShow: any,
+  setRequestFormData: any,
+  setVehicles: any,
+  setTripData: any,
+  setAddressData: any,
+  setSelectedTravelCategory: any,
+  setSelectedTravelType: any
+) {
+  const token = await AsyncStorage.getItem("token");
+  const requestData = {
+    ...data,
+    passenger_name: JSON.stringify(data.passenger_name),
+  };
+  api
+    .post("api/v1/request/fetch-post/", requestData, {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      setIsConfirmationShow(true);
+      setRequestFormData({
+        requester_name: "",
+        office: "",
+        number_of_passenger: null,
+        passenger_name: [],
+        destination: "",
+        distance: "",
+        travel_date: "",
+        travel_time: "",
+        return_date: "",
+        return_time: "",
+        purpose: "",
+        vehicle: "",
+        type: "",
+      });
+      setVehicles([]);
+      setTripData({
+        travel_date: "",
+        travel_time: "",
+        return_date: "",
+        return_time: "",
+        capacity: null,
+        category: "Round Trip",
+      });
+      setAddressData({
+        destination: "",
+        distance: null,
+      });
+      setSelectedTravelCategory("Round Trip");
+      setSelectedTravelType("");
+    })
+    .catch((error) => {
+      console.log(error.response);
+      // if (error.response && error.response.data) {
+      //   setLoadingBarProgress(50);
+      //   setLoadingBarProgress(100);
+      //   const errorMessage = error.response.data.error || "An error occurred.";
+      //   toast.error(errorMessage, {
+      //     position: toast.POSITION.TOP_CENTER,
+      //     autoClose: false,
+      //   });
+      // } else {
+      //   toast.error("An unknown error occurred.", {
+      //     position: toast.POSITION.TOP_CENTER,
+      //     autoClose: false,
+      //   });
+      // }
+    });
+}

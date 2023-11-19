@@ -19,8 +19,13 @@ import DownloadButton from "../buttons/download";
 import Confirmation from "./confirmation";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { formatDate, formatTime } from "../function/function";
+import {
+  format12to24HourFormat,
+  formatDate,
+  formatTime,
+} from "../function/function";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { postRequestFromAPI } from "../api/api";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -30,35 +35,21 @@ const RequestForm: React.FC<ModalProps> = ({
   selectedVehicle,
   tripData,
   addressData,
+  setVehicles,
+  setTripData,
+  setAddressData,
+  setSelectedTravelCategory,
+  setSelectedTravelType,
 }) => {
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
     Array(numberOfPassengers).fill("")
   );
-  const [distanceToUSTPFormatted, setDistanceToUSTPFormatted] =
-    useState<any>("");
-  const [selectedOffice, setSelectedOffice] = useState("Select office/dept");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<{
-    hours: number | null;
-    minutes: number | null;
-    period: string | null;
-  }>({
-    hours: null,
-    minutes: null,
-    period: null,
-  });
 
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
   const [isThirdFormShow, setIsThirdFormShow] = useState(false);
   const [showTextNote, setShowTextNote] = useState(false);
-  const [isFourthFormShow, setIsFourthFormShow] = useState(false);
-  const [isFifthFormShow, setIsFifthFormShow] = useState(false);
-  const [isUrgentYes, setIsUrgentYes] = useState(false);
-  const [isUrgentNo, setIsUrgentNo] = useState(false);
-  const [isSixthFormShow, setIsSixthFormShow] = useState(false);
-  const [isSeventhFormShow, setIsSeventhFormShow] = useState(false);
   const [isTextErrorShow, setIsTextErrorShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [exceedsCapacity, setExceedsCapacity] = useState(false);
@@ -71,20 +62,27 @@ const RequestForm: React.FC<ModalProps> = ({
   const userID = personalInfo?.id;
   const office = personalInfo?.office;
 
-  const [requestFormData, setRequestFormatData] = useState<any>({
-    requester_name: userID,
-    office: office,
+  const convertTravel12to24HourConverted = format12to24HourFormat(
+    tripData.travel_time
+  );
+  const convertReturn12to24HourConverted = format12to24HourFormat(
+    tripData.return_time
+  );
+
+  const [requestFormData, setRequestFormData] = useState<any>({
+    requester_name: "",
+    office: "",
     number_of_passenger: null,
     passenger_name: [],
-    destination: addressData.destination,
-    distance: addressData.distance,
-    travel_date: tripData.travel_date,
-    travel_time: tripData.travel_time,
-    return_date: tripData.return_date,
-    return_time: tripData.return_time,
+    destination: "",
+    distance: "",
+    travel_date: "",
+    travel_time: "",
+    return_date: "",
+    return_time: "",
     purpose: "",
-    vehicle: selectedVehicle?.plate_number,
-    type: tripData.category,
+    vehicle: "",
+    type: "",
   });
 
   const isCurrentStepValid = () => {
@@ -111,10 +109,19 @@ const RequestForm: React.FC<ModalProps> = ({
     ) {
       return;
     }
-    // setRequestFormatData((prevData: any) => ({
-    //   ...prevData,
-    //   vehicle: selectedVehicle?.vehicle_name,
-    // }));
+    setRequestFormData((prevData: any) => ({
+      ...prevData,
+      requester_name: userID,
+      office: office,
+      vehicle: selectedVehicle?.plate_number,
+      travel_date: tripData.travel_date,
+      return_date: tripData.return_date,
+      travel_time: convertTravel12to24HourConverted,
+      return_time: convertReturn12to24HourConverted,
+      type: tripData.category,
+      destination: addressData.destination,
+      distance: addressData.distance,
+    }));
     switch (form) {
       case "Close":
         setIsTextErrorShow(false);
@@ -135,30 +142,21 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsThirdFormShow(false);
         break;
       case "Submit":
-        setRequestFormatData({
-          requester_name: "",
-          office_dept: "",
-          number_of_passenger: 0,
-          passenger_name: [],
-          destination: "",
-          date: "",
-          time: "",
-          purpose: "",
-          urgent: false,
-          vehicle: "",
-        });
-        setSelectedDate(null);
-        setSelectedTime({
-          hours: null,
-          minutes: null,
-          period: null,
-        });
+        postRequestFromAPI(
+          requestFormData,
+          setIsConfirmationShow,
+          setRequestFormData,
+          setVehicles,
+          setTripData,
+          setAddressData,
+          setSelectedTravelCategory,
+          setSelectedTravelType
+        );
         setShowTextNote(false);
         setNumberOfPassengers(0);
         setPassengerData([]);
         setIsFirstFormShow(true);
         onRequestClose();
-        setIsConfirmationShow(true);
         setIsSecondFormShow(false);
 
         console.log(requestFormData);
@@ -175,7 +173,7 @@ const RequestForm: React.FC<ModalProps> = ({
     updatedPassengerData[index] = value;
     setPassengerData(updatedPassengerData);
 
-    setRequestFormatData((prevData: any) => ({
+    setRequestFormData((prevData: any) => ({
       ...prevData,
       passenger_name: updatedPassengerData,
     }));
@@ -191,7 +189,7 @@ const RequestForm: React.FC<ModalProps> = ({
     ) {
       setNumberOfPassengers(parsedNumber);
       setPassengerData(Array(parsedNumber).fill(""));
-      setRequestFormatData((prevData: any) => ({
+      setRequestFormData((prevData: any) => ({
         ...prevData,
         number_of_passenger: parsedNumber,
       }));
@@ -199,7 +197,7 @@ const RequestForm: React.FC<ModalProps> = ({
     } else {
       setNumberOfPassengers(0);
       setPassengerData([]);
-      setRequestFormatData((prevData: any) => ({
+      setRequestFormData((prevData: any) => ({
         ...prevData,
         number_of_passenger: 0,
       }));
@@ -275,7 +273,7 @@ const RequestForm: React.FC<ModalProps> = ({
                       value={requestFormData.purpose}
                       adjustedWidth
                       onChangeText={(text) =>
-                        setRequestFormatData({
+                        setRequestFormData({
                           ...requestFormData,
                           purpose: text,
                         })
@@ -295,7 +293,11 @@ const RequestForm: React.FC<ModalProps> = ({
                     Maximum vehicle capacity: {selectedVehicle?.capacity}
                   </Text>
                   <InputField2
-                    value={requestFormData.number_of_passenger}
+                    value={
+                      requestFormData
+                        ? requestFormData.number_of_passenger
+                        : null
+                    }
                     keyboardType="numeric"
                     onChangeText={handleNumberOfPassengersChange}
                     placeholderText="No. of passenger(s)"
