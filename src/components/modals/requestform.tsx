@@ -20,6 +20,7 @@ import Confirmation from "./confirmation";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { formatDate, formatTime } from "../function/function";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -73,74 +74,29 @@ const RequestForm: React.FC<ModalProps> = ({
   const [requestFormData, setRequestFormatData] = useState<any>({
     requester_name: userID,
     office: office,
-    number_of_passenger: 0,
+    number_of_passenger: null,
     passenger_name: [],
-    destination: "",
-    date: "",
-    time: "",
+    destination: addressData.destination,
+    distance: addressData.distance,
+    travel_date: tripData.travel_date,
+    travel_time: tripData.travel_time,
+    return_date: tripData.return_date,
+    return_time: tripData.return_time,
     purpose: "",
-    urgent: false,
-    vehicle: "",
+    vehicle: selectedVehicle?.plate_number,
+    type: tripData.category,
   });
 
-  const handleDistanceCalculated = (distance: any) => {
-    setDistanceToUSTPFormatted(distance);
-    if (distance > 50) {
-      setShowTextNote(true);
-    } else if (distance < 50) {
-      setShowTextNote(false);
-    }
-  };
-
-  const handleAddressCalculated = (address: string) => {
-    setRequestFormatData((prevData: any) => ({
-      ...prevData,
-      destination: address,
-    }));
-  };
-
-  const handleOfficeChange = (selectedOption: string) => {
-    setSelectedOffice(selectedOption);
-    setRequestFormatData((prevData: any) => ({
-      ...prevData,
-      office_dept: selectedOption,
-    }));
-  };
   const isCurrentStepValid = () => {
     if (isFirstFormShow) {
-      if (!requestFormData.requester_name || !requestFormData.office_dept) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isSecondFormShow) {
       if (
+        !requestFormData.purpose ||
         !requestFormData.number_of_passenger ||
         !passengerData.every((passenger) => passenger.trim() !== "")
       ) {
         setIsTextErrorShow(true);
         return false;
       }
-    } else if (isThirdFormShow) {
-      if (!requestFormData.destination) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isFourthFormShow) {
-      if (!requestFormData.time || !requestFormData.date) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isFifthFormShow) {
-      if (!requestFormData.purpose) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-      if (!isUrgentYes && !isUrgentNo) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isSixthFormShow || isSeventhFormShow) {
-      // Add any additional validation logic for these steps
     }
 
     return true;
@@ -151,17 +107,14 @@ const RequestForm: React.FC<ModalProps> = ({
       form !== "Close" &&
       form !== "First" &&
       form !== "SecondBack" &&
-      form !== "ThirdBack" &&
-      form !== "FourthBack" &&
-      form !== "FifthBack" &&
       !isCurrentStepValid()
     ) {
       return;
     }
-    setRequestFormatData((prevData: any) => ({
-      ...prevData,
-      vehicle: selectedVehicle?.vehicle_name,
-    }));
+    // setRequestFormatData((prevData: any) => ({
+    //   ...prevData,
+    //   vehicle: selectedVehicle?.vehicle_name,
+    // }));
     switch (form) {
       case "Close":
         setIsTextErrorShow(false);
@@ -180,61 +133,6 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
         setIsThirdFormShow(false);
-        break;
-      case "Third":
-        setIsSecondFormShow(false);
-        setIsThirdFormShow(true);
-        setIsFourthFormShow(false);
-        break;
-      case "ThirdBack":
-        setIsSecondFormShow(false);
-        setIsThirdFormShow(true);
-        setIsFourthFormShow(false);
-        break;
-      case "Fourth":
-        setIsThirdFormShow(false);
-        setIsFourthFormShow(true);
-        setIsFifthFormShow(false);
-        break;
-      case "FourthBack":
-        setIsThirdFormShow(false);
-        setIsFourthFormShow(true);
-        setIsFifthFormShow(false);
-        break;
-      case "Fifth":
-        setIsFourthFormShow(false);
-        setIsFifthFormShow(true);
-        setIsSixthFormShow(false);
-        setIsSeventhFormShow(false);
-        break;
-      case "FifthBack":
-        setIsFourthFormShow(false);
-        setIsFifthFormShow(true);
-        setIsSixthFormShow(false);
-        setIsSeventhFormShow(false);
-        break;
-      case "Sixth":
-        setIsFifthFormShow(false);
-        if (distanceToUSTPFormatted > 50) {
-          setIsSixthFormShow(true);
-          setIsSeventhFormShow(false);
-        } else if (distanceToUSTPFormatted < 50) {
-          setIsSixthFormShow(false);
-          setIsSeventhFormShow(true);
-        }
-        break;
-      case "SeventhBack":
-        if (distanceToUSTPFormatted < 50) {
-          setIsFifthFormShow(true);
-          setIsSeventhFormShow(false);
-        } else if (distanceToUSTPFormatted > 50) {
-          setIsSixthFormShow(true);
-          setIsSeventhFormShow(false);
-        }
-        break;
-      case "Seventh":
-        setIsSixthFormShow(false);
-        setIsSeventhFormShow(true);
         break;
       case "Submit":
         setRequestFormatData({
@@ -256,14 +154,12 @@ const RequestForm: React.FC<ModalProps> = ({
           period: null,
         });
         setShowTextNote(false);
-        setDistanceToUSTPFormatted("");
-        setSelectedOffice("Select office/dept");
         setNumberOfPassengers(0);
         setPassengerData([]);
-        setIsSeventhFormShow(false);
         setIsFirstFormShow(true);
         onRequestClose();
         setIsConfirmationShow(true);
+        setIsSecondFormShow(false);
 
         console.log(requestFormData);
 
@@ -311,51 +207,6 @@ const RequestForm: React.FC<ModalProps> = ({
     }
   };
 
-  const handleToDateSelected = (selectedDate: Date) => {
-    const formattedDate = selectedDate.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    setRequestFormatData((prevData: any) => ({
-      ...prevData,
-      date: formattedDate,
-    }));
-    setSelectedDate(selectedDate);
-  };
-
-  const handleTimeSelected = (
-    hours: number,
-    minutes: number,
-    period: string
-  ) => {
-    const formatNumberToTwoDigits = (number: number) => {
-      return number < 10 ? `0${number}` : `${number}`;
-    };
-    const formattedHours = formatNumberToTwoDigits(hours);
-    const formattedMinutes = formatNumberToTwoDigits(minutes);
-
-    setRequestFormatData((prevData: any) => ({
-      ...prevData,
-      time: `${formattedHours}:${formattedMinutes} ${period}`,
-    }));
-    setSelectedTime({
-      hours,
-      minutes,
-      period,
-    });
-  };
-
-  const [selectedFileName, setSelectedFileName] = useState<string>("");
-
-  const handleFileSelected = (fileName: string) => {
-    setSelectedFileName(fileName);
-  };
-
-  const downloadUrl =
-    "https://docs.google.com/document/d/1HJ3MiD0j2Ef77Qcgmvl64JG1DKQxLHL5/edit?usp=drive_link&ouid=115657237309251643032&rtpof=true&sd=true";
-  const buttonText = "Download Template";
-
   const handleRequestClose = () => {
     setIsConfirmationShow(false);
   };
@@ -383,15 +234,116 @@ const RequestForm: React.FC<ModalProps> = ({
               {
                 backgroundColor: Colors.primaryColor2,
                 width: Viewport.width * 0.9,
-                height: Viewport.height * 0.6,
+                height: Viewport.height * 0.7,
                 paddingBottom: Viewport.height * 0.03,
                 borderRadius: 10,
-                gap: 20,
+                gap: 5,
               },
               Styles.flexColumn,
             ]}
           >
             {isFirstFormShow && (
+              <>
+                <View
+                  style={{
+                    height: Viewport.height * 0.6,
+                    width: Viewport.width * 0.8,
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <View style={{}}>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.normal,
+
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Purpose and passenger
+                    </Text>
+                  </View>
+                  {isTextErrorShow && (
+                    <Text
+                      style={{ color: "#F30F0F", fontSize: FontSizes.small }}
+                    >
+                      Please fill-out the fields
+                    </Text>
+                  )}
+                  <View style={{ marginTop: 0 }}>
+                    <InputField2
+                      value={requestFormData.purpose}
+                      adjustedWidth
+                      onChangeText={(text) =>
+                        setRequestFormatData({
+                          ...requestFormData,
+                          purpose: text,
+                        })
+                      }
+                      placeholderText="Type purpose here...."
+                      capitalizeWords={false}
+                    />
+                  </View>
+
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Maximum vehicle capacity: {selectedVehicle?.capacity}
+                  </Text>
+                  <InputField2
+                    value={requestFormData.number_of_passenger}
+                    keyboardType="numeric"
+                    onChangeText={handleNumberOfPassengersChange}
+                    placeholderText="No. of passenger(s)"
+                  />
+                  {exceedsCapacity && (
+                    <Text style={{ color: "red" }}>
+                      Exceeds seating capacity of the vehicle
+                    </Text>
+                  )}
+                  <KeyboardAwareScrollView
+                    keyboardShouldPersistTaps="handled"
+                    scrollEnabled={true}
+                    enableAutomaticScroll={true}
+                    enableOnAndroid={true}
+                  >
+                    {passengerData.map((passenger, index) => (
+                      <View style={{ marginVertical: 15 }} key={index}>
+                        <InputField2
+                          value={passenger}
+                          onChangeText={(text) =>
+                            updatePassengerData(index, text)
+                          }
+                          placeholderText={`Type passenger ${
+                            index + 1
+                          } here...`}
+                          capitalizeWords={true}
+                        />
+                      </View>
+                    ))}
+                  </KeyboardAwareScrollView>
+
+                  <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                    <Button
+                      onPress={() => handleButtonPress("Close")}
+                      transparentBG
+                      transparentText
+                      text="Close"
+                    />
+                    <Button
+                      onPress={() => handleButtonPress("Second")}
+                      defaultBG
+                      text="Next"
+                    />
+                  </View>
+                </View>
+              </>
+            )}
+            {isSecondFormShow && (
               <>
                 <ScrollView>
                   <Text
@@ -404,17 +356,18 @@ const RequestForm: React.FC<ModalProps> = ({
                   >
                     Request Form
                   </Text>
-                  {isTextErrorShow && (
-                    <Text
-                      style={{ color: "#F30F0F", fontSize: FontSizes.small }}
-                    >
-                      Please fill-out the fields!
-                    </Text>
-                  )}
+                  {/* {isTextErrorShow && (
+                <Text
+                  style={{ color: "#F30F0F", fontSize: FontSizes.small }}
+                >
+                  Please fill-out the fields!
+                </Text>
+              )} */}
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -430,6 +383,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -439,10 +393,46 @@ const RequestForm: React.FC<ModalProps> = ({
                       {office}
                     </Text>
                   </View>
+
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Number of passenger{"("}s{")"}: {""}
+                      </Text>
+                      {requestFormData.number_of_passenger}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Passenger{"("}s{")"}: {""}
+                      </Text>
+                      {requestFormData.passenger_name.length > 1
+                        ? requestFormData.passenger_name.join(", ")
+                        : requestFormData.passenger_name[0]}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -458,6 +448,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -473,6 +464,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -488,6 +480,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -503,6 +496,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -516,6 +510,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -527,717 +522,54 @@ const RequestForm: React.FC<ModalProps> = ({
                       {addressData.destination}
                     </Text>
                   </View>
-                </ScrollView>
-                <View style={[{ gap: 60, marginTop: 20 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("Close")}
-                    transparentBG
-                    transparentText
-                    text="Close"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Second")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </>
-            )}
-            {isSecondFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View style={{}}>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    What is the number of passengers? And who are they?
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
-                    {selectedVehicle?.model}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the fields!
-                  </Text>
-                )}
-                <InputField2
-                  value={requestFormData.number_of_passenger.toString()}
-                  keyboardType="numeric"
-                  onChangeText={handleNumberOfPassengersChange}
-                  placeholderText="No. of passenger(s)"
-                />
-                {exceedsCapacity && (
-                  <Text style={{ color: "red" }}>
-                    Exceeds seating capacity of the vehicle
-                  </Text>
-                )}
-                <ScrollView>
-                  {passengerData.map((passenger, index) => (
-                    <View style={{ marginVertical: 15 }} key={index}>
-                      <InputField2
-                        value={passenger}
-                        onChangeText={(text) =>
-                          updatePassengerData(index, text)
-                        }
-                        placeholderText={`Passenger ${index + 1}`}
-                        capitalizeWords={true}
-                      />
-                    </View>
-                  ))}
-                </ScrollView>
-
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("First")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Third")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isThirdFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    What is your destination?
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
-                    {selectedVehicle?.model}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the field!
-                  </Text>
-                )}
-                <View style={{ paddingLeft: 40 }}>
-                  <AutoCompleteAddress
-                    onDistanceCalculated={handleDistanceCalculated}
-                    onAddressSelected={handleAddressCalculated}
-                  />
-                </View>
-                <View>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      marginLeft: Viewport.width * 0.1,
-                      marginTop: Viewport.height * 0.01,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Distance: {distanceToUSTPFormatted} km
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      marginTop: Viewport.height * 0.04,
-                      textAlign: "left",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Requesters traveling to destinations that exceed 50
-                    kilometers are required to provide a travel order for the
-                    vehicle's fuel and the driver's per diem.
-                  </Text>
-                  {showTextNote && (
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        marginTop: Viewport.height * 0.04,
-                        textAlign: "left",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Please provide the travel order document on the last part
-                      of this form.
-                    </Text>
-                  )}
-                </View>
-
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("SecondBack")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Fourth")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isFourthFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    When is your preferred travel date and time?
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
-                    {selectedVehicle?.model}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the fields!
-                  </Text>
-                )}
-                <DatePicker
-                  button2
-                  selectedDate={selectedDate}
-                  onDateSelected={handleToDateSelected}
-                />
-
-                <TimePicker
-                  secondBG
-                  onTimeSelected={handleTimeSelected}
-                  selectedHours={selectedTime.hours}
-                  selectedMinutes={selectedTime.minutes}
-                  selectedPeriod={selectedTime.period}
-                />
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("ThirdBack")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Fifth")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isFifthFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Is it urgent? And what is your purpose?
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
-                    {selectedVehicle?.model}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the fields!
-                  </Text>
-                )}
-                <View
-                  style={[
-                    {
-                      gap: 10,
-                      width: Viewport.width * 0.7,
-                    },
-                    Styles.flexRow,
-                  ]}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Urgent Request?
-                  </Text>
-                  <Checkbox
-                    disabled={false}
-                    value={isUrgentYes}
-                    onValueChange={(newValue) => {
-                      setIsUrgentYes(newValue);
-                      setIsUrgentNo(!newValue);
-                    }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Yes
-                  </Text>
-                  <Checkbox
-                    disabled={false}
-                    value={isUrgentNo}
-                    onValueChange={(newValue) => {
-                      setIsUrgentNo(newValue);
-                      setIsUrgentYes(!newValue);
-                    }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    No
-                  </Text>
-                </View>
-                {isUrgentYes && (
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Please provide a brief statement explaining the urgency or
-                    importance of your purpose for requesting the reservation.
-                  </Text>
-                )}
-                <View style={{ marginTop: 20 }}>
-                  <InputField2
-                    value={requestFormData.purpose}
-                    adjustedWidth
-                    onChangeText={(text) =>
-                      setRequestFormatData({
-                        ...requestFormData,
-                        purpose: text,
-                      })
-                    }
-                    placeholderText="Purpose"
-                    capitalizeWords={false}
-                  />
-                </View>
-
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("FourthBack")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Sixth")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isSixthFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Download and Upload Travel Order Document
-                  </Text>
-
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
-                    {selectedVehicle?.model}
-                  </Text>
-                </View>
-
-                <DownloadButton
-                  downloadUrl={downloadUrl}
-                  buttonText={buttonText}
-                />
-                <UploadButton
-                  selectedFileName={selectedFileName}
-                  onFileSelected={handleFileSelected}
-                />
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("FifthBack")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Seventh")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isSeventhFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Please confirm your details before submitting. Thank you.
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.plate_number}{" "}
-                    {selectedVehicle?.model}
-                  </Text>
-                </View>
-
-                <ScrollView
-                  style={[
-                    {
-                      width: Viewport.width * 0.75,
-                    },
-                  ]}
-                >
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>Distance: {""}</Text>
+                      {addressData.distance} km
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
                     <Text style={{ fontSize: FontSizes.small }}>
                       <Text style={{ fontWeight: "bold" }}>
-                        Requester's name:{" "}
+                        Travel type: {""}
                       </Text>
-                      {requestFormData.requester_name}
+                      {tripData.category}
                     </Text>
                   </View>
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Office/dept:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {requestFormData.office_dept}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.75,
-                        marginTop: 5,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      No. of Passenger{"("}s{")"}:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {requestFormData.number_of_passenger}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
                     <Text style={{ fontSize: FontSizes.small }}>
-                      <Text style={{ fontWeight: "bold" }}>
-                        Passenger's name{"("}s{")"}:{" "}
-                      </Text>
-
-                      {requestFormData.passenger_name.length > 1
-                        ? requestFormData.passenger_name.join(", ")
-                        : requestFormData.passenger_name[0]}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.75,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text style={{ fontSize: FontSizes.small, marginTop: 5 }}>
-                      <Text style={{ fontWeight: "bold" }}>Destination: </Text>
-                      {requestFormData.destination}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.75,
-                        marginTop: 5,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Distance:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {distanceToUSTPFormatted}
-                      {" km"}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.75,
-                        marginTop: 5,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Date:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {requestFormData.date}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.75,
-                        marginTop: 5,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Time:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {requestFormData.time}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.75,
-                        marginTop: 5,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Urgent:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {isUrgentYes ? "Yes" : "No"}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      {
-                        width: Viewport.width * 0.75,
-                        marginTop: 5,
-                      },
-                      Styles.flexRow,
-                    ]}
-                  >
-                    <Text style={{ fontSize: FontSizes.small, marginTop: 5 }}>
-                      <Text style={{ fontWeight: "bold" }}>Purpose: </Text>
+                      <Text style={{ fontWeight: "bold" }}>Purpose: {""}</Text>
                       {requestFormData.purpose}
                     </Text>
                   </View>
                 </ScrollView>
-
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                <View style={[{ gap: 60, marginTop: 20 }, Styles.flexRow]}>
                   <Button
-                    onPress={() => handleButtonPress("SeventhBack")}
+                    onPress={() => handleButtonPress("First")}
                     transparentBG
                     transparentText
                     text="Back"
@@ -1248,7 +580,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     text="Submit"
                   />
                 </View>
-              </View>
+              </>
             )}
           </View>
         </View>

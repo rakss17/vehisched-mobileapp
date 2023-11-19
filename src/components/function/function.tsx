@@ -36,8 +36,19 @@ export const useAppState = (fetchAPI: Function, setAPIData: Function) => {
 };
 
 export const formatTime = (timeString: any) => {
-  const time = new Date(`1970-01-01T${timeString}`);
-  return time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  if (timeString) {
+    if (timeString.split(":").length < 3 ? "hh:mm aa" : null) {
+      return timeString;
+    } else {
+      const time = new Date(`1970-01-01T${timeString}`);
+      return time.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    }
+  } else {
+    return "";
+  }
 };
 
 export const formatDate = (inputDate: any) => {
@@ -55,4 +66,8 @@ export const formatDateTime = (dateTimeString: any) => {
     dateStyle: "short",
     timeStyle: "short",
   });
+};
+
+export const getTimeFormat = (timeString: any) => {
+  return timeString.split(":").length < 3 ? "hh:mm aa" : null;
 };

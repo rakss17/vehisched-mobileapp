@@ -32,6 +32,11 @@ import {
   serverSideUrl,
 } from "../../components/api/api";
 import { format, parse } from "date-fns";
+import {
+  formatDate,
+  formatTime,
+  getTimeFormat,
+} from "../../components/function/function";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -169,14 +174,11 @@ export default function Requester() {
     };
     const formattedHours = formatNumberToTwoDigits(hours);
     const formattedMinutes = formatNumberToTwoDigits(minutes);
-    const combinedFormatted = `${formattedHours}:${formattedMinutes} ${period}`;
-    const date = parse(combinedFormatted, "hh:mm aa", new Date());
 
-    const formatted24Hour = format(date, "HH:mm");
     checkAutocompleteDisability();
     setTripData((prevData: any) => ({
       ...prevData,
-      travel_time: formatted24Hour,
+      travel_time: `${formattedHours}:${formattedMinutes} ${period}`,
     }));
     if (tripData.category === "Round Trip") {
       const updatedErrors = { ...errorMessages };
@@ -221,14 +223,10 @@ export default function Requester() {
     };
     const formattedHours = formatNumberToTwoDigits(hours);
     const formattedMinutes = formatNumberToTwoDigits(minutes);
-    const combinedFormatted = `${formattedHours}:${formattedMinutes} ${period}`;
-    const date = parse(combinedFormatted, "hh:mm aa", new Date());
-
-    const formatted24Hour = format(date, "HH:mm");
 
     setTripData((prevData: any) => ({
       ...prevData,
-      return_time: formatted24Hour,
+      return_time: `${formattedHours}:${formattedMinutes} ${period}`,
     }));
     const updatedErrors = { ...errorMessages };
     delete updatedErrors[0]?.returnTimeError;
@@ -324,11 +322,7 @@ export default function Requester() {
         tripData.capacity,
         setSelectedCategory
       );
-      console.log("sulod", tripData);
-      console.log("sulod", addressData);
     }
-    console.log("gawas", tripData);
-    console.log("gawas", addressData);
   };
 
   const handleSetTripClose = () => {
@@ -1060,69 +1054,92 @@ export default function Requester() {
                 {vehicles.length === 0 ? (
                   <Text>No vehicles available</Text>
                 ) : (
-                  vehicles.map((vehicle, index) => (
-                    <TouchableOpacity
-                      onPress={() => handleRequestFormVisible(vehicle)}
-                      key={index}
-                      style={[
-                        {
-                          width: Viewport.width * 0.95,
-                          height: Viewport.height * 0.2,
-                          backgroundColor: Colors.primaryColor2,
-                          borderRadius: 10,
-                        },
-                        Styles.flexRow,
-                      ]}
+                  <>
+                    <Text
+                      style={{
+                        fontSize: FontSizes.small,
+                        color: Colors.primaryColor1,
+                      }}
                     >
-                      <View
+                      Available vehicles from{" "}
+                      <Text style={{ fontWeight: "bold" }}>
+                        {formatDate(tripData.travel_date)},{" "}
+                        {formatTime(tripData.travel_time)}
+                      </Text>{" "}
+                      to{" "}
+                      <Text style={{ fontWeight: "bold" }}>
+                        {formatDate(tripData.return_date)},{" "}
+                        {formatTime(tripData.return_time)}
+                      </Text>
+                      . Preferred capacity:{" "}
+                      <Text style={{ fontWeight: "bold" }}>
+                        {tripData.capacity}
+                      </Text>
+                    </Text>
+                    {vehicles.map((vehicle, index) => (
+                      <TouchableOpacity
+                        onPress={() => handleRequestFormVisible(vehicle)}
+                        key={index}
                         style={[
                           {
-                            width: Viewport.width * 0.45,
+                            width: Viewport.width * 0.95,
                             height: Viewport.height * 0.2,
-                            paddingLeft: Viewport.height * 0.01,
-                            gap: Viewport.height * 0.02,
+                            backgroundColor: Colors.primaryColor2,
+                            borderRadius: 10,
                           },
-                          Styles.flexColumn,
+                          Styles.flexRow,
                         ]}
                       >
-                        <Text
-                          style={{
-                            fontWeight: "bold",
-                            textAlign: "center",
-                            fontSize: FontSizes.normal,
-                          }}
+                        <View
+                          style={[
+                            {
+                              width: Viewport.width * 0.45,
+                              height: Viewport.height * 0.2,
+                              paddingLeft: Viewport.height * 0.01,
+                              gap: Viewport.height * 0.02,
+                            },
+                            Styles.flexColumn,
+                          ]}
                         >
-                          {vehicle.plate_number} {vehicle.model}
-                        </Text>
-                        <View>
                           <Text
                             style={{
-                              fontSize: FontSizes.small,
-                              textAlign: "left",
+                              fontWeight: "bold",
+                              textAlign: "center",
+                              fontSize: FontSizes.normal,
                             }}
                           >
-                            Seating Capacity: {vehicle.capacity}
+                            {vehicle.plate_number} {vehicle.model}
                           </Text>
-                          <Text
-                            style={{
-                              fontSize: FontSizes.small,
-                              textAlign: "left",
-                            }}
-                          >
-                            Type: {vehicle.type}
-                          </Text>
+                          <View>
+                            <Text
+                              style={{
+                                fontSize: FontSizes.small,
+                                textAlign: "left",
+                              }}
+                            >
+                              Seating Capacity: {vehicle.capacity}
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: FontSizes.small,
+                                textAlign: "left",
+                              }}
+                            >
+                              Type: {vehicle.type}
+                            </Text>
+                          </View>
                         </View>
-                      </View>
-                      <Image
-                        style={{
-                          width: Viewport.width * 0.47,
-                          height: Viewport.height * 0.15,
-                        }}
-                        resizeMode="cover"
-                        source={{ uri: serverSideUrl + vehicle.image }}
-                      />
-                    </TouchableOpacity>
-                  ))
+                        <Image
+                          style={{
+                            width: Viewport.width * 0.47,
+                            height: Viewport.height * 0.15,
+                          }}
+                          resizeMode="cover"
+                          source={{ uri: serverSideUrl + vehicle.image }}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </>
                 )}
               </ScrollView>
             </>

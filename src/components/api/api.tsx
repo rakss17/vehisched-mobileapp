@@ -1,6 +1,8 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
+import { parse, format, isValid } from "date-fns";
+import { getTimeFormat } from "../function/function";
 
 export const serverSideUrl = "http://192.168.1.8:8000/media/";
 
@@ -219,11 +221,14 @@ export async function fetchDriverTrips(
 export async function handlePlaceSelect(
   place: any,
   travel_date: any,
-  travel_time: any,
+  travel_timee: any,
   setTripData: (data: any) => void,
   setAddressData: (addressData: any) => void,
   category: any
 ) {
+  const date = parse(travel_timee, "hh:mm aa", new Date());
+
+  const travel_time = format(date, "HH:mm");
   try {
     const response = await api.get("api/v1/request/place-details/", {
       params: {
@@ -329,13 +334,41 @@ export async function fetchRequestAPI(
 export async function checkVehicleAvailability(
   setVehicles: any,
   preferred_start_travel_date: any,
-  preferred_start_travel_time: any,
+  preferred_start_travel_timee: any,
   preferred_end_travel_date: any,
-  preferred_end_travel_time: any,
+  preferred_end_travel_timee: any,
   preferred_capacity: any,
   // setLoadingBarProgress: any,
   setSelectedCategory: any
 ) {
+  const start_time_format = getTimeFormat(preferred_start_travel_timee);
+
+  let preferred_start_travel_time = preferred_start_travel_timee;
+  if (start_time_format) {
+    const date = parse(
+      preferred_start_travel_timee,
+      start_time_format,
+      new Date()
+    );
+    if (!isValid(date)) {
+      throw new Error("Invalid date for preferred_start_travel_timee");
+    }
+    preferred_start_travel_time = format(date, "HH:mm");
+  }
+
+  let preferred_end_travel_time = preferred_end_travel_timee;
+  const end_time_format = getTimeFormat(preferred_end_travel_timee);
+  if (end_time_format) {
+    const datee = parse(
+      preferred_end_travel_timee,
+      end_time_format,
+      new Date()
+    );
+    if (!isValid(datee)) {
+      throw new Error("Invalid date for preferred_end_travel_timee");
+    }
+    preferred_end_travel_time = format(datee, "HH:mm");
+  }
   const token = await AsyncStorage.getItem("token");
   api
     .get("/api/v1/trip/check-vehicle-availability/", {

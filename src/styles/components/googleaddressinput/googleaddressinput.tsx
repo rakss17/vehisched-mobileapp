@@ -26,6 +26,8 @@ export const AutoCompleteAddressGoogleStyle = StyleSheet.create({
   listView: {
     position: "absolute",
     top: 50,
+    right: -40,
+
     zIndex: 99999,
     width: Viewport.width * 0.8,
   },
