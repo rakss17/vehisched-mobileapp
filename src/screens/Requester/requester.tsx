@@ -38,7 +38,10 @@ import {
   getTimeFormat,
   useAppState,
 } from "../../components/function/function";
-import LoadingDialog from "../../components/modals/loadingdialog";
+import Loading from "../../components/modals/loading";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { NotificationApprovalScheduleReminderWebsocket } from "../../components/api/websocket";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -87,8 +90,13 @@ export default function Requester() {
   const [datePickerKeyFromOneWay, setDatePickerKeyFromOneWay] = useState(4);
   const [datePickerKeyToOneWay, setDatePickerKeyToOneWay] = useState(5);
   const [refreshing, setRefreshing] = React.useState(false);
+  const personalInfo = useSelector(
+    (state: RootState) => state.personalInfo.data
+  );
+  const userName = personalInfo?.username;
 
   useAppState();
+  NotificationApprovalScheduleReminderWebsocket(userName);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -111,7 +119,6 @@ export default function Requester() {
         setDatePickerKeyFromOneWay((prevKey) => prevKey + 1);
         setDatePickerKeyToOneWay((prevKey) => prevKey + 1);
       }
-
       setIsAutocompleteEditable(false);
       setIsTravelDateSelected(true);
       setSelectedTravelCategory("Round Trip");
@@ -1199,7 +1206,7 @@ export default function Requester() {
         showContent
         showFooter
       />
-      <LoadingDialog
+      <Loading
         animationType="fade"
         visible={isRequestSubmissionLoading}
         transparent={true}
@@ -1207,7 +1214,7 @@ export default function Requester() {
         content="Processing..."
         showContent
       />
-      <LoadingDialog
+      <Loading
         animationType="fade"
         visible={isSetTripLoading}
         transparent={true}

@@ -8,7 +8,7 @@ import {
 } from "../../styles/globalstyles/globalstyles";
 import { ModalProps } from "../../interfaces/interfaces";
 
-const LoadingDialog: React.FC<ModalProps> = ({
+const Loading: React.FC<ModalProps> = ({
   animationType,
   transparent,
   visible,
@@ -68,4 +68,4 @@ const LoadingDialog: React.FC<ModalProps> = ({
   );
 };
 
-export default LoadingDialog;
+export default Loading;
