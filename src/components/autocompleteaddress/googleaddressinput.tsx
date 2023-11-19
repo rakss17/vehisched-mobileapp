@@ -59,7 +59,7 @@ AutoCompleteAddressGoogleProps) {
   return (
     <GooglePlacesAutocomplete
       styles={AutoCompleteAddressGoogleStyle}
-      placeholder="Search....."
+      placeholder="Search here....."
       onPress={(data, details = null) =>
         onPlaceSelectedRef.current(data, details)
       }

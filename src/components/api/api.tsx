@@ -338,8 +338,8 @@ export async function checkVehicleAvailability(
   preferred_end_travel_date: any,
   preferred_end_travel_timee: any,
   preferred_capacity: any,
-  // setLoadingBarProgress: any,
-  setSelectedCategory: any
+  setSelectedCategory: any,
+  setIsSetTripLoading: any
 ) {
   const start_time_format = getTimeFormat(preferred_start_travel_timee);
 
@@ -385,12 +385,13 @@ export async function checkVehicleAvailability(
       },
     })
     .then((response) => {
-      // setLoadingBarProgress(50);
+      setIsSetTripLoading(false);
       setVehicles(response.data);
-      // setLoadingBarProgress(100);
+
       setSelectedCategory("Available Vehicle");
     })
     .catch((error) => {
+      setIsSetTripLoading(false);
       // if (error.response && error.response.data) {
       //   setLoadingBarProgress(50);
       //   setLoadingBarProgress(100);
@@ -417,7 +418,8 @@ export async function postRequestFromAPI(
   setTripData: any,
   setAddressData: any,
   setSelectedTravelCategory: any,
-  setSelectedTravelType: any
+  setSelectedTravelType: any,
+  setIsRequestSubmissionLoading: any
 ) {
   const token = await AsyncStorage.getItem("token");
   const requestData = {
@@ -432,6 +434,7 @@ export async function postRequestFromAPI(
       },
     })
     .then((response) => {
+      setIsRequestSubmissionLoading(false);
       setIsConfirmationShow(true);
       setRequestFormData({
         requester_name: "",
@@ -465,6 +468,7 @@ export async function postRequestFromAPI(
       setSelectedTravelType("");
     })
     .catch((error) => {
+      setIsRequestSubmissionLoading(false);
       console.log(error.response);
       // if (error.response && error.response.data) {
       //   setLoadingBarProgress(50);

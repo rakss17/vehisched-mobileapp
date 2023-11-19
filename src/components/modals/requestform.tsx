@@ -40,6 +40,7 @@ const RequestForm: React.FC<ModalProps> = ({
   setAddressData,
   setSelectedTravelCategory,
   setSelectedTravelType,
+  setIsRequestSubmissionLoading,
 }) => {
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
@@ -142,6 +143,7 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsThirdFormShow(false);
         break;
       case "Submit":
+        setIsRequestSubmissionLoading(true);
         postRequestFromAPI(
           requestFormData,
           setIsConfirmationShow,
@@ -150,7 +152,8 @@ const RequestForm: React.FC<ModalProps> = ({
           setTripData,
           setAddressData,
           setSelectedTravelCategory,
-          setSelectedTravelType
+          setSelectedTravelType,
+          setIsRequestSubmissionLoading
         );
         setShowTextNote(false);
         setNumberOfPassengers(0);

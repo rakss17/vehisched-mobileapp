@@ -37,6 +37,7 @@ import {
   formatTime,
   getTimeFormat,
 } from "../../components/function/function";
+import LoadingDialog from "../../components/modals/loadingdialog";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -53,6 +54,9 @@ export default function Requester() {
   >("Round Trip");
   const [selectedTravelType, setSelectedTravelType] = useState<string | null>();
   const [errorMessages, setErrorMessages] = useState<any[]>([]);
+  const [isRequestSubmissionLoading, setIsRequestSubmissionLoading] =
+    useState(false);
+  const [isSetTripLoading, setIsSetTripLoading] = useState(false);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
     travel_time: "",
@@ -318,6 +322,7 @@ export default function Requester() {
 
     setErrorMessages(errorArray);
     if (Object.keys(validationErrors).length === 0) {
+      setIsSetTripLoading(true);
       checkVehicleAvailability(
         setVehicles,
         tripData.travel_date,
@@ -325,7 +330,8 @@ export default function Requester() {
         tripData.return_date,
         tripData.return_time,
         tripData.capacity,
-        setSelectedCategory
+        setSelectedCategory,
+        setIsSetTripLoading
       );
     }
     console.log(tripData);
@@ -1012,15 +1018,16 @@ export default function Requester() {
                     <View style={Styles.flexColumn}>
                       <TextInput
                         keyboardType="numeric"
+                        placeholder="Type here..."
                         value={tripData ? tripData.capacity : null}
                         style={{
                           backgroundColor: Colors.secondaryColor1,
-                          width: Viewport.width * 0.2,
+                          width: Viewport.width * 0.3,
                           height: Viewport.height * 0.06,
                           borderRadius: 0,
                           padding: 10,
-                          fontSize: FontSizes.normal,
-                          borderBottomWidth: 2,
+                          fontSize: FontSizes.small,
+                          borderBottomWidth: 1,
                         }}
                         onChangeText={(text) => {
                           setTripData({
@@ -1173,6 +1180,7 @@ export default function Requester() {
         setAddressData={setAddressData}
         setSelectedTravelCategory={setSelectedTravelCategory}
         setSelectedTravelType={setSelectedTravelType}
+        setIsRequestSubmissionLoading={setIsRequestSubmissionLoading}
       />
       <PromptDialog
         animationType="fade"
@@ -1187,6 +1195,22 @@ export default function Requester() {
         showHeader
         showContent
         showFooter
+      />
+      <LoadingDialog
+        animationType="fade"
+        visible={isRequestSubmissionLoading}
+        transparent={true}
+        onRequestClose={handleRequestFormClose}
+        content="Processing..."
+        showContent
+      />
+      <LoadingDialog
+        animationType="fade"
+        visible={isSetTripLoading}
+        transparent={true}
+        onRequestClose={handleRequestFormClose}
+        content="Processing..."
+        showContent
       />
     </>
   );

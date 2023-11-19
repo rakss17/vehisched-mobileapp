@@ -114,6 +114,7 @@ export interface ModalProps {
   setAddressData?: React.Dispatch<React.SetStateAction<any[]>>;
   setSelectedTravelCategory?: React.Dispatch<React.SetStateAction<any>>;
   setSelectedTravelType?: React.Dispatch<React.SetStateAction<any>>;
+  setIsRequestSubmissionLoading?: any;
 }
 export interface CalendarData {
   key: string;
