@@ -8,6 +8,7 @@ export type RootStackParamList = {
   Driver: undefined;
   GateGuard: undefined;
   LoadingScreen: { message: string };
+  RequesterTabs: { notifLength: number };
 };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;
