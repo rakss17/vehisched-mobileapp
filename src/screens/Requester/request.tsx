@@ -23,7 +23,8 @@ import Confirmation from "../../components/modals/confirmation";
 import RequestDetails from "../../components/modals/requestdetails";
 import { fetchRequestAPI } from "../../components/api/api";
 import { formatDate } from "../../components/function/function";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFetchNotification } from "../../components/api/websocket";
 
 export default function Request() {
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
@@ -35,6 +36,8 @@ export default function Request() {
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [isConfirmation2Show, setIsConfirmation2Show] = useState(false);
   const [isRequestDetailsShow, setIsRequestDetailsShow] = useState(false);
+  const [notifList, setNotifList] = useState<any[]>([]);
+  const notifLength = notifList.filter((notif) => !notif.read_status).length;
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -42,6 +45,15 @@ export default function Request() {
 
     fetchRequestAPI(setOriginalRequestData, setRefreshing);
   }, []);
+  const navigation = useNavigation() as any;
+
+  useEffect(() => {
+    navigation.navigate("Requester", { notifLength } as {
+      notifLength: number;
+    });
+  }, [notifList]);
+
+  useFetchNotification(setNotifList);
 
   useFocusEffect(
     React.useCallback(() => {

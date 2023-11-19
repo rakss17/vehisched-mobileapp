@@ -41,7 +41,11 @@ import {
 import Loading from "../../components/modals/loading";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { NotificationApprovalScheduleReminderWebsocket } from "../../components/api/websocket";
+import {
+  NotificationApprovalScheduleReminderWebsocket,
+  useFetchNotification,
+} from "../../components/api/websocket";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -89,14 +93,25 @@ export default function Requester() {
   const [timePickerKeyTo, setTimePickerKeyTo] = useState(3);
   const [datePickerKeyFromOneWay, setDatePickerKeyFromOneWay] = useState(4);
   const [datePickerKeyToOneWay, setDatePickerKeyToOneWay] = useState(5);
+  const [notifList, setNotifList] = useState<any[]>([]);
+  const notifLength = notifList.filter((notif) => !notif.read_status).length;
   const [refreshing, setRefreshing] = React.useState(false);
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
   const userName = personalInfo?.username;
 
+  const navigation = useNavigation() as any;
+
+  useEffect(() => {
+    navigation.navigate("Requester", { notifLength } as {
+      notifLength: number;
+    });
+  }, [notifList]);
+
   useAppState();
   NotificationApprovalScheduleReminderWebsocket(userName);
+  useFetchNotification(setNotifList);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);

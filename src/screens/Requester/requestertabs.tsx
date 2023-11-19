@@ -9,10 +9,19 @@ import { faHome, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Requester from "./requester";
 import Request from "./request";
+import { useRoute, RouteProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../interfaces/interfaces";
 
 const Tab = createBottomTabNavigator();
 
+type RequesterTabsScreenRouteProp = RouteProp<
+  RootStackParamList,
+  "RequesterTabs"
+>;
+
 export function RequesterTabs() {
+  const route = useRoute<RequesterTabsScreenRouteProp>();
+  const notifLength = route.params?.notifLength;
   return (
     <Tab.Navigator
       screenOptions={{
@@ -42,6 +51,7 @@ export function RequesterTabs() {
           tabBarIcon: ({ color }) => (
             <FontAwesomeIcon icon={faHome} color={color} size={25} />
           ),
+          tabBarBadge: notifLength > 0 ? notifLength : undefined,
         }}
       />
       <Tab.Screen
@@ -52,6 +62,7 @@ export function RequesterTabs() {
           tabBarIcon: ({ color }) => (
             <FontAwesomeIcon icon={faClipboardList} color={color} size={25} />
           ),
+          tabBarBadge: notifLength > 0 ? notifLength : undefined,
         }}
       />
     </Tab.Navigator>

@@ -1,9 +1,10 @@
 import { Platform } from "react-native";
-import { useEffect } from "react";
-// import { toast } from "react-toastify";
+import React, { useEffect } from "react";
 import moment from "moment";
-// import ToastContent from "../toastcontent/toastcontent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
+import { api } from "./api";
+import { useFocusEffect } from "@react-navigation/native";
 
 const serverSideUrl = "192.168.1.8:8000";
 
@@ -45,8 +46,6 @@ export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
         shouldSetBadge: true,
       }),
     });
-    // let date = new Date();
-    // date.setSeconds(date.getSeconds() + 30);
 
     newSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -55,7 +54,6 @@ export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
         data.status === "Approved" &&
         data.message != "Notification message goes here"
       ) {
-        const justnow = "Just Now";
         Notifications.scheduleNotificationAsync({
           content: {
             title: "Approval",
@@ -63,19 +61,11 @@ export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
           },
           trigger: null,
         });
-        // toast.success(
-        //   <ToastContent message={data.message} timeago={justnow} />,
-        //   {
-        //     position: toast.POSITION.TOP_CENTER,
-        //     autoClose: false,
-        //   }
-        // );
       } else if (
         data.type === "reject.notification" &&
         data.status === "Rejected" &&
         data.message != "Notification message goes here"
       ) {
-        const justnow = "Just Now";
         Notifications.scheduleNotificationAsync({
           content: {
             title: "Rejection",
@@ -83,16 +73,11 @@ export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
           },
           trigger: null,
         });
-        // toast.error(<ToastContent message={data.message} timeago={justnow} />, {
-        //   position: toast.POSITION.TOP_CENTER,
-        //   autoClose: false,
-        // });
       } else if (
         data.type === "schedule.reminder" &&
         data.status === "Reminder" &&
         data.message != "Notification message goes here"
       ) {
-        const justnow = "Just Now";
         Notifications.scheduleNotificationAsync({
           content: {
             title: "Schedule Rimender",
@@ -100,10 +85,6 @@ export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
           },
           trigger: null,
         });
-        // toast.info(<ToastContent message={data.message} timeago={justnow} />, {
-        //   position: toast.POSITION.TOP_CENTER,
-        //   autoClose: false,
-        // });
       }
     };
 
@@ -119,4 +100,105 @@ export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
   }, []);
 
   return null;
+}
+
+export function useFetchNotification(setNotifList: any) {
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchNotification = async () => {
+        const token = await AsyncStorage.getItem("token");
+
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== "granted") {
+          alert("No notification permissions!");
+          return;
+        }
+
+        if (Platform.OS === "android") {
+          Notifications.setNotificationChannelAsync("default", {
+            name: "default",
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: "#FF231F7C",
+          });
+        }
+        Notifications.setNotificationHandler({
+          handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: true,
+          }),
+        });
+
+        api
+          .get("api/v1/notification/fetch/", {
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response: any) => {
+            setNotifList(response.data);
+            const unreadNotifications = response.data.filter(
+              (notification: any) => !notification.read_status
+            );
+            unreadNotifications.forEach((notification: any) => {
+              if (notification.subject.includes("has been approved")) {
+                let message = `${notification.subject} `;
+                Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Approval",
+                    body: message,
+                  },
+                  trigger: null,
+                });
+              } else if (
+                notification.subject.includes("Your travel will commence now")
+              ) {
+                let message = `${notification.subject} `;
+                Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Schedule Reminder",
+                    body: message,
+                  },
+                  trigger: null,
+                });
+              } else if (notification.subject.includes("1 hour")) {
+                let message = `${notification.subject} `;
+                Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Schedule Reminder",
+                    body: message,
+                  },
+                  trigger: null,
+                });
+              } else if (notification.subject.includes("12 hours")) {
+                let message = `${notification.subject} `;
+                Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Schedule Reminder",
+                    body: message,
+                  },
+                  trigger: null,
+                });
+              } else if (notification.subject.includes("24 hours")) {
+                let message = `${notification.subject} `;
+                Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Schedule Reminder",
+                    body: message,
+                  },
+                  trigger: null,
+                });
+              }
+            });
+          })
+          .catch((error: any) => {
+            console.error("Error fetching notif list:", error);
+          });
+      };
+
+      fetchNotification();
+    }, [])
+  );
 }

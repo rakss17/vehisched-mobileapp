@@ -6,7 +6,7 @@ import { getTimeFormat } from "../function/function";
 
 export const serverSideUrl = "http://192.168.1.8:8000/media/";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: "http://192.168.1.8:8000/",
 });
 
