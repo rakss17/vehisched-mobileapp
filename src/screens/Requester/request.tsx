@@ -161,37 +161,37 @@ export default function Request() {
       >
         <Button
           text="Pending"
-          transparentBG2
-          transparentText2
-          isHighlighted={selectedStatus === "Pending"}
+          transparentBGAdjust
+          transparentTextAdjust
+          isHighlightedAdjust={selectedStatus === "Pending"}
           onPress={() => handleButtonPress("Pending")}
         />
         <Button
           text="Approved"
-          transparentBG2
-          transparentText2
-          isHighlighted={selectedStatus === "Approved"}
+          transparentBGAdjust
+          transparentTextAdjust
+          isHighlightedAdjust={selectedStatus === "Approved"}
           onPress={() => handleButtonPress("Approved")}
         />
         <Button
           text="Completed"
-          transparentBG2
-          transparentText2
-          isHighlighted={selectedStatus === "Completed"}
+          transparentBGAdjust
+          transparentTextAdjust
+          isHighlightedAdjust={selectedStatus === "Completed"}
           onPress={() => handleButtonPress("Completed")}
         />
         <Button
           text="Canceled"
-          transparentBG2
-          transparentText2
-          isHighlighted={selectedStatus === "Canceled"}
+          transparentBGAdjust
+          transparentTextAdjust
+          isHighlightedAdjust={selectedStatus === "Canceled"}
           onPress={() => handleButtonPress("Canceled")}
         />
         <Button
           text="Declined"
-          transparentBG2
-          transparentText2
-          isHighlighted={selectedStatus === "Declined"}
+          transparentBGAdjust
+          transparentTextAdjust
+          isHighlightedAdjust={selectedStatus === "Declined"}
           onPress={() => handleButtonPress("Declined")}
         />
       </View>

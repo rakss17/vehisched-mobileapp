@@ -65,6 +65,9 @@ export interface ButtonProps {
   style?: StyleProp<ViewStyle>;
   largeSize?: boolean;
   isSelected?: any;
+  transparentBGAdjust?: boolean;
+  transparentTextAdjust?: boolean;
+  isHighlightedAdjust?: boolean;
 }
 
 export interface DropdownProps {

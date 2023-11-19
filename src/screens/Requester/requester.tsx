@@ -36,6 +36,7 @@ import {
   formatDate,
   formatTime,
   getTimeFormat,
+  useAppState,
 } from "../../components/function/function";
 import LoadingDialog from "../../components/modals/loadingdialog";
 
@@ -86,6 +87,8 @@ export default function Requester() {
   const [datePickerKeyFromOneWay, setDatePickerKeyFromOneWay] = useState(4);
   const [datePickerKeyToOneWay, setDatePickerKeyToOneWay] = useState(5);
   const [refreshing, setRefreshing] = React.useState(false);
+
+  useAppState();
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);

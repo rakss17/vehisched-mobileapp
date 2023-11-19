@@ -15,6 +15,9 @@ const Button: React.FC<ButtonProps> = ({
   isHighlighted,
   style,
   largeSize,
+  transparentBGAdjust,
+  transparentTextAdjust,
+  isHighlightedAdjust,
 }) => {
   return (
     <TouchableOpacity
@@ -23,7 +26,9 @@ const Button: React.FC<ButtonProps> = ({
         defaultBG && ButtonStyle.buttonBG,
         transparentBG && ButtonStyle.buttonBG2,
         transparentBG2 && ButtonStyle.transparentBG2,
+        transparentBGAdjust && ButtonStyle.transparentBGAdjust,
         isHighlighted && ButtonStyle.borderBottom,
+        isHighlightedAdjust && ButtonStyle.borderBottomAdjust,
         disabled && ButtonStyle.disabledButton,
         style,
         largeSize && ButtonStyle.largeSize,
@@ -36,6 +41,7 @@ const Button: React.FC<ButtonProps> = ({
           ButtonStyle.text,
           transparentText && ButtonStyle.transparentText,
           transparentText2 && ButtonStyle.transparentText2,
+          transparentTextAdjust && ButtonStyle.transparentTextAdjust,
         ]}
       >
         {text}
