@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import {
   BackgroundColor,
@@ -29,6 +30,7 @@ import AutoCompleteAddressGoogle from "../../components/autocompleteaddress/goog
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import {
   checkVehicleAvailability,
+  fetchRequestAPI,
   serverSideUrl,
 } from "../../components/api/api";
 import { format, parse } from "date-fns";
@@ -45,7 +47,7 @@ import {
   NotificationApprovalScheduleReminderWebsocket,
   useFetchNotification,
 } from "../../components/api/websocket";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 // @ts-ignore
 import LoadingDots from "react-native-loading-dots";
 
@@ -95,6 +97,7 @@ export default function Requester() {
   const [timePickerKeyTo, setTimePickerKeyTo] = useState(3);
   const [datePickerKeyFromOneWay, setDatePickerKeyFromOneWay] = useState(4);
   const [datePickerKeyToOneWay, setDatePickerKeyToOneWay] = useState(5);
+  const [pendingSchedule, setPendingSchedule] = useState<any[]>([]);
   const [notifList, setNotifList] = useState<any[]>([]);
   const notifLength = notifList.filter((notif) => !notif.read_status).length;
   const [refreshing, setRefreshing] = React.useState(false);
@@ -114,6 +117,12 @@ export default function Requester() {
   useAppState();
   NotificationApprovalScheduleReminderWebsocket(userName);
   useFetchNotification(setNotifList);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchRequestAPI(() => {}, undefined, setPendingSchedule);
+    }, [])
+  );
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -1193,11 +1202,11 @@ export default function Requester() {
                   paddingBottom: Viewport.width * 0.45,
                 }}
               >
-                {todayMockData.length === 0 ? (
+                {pendingSchedule.length === 0 ? (
                   <Text>No vehicles available</Text>
                 ) : (
                   <>
-                    {todayMockData.map((schedule, index) => (
+                    {pendingSchedule.map((schedule, index) => (
                       <TouchableOpacity
                         // onPress={() => handleRequestFormVisible(vehicle)}
                         key={index}
@@ -1230,14 +1239,15 @@ export default function Requester() {
                               fontSize: FontSizes.normal,
                             }}
                           >
-                            Schedule no. {schedule.trip_number}
+                            Schedule no. {schedule.request_id}
                           </Text>
                           <View style={[{}, Styles.flexRow]}>
                             <Text style={{ fontSize: FontSizes.small }}>
                               <Text style={{ fontWeight: "bold" }}>
                                 Travel date and time:{" "}
                               </Text>
-                              {schedule.date}, {schedule.time}
+                              {formatDate(schedule.travel_date)},{" "}
+                              {formatTime(schedule.travel_time)}
                             </Text>
                           </View>
                           <View style={[{}, Styles.flexRow]}>
@@ -1265,13 +1275,10 @@ export default function Requester() {
                                 fontWeight: "bold",
                               }}
                             >
-                              Waiting for office staff approval{" "}
-                              <LoadingDots
-                                dots={4}
-                                size={5}
-                                colors={["black", "black", "black", "black"]}
-                                borderRadius={10}
-                                bounceHeight={10}
+                              Waiting for approval{" "}
+                              <ActivityIndicator
+                                size={FontSizes.normal}
+                                color={Colors.primaryColor1}
                               />
                             </Text>
                           </View>

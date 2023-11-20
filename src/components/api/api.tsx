@@ -296,8 +296,9 @@ export async function handlePlaceSelect(
 }
 
 export async function fetchRequestAPI(
-  setRequestFilteredData: any,
-  setRefreshing?: any
+  setRequestFilteredData?: any,
+  setRefreshing?: any,
+  setPendingSchedule?: any
 ) {
   const token = await AsyncStorage.getItem("token");
   api
@@ -321,7 +322,17 @@ export async function fetchRequestAPI(
         return item;
       });
 
-      setRequestFilteredData(updatedData);
+      if (updatedData) {
+        setRequestFilteredData(updatedData);
+      }
+
+      const pendingScheduleTrips = response.data.filter(
+        (trip: any) => trip.status === "Pending"
+      );
+      if (pendingScheduleTrips) {
+        setPendingSchedule(pendingScheduleTrips);
+      }
+
       if (setRefreshing) {
         setRefreshing(false);
       }
