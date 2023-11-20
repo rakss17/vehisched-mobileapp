@@ -48,8 +48,6 @@ import {
   useFetchNotification,
 } from "../../components/api/websocket";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-// @ts-ignore
-import LoadingDots from "react-native-loading-dots";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
