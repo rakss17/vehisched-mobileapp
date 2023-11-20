@@ -18,7 +18,7 @@ import {
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { Vehicle } from "../../interfaces/interfaces";
-import { vehiclesMockData } from "../../components/mockdata/mockdata";
+import { todayMockData } from "../../components/mockdata/mockdata";
 import SetTripModal from "../../components/modals/settrip";
 import RequestForm from "../../components/modals/requestform";
 import PromptDialog from "../../components/modals/promptdialog";
@@ -46,6 +46,8 @@ import {
   useFetchNotification,
 } from "../../components/api/websocket";
 import { useNavigation } from "@react-navigation/native";
+// @ts-ignore
+import LoadingDots from "react-native-loading-dots";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -154,7 +156,7 @@ export default function Requester() {
   }, []);
 
   useEffect(() => {
-    setSelectedCategory("Set Trip");
+    setSelectedCategory("Ongoing Schedule");
   }, []);
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -1175,6 +1177,105 @@ export default function Requester() {
                           resizeMode="cover"
                           source={{ uri: serverSideUrl + vehicle.image }}
                         />
+                      </TouchableOpacity>
+                    ))}
+                  </>
+                )}
+              </ScrollView>
+            </>
+          )}
+          {selectedCategory === "Ongoing Schedule" && (
+            <>
+              <ScrollView
+                contentContainerStyle={{
+                  gap: Viewport.height * 0.01,
+                  paddingTop: Viewport.width * 0.1,
+                  paddingBottom: Viewport.width * 0.45,
+                }}
+              >
+                {todayMockData.length === 0 ? (
+                  <Text>No vehicles available</Text>
+                ) : (
+                  <>
+                    {todayMockData.map((schedule, index) => (
+                      <TouchableOpacity
+                        // onPress={() => handleRequestFormVisible(vehicle)}
+                        key={index}
+                        style={[
+                          {
+                            width: Viewport.width * 0.95,
+                            height: "auto",
+                            backgroundColor: Colors.primaryColor2,
+                            borderRadius: 10,
+                          },
+                          Styles.flexColumn,
+                        ]}
+                      >
+                        <View
+                          style={[
+                            {
+                              width: Viewport.width * 0.85,
+                              height: "auto",
+                              paddingTop: Viewport.height * 0.02,
+                              paddingBottom: Viewport.height * 0.02,
+                              gap: Viewport.height * 0.01,
+                              alignItems: "flex-start",
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={{
+                              fontWeight: "bold",
+                              textAlign: "center",
+                              fontSize: FontSizes.normal,
+                            }}
+                          >
+                            Schedule no. {schedule.trip_number}
+                          </Text>
+                          <View style={[{}, Styles.flexRow]}>
+                            <Text style={{ fontSize: FontSizes.small }}>
+                              <Text style={{ fontWeight: "bold" }}>
+                                Travel date and time:{" "}
+                              </Text>
+                              {schedule.date}, {schedule.time}
+                            </Text>
+                          </View>
+                          <View style={[{}, Styles.flexRow]}>
+                            <Text style={{ fontSize: FontSizes.small }}>
+                              <Text style={{ fontWeight: "bold" }}>
+                                Destination:{" "}
+                              </Text>
+                              {schedule.destination}
+                            </Text>
+                          </View>
+                          <View
+                            style={[
+                              {
+                                width: Viewport.width * 0.85,
+                                alignItems: "flex-end",
+                                justifyContent: "flex-end",
+                              },
+                              Styles.flexRow,
+                            ]}
+                          >
+                            <Text
+                              style={{
+                                fontSize: FontSizes.small,
+                                textAlign: "left",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Waiting for office staff approval{" "}
+                              <LoadingDots
+                                dots={4}
+                                size={5}
+                                colors={["black", "black", "black", "black"]}
+                                borderRadius={10}
+                                bounceHeight={10}
+                              />
+                            </Text>
+                          </View>
+                        </View>
                       </TouchableOpacity>
                     ))}
                   </>

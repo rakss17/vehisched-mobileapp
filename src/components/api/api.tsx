@@ -486,3 +486,43 @@ export async function postRequestFromAPI(
       // }
     });
 }
+
+export async function fetchSchedule(
+  setSchedule: any,
+  setNextSchedule: any,
+  setIsOngoingScheduleClick: any,
+  handleButtonClick: any,
+  setVehicleRecommendation: any
+) {
+  const token = await AsyncStorage.getItem("token");
+  api
+    .get("api/v1/trip/fetch-requester/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      const scheduleData = response.data.trip_data.filter(
+        (item: any) => !item.next_schedule_travel_date
+      );
+
+      const nextScheduleData = response.data.trip_data.filter(
+        (item: any) => item.next_schedule_travel_date
+      );
+      setVehicleRecommendation(response.data.vehicle_recommendation);
+
+      setSchedule(scheduleData);
+      setNextSchedule(nextScheduleData);
+      if (
+        scheduleData.length > 0 ||
+        response.data.vehicle_recommendation.length > 0
+      ) {
+        setIsOngoingScheduleClick(true);
+        handleButtonClick("Ongoing Schedule");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching schedule list:", error);
+    });
+}
