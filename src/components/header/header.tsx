@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { View, Image, Text } from "react-native";
 import {
   Viewport,
@@ -10,25 +9,18 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "../../interfaces/interfaces";
 import Dropdown from "../dropdown/dropdown";
-import { SignoutAPI } from "../api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Header() {
-  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<NavigationProp>();
   const handleDropdown = (options: string) => {
     if (options === "Sign Out") {
-      setIsLoading(true);
-      SignoutAPI(navigation, setIsLoading);
+      AsyncStorage.removeItem("token");
+      navigation.navigate("Landing");
     } else {
       alert("Under Development");
     }
   };
-
-  useEffect(() => {
-    if (isLoading) {
-      navigation.navigate("LoadingScreen", { message: "Signing out" });
-    }
-  }, [isLoading]);
   return (
     <>
       <BackgroundColor
