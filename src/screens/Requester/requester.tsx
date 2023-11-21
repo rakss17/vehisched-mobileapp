@@ -31,6 +31,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import {
   checkVehicleAvailability,
   fetchRequestAPI,
+  fetchSchedule,
   serverSideUrl,
 } from "../../components/api/api";
 import { format, parse } from "date-fns";
@@ -48,6 +49,7 @@ import {
   useFetchNotification,
 } from "../../components/api/websocket";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import Countdown from "../../components/countdown/countdown";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -67,6 +69,9 @@ export default function Requester() {
   const [isRequestSubmissionLoading, setIsRequestSubmissionLoading] =
     useState(false);
   const [isSetTripLoading, setIsSetTripLoading] = useState(false);
+  const [schedule, setSchedule] = useState<any[]>([]);
+  const [nextSchedule, setNextSchedule] = useState<any[]>([]);
+  const [vehicleRecommendation, setVehicleRecommendation] = useState<any[]>([]);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
     travel_time: "",
@@ -122,6 +127,11 @@ export default function Requester() {
     }, [])
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchSchedule(setSchedule, setNextSchedule, setVehicleRecommendation);
+    }, [])
+  );
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
@@ -163,13 +173,13 @@ export default function Requester() {
   }, []);
 
   useEffect(() => {
-    setSelectedCategory("Ongoing Schedule");
+    if (schedule.length > 0 || pendingSchedule.length > 0) {
+      setSelectedCategory("Ongoing Schedule");
+    } else {
+      setSelectedCategory("Set Trip");
+    }
   }, []);
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     setSelectedCategory("Set Trip");
-  //   }, [])
-  // );
+
   const checkAutocompleteDisability = () => {
     if (tripData.travel_date !== "" && tripData.travel_time !== "") {
       setIsAutocompleteEditable(true);
@@ -178,11 +188,6 @@ export default function Requester() {
   };
 
   const handleFromDateSelected = (selectedDate: Date) => {
-    // const formattedDate = selectedDate.toLocaleDateString(undefined, {
-    //   year: "numeric",
-    //   month: "2-digit",
-    //   day: "2-digit",
-    // });
     const formattedDate = selectedDate
       ? format(selectedDate, "yyyy-MM-dd")
       : null;
@@ -1195,13 +1200,13 @@ export default function Requester() {
             <>
               <ScrollView
                 contentContainerStyle={{
-                  gap: Viewport.height * 0.01,
-                  paddingTop: Viewport.width * 0.1,
+                  gap: Viewport.height * 0.03,
+                  paddingTop: Viewport.width * 0.05,
                   paddingBottom: Viewport.width * 0.45,
                 }}
               >
                 {pendingSchedule.length === 0 ? (
-                  <Text>No vehicles available</Text>
+                  <Text>No pending schedule available</Text>
                 ) : (
                   <>
                     {pendingSchedule.map((schedule, index) => (
@@ -1277,6 +1282,134 @@ export default function Requester() {
                               <ActivityIndicator
                                 size={FontSizes.normal}
                                 color={Colors.primaryColor1}
+                              />
+                            </Text>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </>
+                )}
+                {schedule.length === 0 ? (
+                  <Text>No pending schedule available</Text>
+                ) : (
+                  <>
+                    {schedule.map((schedule, index) => (
+                      <TouchableOpacity
+                        // onPress={() => handleRequestFormVisible(vehicle)}
+                        key={index}
+                        style={[
+                          {
+                            width: Viewport.width * 0.95,
+                            height: "auto",
+                            backgroundColor: Colors.primaryColor2,
+                            borderRadius: 10,
+                          },
+                          Styles.flexColumn,
+                        ]}
+                      >
+                        <View
+                          style={[
+                            {
+                              width: Viewport.width * 0.85,
+                              height: "auto",
+                              paddingTop: Viewport.height * 0.02,
+                              paddingBottom: Viewport.height * 0.02,
+                              gap: Viewport.height * 0.01,
+                              alignItems: "flex-start",
+                            },
+                          ]}
+                        >
+                          <View
+                            style={[
+                              {
+                                justifyContent: "space-between",
+
+                                width: Viewport.width * 0.85,
+                              },
+                              Styles.flexRow,
+                            ]}
+                          >
+                            <Text
+                              style={{
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                fontSize: FontSizes.normal,
+                              }}
+                            >
+                              Schedule no. {schedule.trip_id}
+                            </Text>
+                            <Text style={{ fontSize: FontSizes.small }}>
+                              <Text
+                                style={{
+                                  fontWeight: "bold",
+                                  color: Colors.primaryColor1,
+                                }}
+                              >
+                                {schedule.status}
+                              </Text>
+                            </Text>
+                          </View>
+
+                          <View style={[{}, Styles.flexRow]}>
+                            <Text style={{ fontSize: FontSizes.small }}>
+                              <Text style={{ fontWeight: "bold" }}>
+                                Travel date and time:{" "}
+                              </Text>
+                              {formatDate(schedule.travel_date)},{" "}
+                              {formatTime(schedule.travel_time)}
+                              <Text style={{ fontWeight: "bold" }}> to </Text>
+                              {formatDate(schedule.return_date)},{" "}
+                              {formatTime(schedule.return_time)}
+                            </Text>
+                          </View>
+                          <View style={[{}, Styles.flexRow]}>
+                            <Text style={{ fontSize: FontSizes.small }}>
+                              <Text style={{ fontWeight: "bold" }}>
+                                Driver:{" "}
+                              </Text>
+                              {schedule.driver}{" "}
+                              <Text style={{ fontWeight: "bold" }}> - </Text> 0
+                              {schedule.contact_no_of_driver}
+                            </Text>
+                          </View>
+                          <View style={[{}, Styles.flexRow]}>
+                            <Text style={{ fontSize: FontSizes.small }}>
+                              <Text style={{ fontWeight: "bold" }}>
+                                Destination:{" "}
+                              </Text>
+                              {schedule.destination}
+                            </Text>
+                          </View>
+                          <View style={[{}, Styles.flexRow]}>
+                            <Text style={{ fontSize: FontSizes.small }}>
+                              <Text style={{ fontWeight: "bold" }}>
+                                Vehicle:{" "}
+                              </Text>
+                              {schedule.vehicle}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={[
+                              {
+                                width: Viewport.width * 0.85,
+                                alignItems: "flex-end",
+                                justifyContent: "flex-end",
+                              },
+                              Styles.flexRow,
+                            ]}
+                          >
+                            <Text
+                              style={{
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                fontSize: FontSizes.small,
+                              }}
+                            >
+                              <Countdown
+                                travelDate={schedule.travel_date}
+                                travelTime={schedule.travel_time}
                               />
                             </Text>
                           </View>

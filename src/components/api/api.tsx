@@ -528,8 +528,6 @@ export async function postRequestFromAPI(
 export async function fetchSchedule(
   setSchedule: any,
   setNextSchedule: any,
-  setIsOngoingScheduleClick: any,
-  handleButtonClick: any,
   setVehicleRecommendation: any
 ) {
   const token = await AsyncStorage.getItem("token");
@@ -556,8 +554,6 @@ export async function fetchSchedule(
         scheduleData.length > 0 ||
         response.data.vehicle_recommendation.length > 0
       ) {
-        setIsOngoingScheduleClick(true);
-        handleButtonClick("Ongoing Schedule");
       }
     })
     .catch((error) => {
