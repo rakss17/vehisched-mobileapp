@@ -57,6 +57,33 @@ export async function SigninAPI(
   }
 }
 
+export async function SignoutAPI(navigation: any, setIsLoading: any) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.post(
+      "api/v1/accounts/token/logout",
+      {},
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    setIsLoading(false);
+    navigation.navigate("Landing");
+    AsyncStorage.removeItem("token");
+  } catch (error: any) {
+    // if (error.message.includes("400")) {
+    // setErrorMessage("Server Error");
+    //   setIsLoading(false);
+    // } else {
+    //   navigation.navigate("Landing");
+    //   setIsLoading(false);
+    // }
+  }
+}
+
 export async function tripScanned(
   requestId: any,
   setScannedAuthorized: any,
