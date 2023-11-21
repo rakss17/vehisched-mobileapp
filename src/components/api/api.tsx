@@ -325,7 +325,8 @@ export async function handlePlaceSelect(
 export async function fetchRequestAPI(
   setRequestFilteredData?: any,
   setRefreshing?: any,
-  setPendingSchedule?: any
+  setPendingSchedule?: any,
+  setSelectedCategory?: any
 ) {
   const token = await AsyncStorage.getItem("token");
   api
@@ -356,8 +357,9 @@ export async function fetchRequestAPI(
       const pendingScheduleTrips = response.data.filter(
         (trip: any) => trip.status === "Pending"
       );
-      if (pendingScheduleTrips) {
+      if (pendingScheduleTrips && pendingScheduleTrips.length > 0) {
         setPendingSchedule(pendingScheduleTrips);
+        setSelectedCategory("Ongoing Schedule");
       }
 
       if (setRefreshing) {
@@ -528,7 +530,9 @@ export async function postRequestFromAPI(
 export async function fetchSchedule(
   setSchedule: any,
   setNextSchedule: any,
-  setVehicleRecommendation: any
+  setVehicleRecommendation: any,
+  setSelectedCategory: any,
+  setRefreshingSchedule?: any
 ) {
   const token = await AsyncStorage.getItem("token");
   api
@@ -553,7 +557,12 @@ export async function fetchSchedule(
       if (
         scheduleData.length > 0 ||
         response.data.vehicle_recommendation.length > 0
-      ) {
+      )
+        setSelectedCategory("Ongoing Schedule");
+      {
+      }
+      if (setRefreshingSchedule) {
+        setRefreshingSchedule(false);
       }
     })
     .catch((error) => {

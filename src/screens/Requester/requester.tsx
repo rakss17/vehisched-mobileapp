@@ -104,6 +104,7 @@ export default function Requester() {
   const [notifList, setNotifList] = useState<any[]>([]);
   const notifLength = notifList.filter((notif) => !notif.read_status).length;
   const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshingSchedule, setRefreshingSchedule] = React.useState(false);
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
@@ -123,15 +124,45 @@ export default function Requester() {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchRequestAPI(() => {}, undefined, setPendingSchedule);
+      fetchRequestAPI(
+        () => {},
+        undefined,
+        setPendingSchedule,
+        setSelectedCategory
+      );
     }, [])
   );
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchSchedule(setSchedule, setNextSchedule, setVehicleRecommendation);
+      fetchSchedule(
+        setSchedule,
+        setNextSchedule,
+        setVehicleRecommendation,
+        setSelectedCategory
+      );
     }, [])
   );
+
+  const onRefreshSchedule = React.useCallback(() => {
+    setRefreshingSchedule(true);
+    setTimeout(() => {
+      fetchRequestAPI(
+        () => {},
+        setRefreshingSchedule,
+        setPendingSchedule,
+        setSelectedCategory
+      );
+      fetchSchedule(
+        setSchedule,
+        setNextSchedule,
+        setVehicleRecommendation,
+        setSelectedCategory,
+        setRefreshingSchedule
+      );
+    });
+  }, []);
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
@@ -172,13 +203,13 @@ export default function Requester() {
     }, 1000);
   }, []);
 
-  useEffect(() => {
-    if (schedule.length > 0 || pendingSchedule.length > 0) {
-      setSelectedCategory("Ongoing Schedule");
-    } else {
-      setSelectedCategory("Set Trip");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (schedule.length > 0 || pendingSchedule.length > 0) {
+  //     setSelectedCategory("Ongoing Schedule");
+  //   } else {
+  //     setSelectedCategory("Set Trip");
+  //   }
+  // }, []);
 
   const checkAutocompleteDisability = () => {
     if (tripData.travel_date !== "" && tripData.travel_time !== "") {
@@ -1204,6 +1235,12 @@ export default function Requester() {
                   paddingTop: Viewport.width * 0.05,
                   paddingBottom: Viewport.width * 0.45,
                 }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshingSchedule}
+                    onRefresh={onRefreshSchedule}
+                  />
+                }
               >
                 {pendingSchedule.length === 0 ? (
                   <Text>No pending schedule available</Text>
@@ -1291,7 +1328,7 @@ export default function Requester() {
                   </>
                 )}
                 {schedule.length === 0 ? (
-                  <Text>No pending schedule available</Text>
+                  <Text>No schedule available</Text>
                 ) : (
                   <>
                     {schedule.map((schedule, index) => (

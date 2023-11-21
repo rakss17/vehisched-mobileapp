@@ -43,7 +43,12 @@ export default function Request() {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
 
-    fetchRequestAPI(setOriginalRequestData, setRefreshing, () => {});
+    fetchRequestAPI(
+      setOriginalRequestData,
+      setRefreshing,
+      () => {},
+      () => {}
+    );
   }, []);
   const navigation = useNavigation() as any;
 
@@ -57,7 +62,12 @@ export default function Request() {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchRequestAPI(setOriginalRequestData, setRefreshing, () => {});
+      fetchRequestAPI(
+        setOriginalRequestData,
+        setRefreshing,
+        () => {},
+        () => {}
+      );
     }, [])
   );
 
