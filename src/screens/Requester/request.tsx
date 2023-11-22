@@ -24,7 +24,12 @@ import RequestDetails from "../../components/modals/requestdetails";
 import { fetchRequestAPI } from "../../components/api/api";
 import { formatDate } from "../../components/function/function";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useFetchNotification } from "../../components/api/websocket";
+import {
+  NotificationApprovalScheduleReminderWebsocket,
+  useFetchNotification,
+} from "../../components/api/websocket";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 export default function Request() {
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
@@ -38,6 +43,10 @@ export default function Request() {
   const [isRequestDetailsShow, setIsRequestDetailsShow] = useState(false);
   const [notifList, setNotifList] = useState<any[]>([]);
   const notifLength = notifList.filter((notif) => !notif.read_status).length;
+  const personalInfo = useSelector(
+    (state: RootState) => state.personalInfo.data
+  );
+  const userName = personalInfo?.username;
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -59,6 +68,7 @@ export default function Request() {
   }, [notifList]);
 
   useFetchNotification(setNotifList);
+  NotificationApprovalScheduleReminderWebsocket(userName);
 
   useFocusEffect(
     React.useCallback(() => {

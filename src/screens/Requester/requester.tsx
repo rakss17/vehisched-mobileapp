@@ -1250,6 +1250,86 @@ export default function Requester() {
                   />
                 }
               >
+                {vehicleRecommendation.map((schedule, index) => (
+                  <TouchableOpacity
+                    // onPress={() => handleRequestFormVisible(vehicle)}
+                    key={index}
+                    style={[
+                      {
+                        width: Viewport.width * 0.95,
+                        height: "auto",
+                        backgroundColor: Colors.primaryColor2,
+                        borderRadius: 10,
+                      },
+                      Styles.flexColumn,
+                    ]}
+                  >
+                    <View
+                      style={[
+                        {
+                          width: Viewport.width * 0.85,
+                          height: "auto",
+                          paddingTop: Viewport.height * 0.02,
+                          paddingBottom: Viewport.height * 0.02,
+                          gap: Viewport.height * 0.01,
+                          alignItems: "flex-start",
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          textAlign: "center",
+                          fontSize: FontSizes.normal,
+                        }}
+                      >
+                        Schedule no. {schedule.request_id}
+                      </Text>
+                      <View style={[{}, Styles.flexRow]}>
+                        <Text style={{ fontSize: FontSizes.small }}>
+                          <Text style={{ fontWeight: "bold" }}>
+                            Travel date and time:{" "}
+                          </Text>
+                          {formatDate(schedule.travel_date)},{" "}
+                          {formatTime(schedule.travel_time)}
+                        </Text>
+                      </View>
+                      <View style={[{}, Styles.flexRow]}>
+                        <Text style={{ fontSize: FontSizes.small }}>
+                          <Text style={{ fontWeight: "bold" }}>
+                            Destination:{" "}
+                          </Text>
+                          {schedule.destination}
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          {
+                            width: Viewport.width * 0.85,
+                            alignItems: "flex-end",
+                            justifyContent: "flex-end",
+                          },
+                          Styles.flexRow,
+                        ]}
+                      >
+                        <Text
+                          style={{
+                            fontSize: FontSizes.small,
+                            textAlign: "left",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Waiting for approval{" "}
+                          <ActivityIndicator
+                            size={FontSizes.normal}
+                            color={Colors.primaryColor1}
+                          />
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+
                 {pendingSchedule.length === 0 ? (
                   <Text>No pending schedule available</Text>
                 ) : (
