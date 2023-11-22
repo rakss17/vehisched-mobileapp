@@ -8,6 +8,7 @@ import {
   TextInput,
   RefreshControl,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import {
   BackgroundColor,
@@ -15,6 +16,7 @@ import {
   Viewport,
   FontSizes,
   Colors,
+  pageMargin,
 } from "../../styles/globalstyles/globalstyles";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
@@ -28,6 +30,8 @@ import DatePicker from "../../components/datepicker/datepicker";
 import TimePicker from "../../components/timepicker/timepicker";
 import AutoCompleteAddressGoogle from "../../components/autocompleteaddress/googleaddressinput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import PagerView from "react-native-pager-view";
+import Carousel from "react-native-reanimated-carousel";
 import {
   checkVehicleAvailability,
   fetchRequestAPI,
@@ -105,6 +109,9 @@ export default function Requester() {
   const notifLength = notifList.filter((notif) => !notif.read_status).length;
   const [refreshing, setRefreshing] = React.useState(false);
   const [refreshingSchedule, setRefreshingSchedule] = React.useState(false);
+  const [selectedVehicleRecommendation, setSelectedVehicleRecommendation] =
+    useState<string>("");
+  const [selectedTrip, setSelectedTrip] = useState<string>("");
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
@@ -1250,8 +1257,8 @@ export default function Requester() {
                   />
                 }
               >
-                {vehicleRecommendation.map((schedule, index) => (
-                  <TouchableOpacity
+                {vehicleRecommendation.map((recommend, index) => (
+                  <View
                     // onPress={() => handleRequestFormVisible(vehicle)}
                     key={index}
                     style={[
@@ -1283,25 +1290,113 @@ export default function Requester() {
                           fontSize: FontSizes.normal,
                         }}
                       >
-                        Schedule no. {schedule.request_id}
+                        Schedule no. {recommend.request_id}
                       </Text>
                       <View style={[{}, Styles.flexRow]}>
                         <Text style={{ fontSize: FontSizes.small }}>
                           <Text style={{ fontWeight: "bold" }}>
-                            Travel date and time:{" "}
+                            We regret to inform you that the vehicle you
+                            reserved for the date{" "}
+                            <Text style={{ color: Colors.primaryColor1 }}>
+                              {formatDate(recommend.travel_date)},{" "}
+                              {formatTime(recommend.travel_time)}
+                            </Text>{" "}
+                            to{" "}
+                            <Text style={{ color: Colors.primaryColor1 }}>
+                              {formatDate(recommend.return_date)},{" "}
+                              {formatTime(recommend.return_time)}{" "}
+                            </Text>
+                            is currently undergoing unexpected maintenance. We
+                            apologize for any inconvenience this may cause.{" "}
+                            {recommend.message}
                           </Text>
-                          {formatDate(schedule.travel_date)},{" "}
-                          {formatTime(schedule.travel_time)}
                         </Text>
                       </View>
-                      <View style={[{}, Styles.flexRow]}>
-                        <Text style={{ fontSize: FontSizes.small }}>
-                          <Text style={{ fontWeight: "bold" }}>
-                            Destination:{" "}
-                          </Text>
-                          {schedule.destination}
-                        </Text>
-                      </View>
+                      {recommend.vehicle_data_recommendation &&
+                      recommend.vehicle_data_recommendation.length > 0 ? (
+                        <Carousel
+                          loop={false}
+                          width={Viewport.width * 0.85}
+                          height={Viewport.height * 0.25}
+                          autoPlay={false}
+                          data={recommend.vehicle_data_recommendation}
+                          scrollAnimationDuration={1000}
+                          mode="parallax"
+                          onSnapToItem={(index) =>
+                            console.log("current index:", index)
+                          }
+                          renderItem={({ item }: { item: any }) => (
+                            <Pressable
+                              key={item.vehicle_recommendation_plate_number}
+                              style={
+                                selectedVehicleRecommendation ===
+                                  item.vehicle_recommendation_plate_number &&
+                                selectedTrip === recommend.trip_id
+                                  ? {
+                                      backgroundColor: "white",
+                                      width: Viewport.width * 0.65,
+                                      height: Viewport.height * 0.2,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      borderWidth: 5,
+                                      borderColor: Colors.primaryColor1,
+                                    }
+                                  : {
+                                      backgroundColor: "white",
+                                      width: Viewport.width * 0.65,
+                                      height: Viewport.height * 0.2,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }
+                              }
+                              onPress={() => {
+                                setSelectedVehicleRecommendation(
+                                  item.vehicle_recommendation_plate_number
+                                );
+                                if (
+                                  selectedVehicleRecommendation ===
+                                  item.vehicle_recommendation_plate_number
+                                ) {
+                                  setSelectedVehicleRecommendation("");
+                                }
+                                setSelectedTrip(recommend.trip_id);
+                                const updatedErrors = { ...errorMessages };
+                                delete updatedErrors[0]
+                                  ?.selectedVehicleRecommendationError;
+                                setErrorMessages(updatedErrors);
+                              }}
+                            >
+                              <Image
+                                style={{
+                                  width: Viewport.width * 0.3,
+                                  height: Viewport.height * 0.1,
+                                }}
+                                resizeMode="cover"
+                                source={{
+                                  uri:
+                                    serverSideUrl +
+                                    item.vehicle_recommendation_image,
+                                }}
+                              />
+
+                              <Text>
+                                {item.vehicle_recommendation_plate_number}{" "}
+                                {item.vehicle_recommendation_model}
+                              </Text>
+
+                              <Text>
+                                Seating Capacity:{" "}
+                                {item.vehicle_recommendation_capacity}
+                              </Text>
+                              <Text>
+                                Type: {item.vehicle_recommendation_type}
+                              </Text>
+                            </Pressable>
+                          )}
+                        />
+                      ) : null}
                       <View
                         style={[
                           {
@@ -1311,23 +1406,9 @@ export default function Requester() {
                           },
                           Styles.flexRow,
                         ]}
-                      >
-                        <Text
-                          style={{
-                            fontSize: FontSizes.small,
-                            textAlign: "left",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Waiting for approval{" "}
-                          <ActivityIndicator
-                            size={FontSizes.normal}
-                            color={Colors.primaryColor1}
-                          />
-                        </Text>
-                      </View>
+                      ></View>
                     </View>
-                  </TouchableOpacity>
+                  </View>
                 ))}
 
                 {pendingSchedule.length === 0 ? (

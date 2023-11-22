@@ -23,7 +23,7 @@ export const Viewport = {
   width: Dimensions.get("window").width,
   height: Dimensions.get("window").height,
 };
-
+export const pageMargin = Viewport.width * 0.05;
 export const Colors = {
   primaryColor1: "#060E57",
   primaryColor2: "#D9D9D9",
