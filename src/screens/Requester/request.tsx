@@ -93,12 +93,16 @@ export default function Request() {
     switch (status) {
       case "Pending":
         filteredStatus = originalRequestData.filter(
-          (request) => request.status === "Pending"
+          (request) =>
+            request.status === "Pending" ||
+            request.status === "Awaiting Vehicle Alteration"
         );
         break;
       case "Approved":
         filteredStatus = originalRequestData.filter(
-          (request) => request.status === "Approved"
+          (request) =>
+            request.status === "Approved" ||
+            request.status === "Approved - Alterate Vehicle"
         );
         break;
       case "Completed":

@@ -33,6 +33,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import PagerView from "react-native-pager-view";
 import Carousel from "react-native-reanimated-carousel";
 import {
+  acceptVehicleAPI,
+  cancelRequestAPI,
   checkVehicleAvailability,
   fetchRequestAPI,
   fetchSchedule,
@@ -54,11 +56,17 @@ import {
 } from "../../components/api/websocket";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Countdown from "../../components/countdown/countdown";
+import Confirmation from "../../components/modals/confirmation";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
   const [isRequestFormVisible, setIsRequestFormVisible] = useState(false);
+
+  const [isConfirmationAcceptedShow, setIsConfirmationAcceptedShow] =
+    useState(false);
+  const [isConfirmationCanceledShow, setIsConfirmationCanceledShow] =
+    useState(false);
   const [isVehicleVip, setIsVehicleVip] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState<any | undefined>(
     undefined
@@ -70,9 +78,7 @@ export default function Requester() {
   >("Round Trip");
   const [selectedTravelType, setSelectedTravelType] = useState<string | null>();
   const [errorMessages, setErrorMessages] = useState<any[]>([]);
-  const [isRequestSubmissionLoading, setIsRequestSubmissionLoading] =
-    useState(false);
-  const [isSetTripLoading, setIsSetTripLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [schedule, setSchedule] = useState<any[]>([]);
   const [nextSchedule, setNextSchedule] = useState<any[]>([]);
   const [vehicleRecommendation, setVehicleRecommendation] = useState<any[]>([]);
@@ -407,7 +413,7 @@ export default function Requester() {
 
     setErrorMessages(errorArray);
     if (Object.keys(validationErrors).length === 0) {
-      setIsSetTripLoading(true);
+      setIsLoading(true);
       checkVehicleAvailability(
         setVehicles,
         tripData.travel_date,
@@ -416,7 +422,7 @@ export default function Requester() {
         tripData.return_time,
         tripData.capacity,
         setSelectedCategory,
-        setIsSetTripLoading
+        setIsLoading
       );
     }
     console.log(tripData);
@@ -436,9 +442,61 @@ export default function Requester() {
     setSelectedVehicle(vehicle);
   };
 
+  const handleAccept = (recommend_request_id: any, recommend_trip_id: any) => {
+    setSelectedTrip(recommend_trip_id);
+    let validationErrors: { [key: string]: string } = {};
+
+    if (!selectedVehicleRecommendation) {
+      validationErrors.selectedVehicleRecommendationError =
+        "Please select vehicle";
+    }
+
+    const errorArray = [validationErrors];
+
+    setErrorMessages(errorArray);
+
+    if (Object.keys(validationErrors).length === 0) {
+      setIsLoading(true);
+      acceptVehicleAPI(
+        recommend_request_id,
+        selectedVehicleRecommendation,
+        setSelectedVehicleRecommendation,
+        setIsLoading,
+        fetchSchedule,
+        setSchedule,
+        setNextSchedule,
+        setVehicleRecommendation,
+        setSelectedCategory,
+        fetchRequestAPI,
+        setPendingSchedule,
+        setIsConfirmationAcceptedShow
+      );
+    }
+  };
+
+  const handleCancel = (recommend_request_id: any) => {
+    console.log("giatay");
+    console.log("naa?", selectedVehicleRecommendation);
+    setIsLoading(true);
+    cancelRequestAPI(
+      recommend_request_id,
+      setIsLoading,
+      fetchSchedule,
+      setSchedule,
+      setNextSchedule,
+      setVehicleRecommendation,
+      setSelectedCategory,
+      fetchRequestAPI,
+      setPendingSchedule,
+      setIsConfirmationCanceledShow
+    );
+  };
+
   const handleRequestFormClose = () => {
     setIsRequestFormVisible(false);
     setIsVehicleVip(false);
+    setIsConfirmationAcceptedShow(false);
+    setIsConfirmationCanceledShow(false);
   };
   const handleOnNextPressed = () => {
     setIsVehicleVip(false);
@@ -1290,7 +1348,7 @@ export default function Requester() {
                           fontSize: FontSizes.normal,
                         }}
                       >
-                        Schedule no. {recommend.request_id}
+                        Schedule no. {recommend.trip_id}
                       </Text>
                       <View style={[{}, Styles.flexRow]}>
                         <Text style={{ fontSize: FontSizes.small }}>
@@ -1312,101 +1370,144 @@ export default function Requester() {
                           </Text>
                         </Text>
                       </View>
+                      {!recommend.vehicle_data_recommendation ||
+                        (recommend.vehicle_data_recommendation.length === 0 && (
+                          <Button
+                            onPress={() => handleCancel(recommend.request_id)}
+                            text="Cancel"
+                            transparentBG
+                            transparentText
+                          />
+                        ))}
                       {recommend.vehicle_data_recommendation &&
                       recommend.vehicle_data_recommendation.length > 0 ? (
-                        <Carousel
-                          loop={false}
-                          width={Viewport.width * 0.85}
-                          height={Viewport.height * 0.25}
-                          autoPlay={false}
-                          data={recommend.vehicle_data_recommendation}
-                          scrollAnimationDuration={1000}
-                          mode="parallax"
-                          onSnapToItem={(index) =>
-                            console.log("current index:", index)
-                          }
-                          renderItem={({ item }: { item: any }) => (
-                            <Pressable
-                              key={item.vehicle_recommendation_plate_number}
-                              style={
-                                selectedVehicleRecommendation ===
-                                  item.vehicle_recommendation_plate_number &&
-                                selectedTrip === recommend.trip_id
-                                  ? {
-                                      backgroundColor: "white",
-                                      width: Viewport.width * 0.65,
-                                      height: Viewport.height * 0.2,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      borderWidth: 5,
-                                      borderColor: Colors.primaryColor1,
-                                    }
-                                  : {
-                                      backgroundColor: "white",
-                                      width: Viewport.width * 0.65,
-                                      height: Viewport.height * 0.2,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                    }
-                              }
-                              onPress={() => {
-                                setSelectedVehicleRecommendation(
-                                  item.vehicle_recommendation_plate_number
-                                );
-                                if (
+                        <>
+                          <Carousel
+                            loop={false}
+                            width={Viewport.width * 0.85}
+                            height={Viewport.height * 0.2}
+                            autoPlay={false}
+                            data={recommend.vehicle_data_recommendation}
+                            scrollAnimationDuration={1000}
+                            mode="parallax"
+                            renderItem={({ item }: { item: any }) => (
+                              <Pressable
+                                key={item.vehicle_recommendation_plate_number}
+                                style={
                                   selectedVehicleRecommendation ===
-                                  item.vehicle_recommendation_plate_number
-                                ) {
-                                  setSelectedVehicleRecommendation("");
+                                    item.vehicle_recommendation_plate_number &&
+                                  selectedTrip === recommend.trip_id
+                                    ? {
+                                        backgroundColor: "white",
+                                        width: Viewport.width * 0.65,
+                                        height: Viewport.height * 0.2,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        borderWidth: 5,
+                                        borderColor: Colors.primaryColor1,
+                                      }
+                                    : {
+                                        backgroundColor: "white",
+                                        width: Viewport.width * 0.65,
+                                        height: Viewport.height * 0.2,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                      }
                                 }
-                                setSelectedTrip(recommend.trip_id);
-                                const updatedErrors = { ...errorMessages };
-                                delete updatedErrors[0]
-                                  ?.selectedVehicleRecommendationError;
-                                setErrorMessages(updatedErrors);
-                              }}
+                                onPress={() => {
+                                  setSelectedVehicleRecommendation(
+                                    item.vehicle_recommendation_plate_number
+                                  );
+                                  if (
+                                    selectedVehicleRecommendation ===
+                                    item.vehicle_recommendation_plate_number
+                                  ) {
+                                    setSelectedVehicleRecommendation("");
+                                  }
+
+                                  setSelectedTrip(recommend.trip_id);
+                                  const updatedErrors = { ...errorMessages };
+                                  delete updatedErrors[0]
+                                    ?.selectedVehicleRecommendationError;
+                                  setErrorMessages(updatedErrors);
+                                }}
+                              >
+                                <Image
+                                  style={{
+                                    width: Viewport.width * 0.3,
+                                    height: Viewport.height * 0.1,
+                                  }}
+                                  resizeMode="cover"
+                                  source={{
+                                    uri:
+                                      serverSideUrl +
+                                      item.vehicle_recommendation_image,
+                                  }}
+                                />
+
+                                <Text>
+                                  {item.vehicle_recommendation_plate_number}{" "}
+                                  {item.vehicle_recommendation_model}
+                                </Text>
+
+                                <Text>
+                                  Seating Capacity:{" "}
+                                  {item.vehicle_recommendation_capacity}
+                                </Text>
+                                <Text>
+                                  Type: {item.vehicle_recommendation_type}
+                                </Text>
+                              </Pressable>
+                            )}
+                          />
+                          {errorMessages[0]
+                            ?.selectedVehicleRecommendationError && (
+                            <Text
+                              style={[
+                                {
+                                  width: Viewport.width * 0.85,
+                                  textAlign: "center",
+                                },
+                                Styles.textError,
+                              ]}
                             >
-                              <Image
-                                style={{
-                                  width: Viewport.width * 0.3,
-                                  height: Viewport.height * 0.1,
-                                }}
-                                resizeMode="cover"
-                                source={{
-                                  uri:
-                                    serverSideUrl +
-                                    item.vehicle_recommendation_image,
-                                }}
-                              />
-
-                              <Text>
-                                {item.vehicle_recommendation_plate_number}{" "}
-                                {item.vehicle_recommendation_model}
-                              </Text>
-
-                              <Text>
-                                Seating Capacity:{" "}
-                                {item.vehicle_recommendation_capacity}
-                              </Text>
-                              <Text>
-                                Type: {item.vehicle_recommendation_type}
-                              </Text>
-                            </Pressable>
+                              {
+                                errorMessages[0]
+                                  ?.selectedVehicleRecommendationError
+                              }
+                            </Text>
                           )}
-                        />
+                          <View
+                            style={[
+                              {
+                                justifyContent: "space-around",
+
+                                width: Viewport.width * 0.85,
+                              },
+                              Styles.flexRow,
+                            ]}
+                          >
+                            <Button
+                              onPress={() => handleCancel(recommend.request_id)}
+                              text="Cancel"
+                              transparentBG
+                              transparentText
+                            />
+                            <Button
+                              onPress={() =>
+                                handleAccept(
+                                  recommend.request_id,
+                                  recommend.trip_id
+                                )
+                              }
+                              text="Accept"
+                              defaultBG
+                            />
+                          </View>
+                        </>
                       ) : null}
-                      <View
-                        style={[
-                          {
-                            width: Viewport.width * 0.85,
-                            alignItems: "flex-end",
-                            justifyContent: "flex-end",
-                          },
-                          Styles.flexRow,
-                        ]}
-                      ></View>
                     </View>
                   </View>
                 ))}
@@ -1630,7 +1731,24 @@ export default function Requester() {
         </View>
       </View>
       {/* </ScrollView> */}
-
+      <Confirmation
+        visible={isConfirmationAcceptedShow}
+        animationType="fade"
+        transparent={true}
+        content="Accepted Successfully"
+        onRequestClose={handleRequestFormClose}
+        showContent
+        adjustedSize
+      />
+      <Confirmation
+        visible={isConfirmationCanceledShow}
+        animationType="fade"
+        transparent={true}
+        content="Canceled Successfully"
+        onRequestClose={handleRequestFormClose}
+        showContent
+        adjustedSize
+      />
       <SetTripModal
         animationType="fade"
         visible={isSetTripVisible}
@@ -1650,7 +1768,7 @@ export default function Requester() {
         setAddressData={setAddressData}
         setSelectedTravelCategory={setSelectedTravelCategory}
         setSelectedTravelType={setSelectedTravelType}
-        setIsRequestSubmissionLoading={setIsRequestSubmissionLoading}
+        setIsRequestSubmissionLoading={setIsLoading}
       />
       <PromptDialog
         animationType="fade"
@@ -1668,15 +1786,7 @@ export default function Requester() {
       />
       <Loading
         animationType="fade"
-        visible={isRequestSubmissionLoading}
-        transparent={true}
-        onRequestClose={handleRequestFormClose}
-        content="Processing..."
-        showContent
-      />
-      <Loading
-        animationType="fade"
-        visible={isSetTripLoading}
+        visible={isLoading}
         transparent={true}
         onRequestClose={handleRequestFormClose}
         content="Processing..."

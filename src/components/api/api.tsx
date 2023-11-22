@@ -569,3 +569,105 @@ export async function fetchSchedule(
       console.error("Error fetching schedule list:", error);
     });
 }
+
+export async function acceptVehicleAPI(
+  requestId: any,
+  selectedVehicleRecommendation: any,
+  setSelectedVehicleRecommendation: any,
+  setIsLoading: any,
+  fetchSchedule: any,
+  setSchedule: any,
+  setNextSchedule: any,
+  setVehicleRecommendation: any,
+  setSelectedCategory: any,
+  fetchRequestAPI: any,
+  setPendingSchedule: any,
+  setIsConfirmationAcceptedShow: any
+) {
+  const token = await AsyncStorage.getItem("token");
+  api
+    .patch(
+      `/api/v1/trip/accept-vehicle/${requestId}/`,
+      {
+        plate_number: selectedVehicleRecommendation,
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      fetchSchedule(
+        setSchedule,
+        setNextSchedule,
+        setVehicleRecommendation,
+        setSelectedCategory,
+        undefined
+      );
+      fetchRequestAPI(
+        () => {},
+        undefined,
+        setPendingSchedule,
+        () => {}
+      );
+      setSelectedVehicleRecommendation("");
+      setIsLoading(false);
+      setIsConfirmationAcceptedShow(true);
+    })
+    .catch((error) => {
+      setIsLoading(false);
+      console.log(error);
+    });
+}
+
+export async function cancelRequestAPI(
+  requestId: any,
+  setIsLoading: any,
+  fetchSchedule: any,
+  setSchedule: any,
+  setNextSchedule: any,
+  setVehicleRecommendation: any,
+  setSelectedCategory: any,
+  fetchRequestAPI: any,
+  setPendingSchedule: any,
+  setIsConfirmationCanceledShow: any
+) {
+  const token = await AsyncStorage.getItem("token");
+
+  api
+    .patch(
+      `/api/v1/request/cancel/${requestId}/`,
+      {
+        status: "Canceled",
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      fetchSchedule(
+        setSchedule,
+        setNextSchedule,
+        setVehicleRecommendation,
+        setSelectedCategory,
+        undefined
+      );
+      fetchRequestAPI(
+        () => {},
+        undefined,
+        setPendingSchedule,
+        () => {}
+      );
+      setIsLoading(false);
+      setIsConfirmationCanceledShow(true);
+    })
+    .catch((error) => {
+      setIsLoading(false);
+      console.log(error);
+    });
+}
