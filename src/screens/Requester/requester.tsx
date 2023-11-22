@@ -118,9 +118,17 @@ export default function Requester() {
     });
   }, [notifList]);
 
-  useAppState();
   NotificationApprovalScheduleReminderWebsocket(userName);
   useFetchNotification(setNotifList);
+
+  useAppState(
+    fetchSchedule,
+    setSchedule,
+    setNextSchedule,
+    setVehicleRecommendation,
+    fetchRequestAPI,
+    setPendingSchedule
+  );
 
   useFocusEffect(
     React.useCallback(() => {

@@ -2,7 +2,14 @@ import { useEffect } from "react";
 import { AppState, BackHandler } from "react-native";
 import { parse, format } from "date-fns";
 
-export const useAppState = (fetchAPI?: Function, setAPIData?: Function) => {
+export const useAppState = (
+  fetchAPI?: Function,
+  setAPIData?: Function,
+  setAPIData12?: Function,
+  setAPIData13?: Function,
+  fetchAPI2?: Function,
+  setAPIData2?: Function
+) => {
   useEffect(() => {
     const handleBackPress = () => {
       AppState.currentState !== "background" &&
@@ -31,8 +38,25 @@ export const useAppState = (fetchAPI?: Function, setAPIData?: Function) => {
 
   const handleAppStateChange = (nextAppState: any) => {
     if (nextAppState === "active") {
-      if (fetchAPI && setAPIData) {
+      if (fetchAPI && setAPIData && undefined && undefined) {
         fetchAPI(setAPIData);
+      }
+      if (fetchAPI && setAPIData && setAPIData12 && setAPIData13) {
+        fetchAPI(
+          setAPIData,
+          setAPIData12,
+          setAPIData13,
+          () => {},
+          () => {}
+        );
+      }
+      if (fetchAPI2 && setAPIData2) {
+        fetchAPI2(
+          () => {},
+          undefined,
+          setAPIData2,
+          () => {}
+        );
       }
     }
   };
