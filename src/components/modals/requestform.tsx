@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, View, Text, ScrollView } from "react-native";
 import Checkbox from "expo-checkbox";
 import {
@@ -17,6 +17,7 @@ import TimePicker from "../timepicker/timepicker";
 import UploadButton from "../buttons/upload";
 import DownloadButton from "../buttons/download";
 import Confirmation from "./confirmation";
+import Csm from "./csm";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -343,9 +344,17 @@ const RequestForm: React.FC<ModalProps> = ({
     "https://docs.google.com/document/d/1HJ3MiD0j2Ef77Qcgmvl64JG1DKQxLHL5/edit?usp=drive_link&ouid=115657237309251643032&rtpof=true&sd=true";
   const buttonText = "Download Template";
 
+
+  const [isCsmVisible, setCsmVisible] = useState(false);
   const handleRequestClose = () => {
-    setIsConfirmationShow(false);
+   setCsmVisible(true);
+   console.log('handleRequestClose called');
   };
+  
+  useEffect(() => {
+   console.log('isCsmVisible:', isCsmVisible);
+  }, [isCsmVisible]);
+  
   return (
     <>
       <Modal
@@ -1160,6 +1169,7 @@ const RequestForm: React.FC<ModalProps> = ({
         showHeader
         showFooter
       />
+      {isCsmVisible && <Csm/>}
     </>
   );
 };

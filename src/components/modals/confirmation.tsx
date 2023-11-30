@@ -9,6 +9,7 @@ import {
 import { ModalProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
 
+
 const Confirmation: React.FC<ModalProps> = ({
   animationType,
   transparent,
