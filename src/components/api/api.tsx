@@ -543,24 +543,32 @@ export async function fetchSchedule(
       },
     })
     .then((response) => {
-      const scheduleData = response.data.trip_data.filter(
+      const tripData = response.data.trip_data || [];
+      const scheduleData = tripData.filter(
         (item: any) => !item.next_schedule_travel_date
       );
 
-      const nextScheduleData = response.data.trip_data.filter(
+      const nextScheduleData = tripData.filter(
         (item: any) => item.next_schedule_travel_date
       );
-      setVehicleRecommendation(response.data.vehicle_recommendation);
-
+      const vehicleRecommendation = response.data.vehicle_recommendation || [];
+      setVehicleRecommendation(vehicleRecommendation);
+      if (
+        scheduleData ||
+        nextScheduleData ||
+        vehicleRecommendation
+      ) {
       setSchedule(scheduleData);
       setNextSchedule(nextScheduleData);
-      if (
-        scheduleData.length > 0 ||
-        response.data.vehicle_recommendation.length > 0
-      )
         setSelectedCategory("Ongoing Schedule");
-      {
-      }
+     
+    } else {
+      setSelectedCategory("Set Trip");
+    }
+    
+    
+      
+      
       if (setRefreshingSchedule) {
         setRefreshingSchedule(false);
       }

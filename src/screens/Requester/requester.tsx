@@ -224,13 +224,7 @@ export default function Requester() {
     }, 1000);
   }, []);
 
-  // useEffect(() => {
-  //   if (schedule.length > 0 || pendingSchedule.length > 0) {
-  //     setSelectedCategory("Ongoing Schedule");
-  //   } else {
-  //     setSelectedCategory("Set Trip");
-  //   }
-  // }, []);
+  
 
   const checkAutocompleteDisability = () => {
     if (tripData.travel_date !== "" && tripData.travel_time !== "") {
