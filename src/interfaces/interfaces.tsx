@@ -245,7 +245,16 @@ export interface InitialFormVipProps {
   setTripData: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
   setAddressData: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
   selectedVehicle?: any | undefined;
-  tripData: any;
-  addressData: any;
+  tripData: {
+    travel_date: any;
+    travel_time: any;
+    return_date: any;
+    return_time: any;
+    category: any
+  };
+  addressData: {
+    destination: any;
+    distance: any;
+  };
   handleRequestFormVisible: (vehicle: Vehicle) => void;
 }
