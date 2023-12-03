@@ -6,7 +6,7 @@ import * as Notifications from "expo-notifications";
 import { api } from "./api";
 import { useFocusEffect } from "@react-navigation/native";
 
-const serverSideUrl = "192.168.1.15:8000";
+const serverSideUrl = "192.168.1.8:8000";
 
 export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
   useFocusEffect(
@@ -89,11 +89,25 @@ export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
         } else if (
           data.type === "recommend.notification" &&
           data.status === "Recommend" &&
-          data.message != "Notification message goes here"
+          data.message != "Notification message goes here" &&
+          data.message.includes("unexpected maintenance")
         ) {
           Notifications.scheduleNotificationAsync({
             content: {
               title: "Vehicle Maintenance",
+              body: data.message + " Press here to see alternative vehicles.",
+            },
+            trigger: null,
+          });
+        } else if (
+          data.type === "recommend.notification" &&
+          data.status === "Recommend" &&
+          data.message != "Notification message goes here" &&
+          data.message.includes("is used by the higher official")
+        ) {
+          Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Vehicle Prioritization",
               body: data.message + " Press here to see alternative vehicles.",
             },
             trigger: null,
@@ -211,6 +225,17 @@ export function useFetchNotification(setNotifList: any) {
                 Notifications.scheduleNotificationAsync({
                   content: {
                     title: "Vehicle Maintenance",
+                    body: message + " Press here to see alternative vehicles.",
+                  },
+                  trigger: null,
+                });
+              } else if (
+                notification.subject.includes("used by the higher official")
+              ) {
+                let message = `${notification.subject} `;
+                Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Vehicle Prioritization",
                     body: message + " Press here to see alternative vehicles.",
                   },
                   trigger: null,

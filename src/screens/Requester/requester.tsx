@@ -149,16 +149,16 @@ export default function Requester() {
     setPendingSchedule
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchRequestAPI(
-        () => {},
-        undefined,
-        setPendingSchedule,
-        setSelectedCategory
-      );
-    }, [])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     fetchRequestAPI(
+  //       () => {},
+  //       undefined,
+  //       setPendingSchedule,
+  //       setSelectedCategory
+  //     );
+  //   }, [])
+  // );
 
   useFocusEffect(
     React.useCallback(() => {
