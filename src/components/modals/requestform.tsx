@@ -62,6 +62,7 @@ const RequestForm: React.FC<ModalProps> = ({
   const middleName = personalInfo?.middle_name;
   const userID = personalInfo?.id;
   const office = personalInfo?.office;
+  const role = personalInfo?.role;
 
   const convertTravel12to24HourConverted = format12to24HourFormat(
     tripData.travel_time
@@ -84,6 +85,7 @@ const RequestForm: React.FC<ModalProps> = ({
     purpose: "",
     vehicle: "",
     type: "",
+    role: "",
   });
 
   const isCurrentStepValid = () => {
@@ -122,6 +124,7 @@ const RequestForm: React.FC<ModalProps> = ({
       type: tripData.category,
       destination: addressData.destination,
       distance: addressData.distance,
+      role: role,
     }));
     switch (form) {
       case "Close":

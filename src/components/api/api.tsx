@@ -4,10 +4,10 @@ import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
 import { parse, format, isValid } from "date-fns";
 import { getTimeFormat } from "../function/function";
 
-export const serverSideUrl = "http://192.168.1.8:8000/media/";
+export const serverSideUrl = "http://192.168.1.15:8000/media/";
 
 export const api = axios.create({
-  baseURL: "http://192.168.1.8:8000/",
+  baseURL: "http://192.168.1.15:8000/",
 });
 
 export async function SigninAPI(
@@ -678,4 +678,27 @@ export async function cancelRequestAPI(
       setIsLoading(false);
       console.log(error);
     });
+}
+
+export async function fetchVehicleVIPAPI(
+  setVehicles: any,
+  setSelectedCategory: any
+) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.get("api/v1/vehicles/fetch-vehicle-vip/", {
+      params: {
+        role: "vip",
+      },
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    setVehicles(response.data);
+    setSelectedCategory("Available Vehicle");
+  } catch (error) {
+    console.log(error);
+  }
 }

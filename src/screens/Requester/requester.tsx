@@ -38,6 +38,7 @@ import {
   checkVehicleAvailability,
   fetchRequestAPI,
   fetchSchedule,
+  fetchVehicleVIPAPI,
   serverSideUrl,
 } from "../../components/api/api";
 import { format, parse } from "date-fns";
@@ -57,12 +58,13 @@ import {
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Countdown from "../../components/countdown/countdown";
 import Confirmation from "../../components/modals/confirmation";
+import InitialFormVip from "../../components/modals/initialformvip";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
   const [isRequestFormVisible, setIsRequestFormVisible] = useState(false);
-
+  const [isInitialFormVIPOpen, setIsInitialFormVIPOpen] = useState(false);
   const [isConfirmationAcceptedShow, setIsConfirmationAcceptedShow] =
     useState(false);
   const [isConfirmationCanceledShow, setIsConfirmationCanceledShow] =
@@ -118,10 +120,14 @@ export default function Requester() {
   const [selectedVehicleRecommendation, setSelectedVehicleRecommendation] =
     useState<string>("");
   const [selectedTrip, setSelectedTrip] = useState<string>("");
+  const [plateNumber, setSelectedPlateNumber] = useState("");
+  const [vehicleName, setSelectedModel] = useState("");
+  const [capacity, setSelectedCapacity] = useState("");
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
   const userName = personalInfo?.username;
+  const role = personalInfo?.role;
 
   const navigation = useNavigation() as any;
 
@@ -164,6 +170,12 @@ export default function Requester() {
       );
     }, [])
   );
+
+  useEffect(() => {
+    if (role === "vip") {
+      fetchVehicleVIPAPI(setVehicles, setSelectedCategory);
+    }
+  }, []);
 
   const onRefreshSchedule = React.useCallback(() => {
     setRefreshingSchedule(true);
@@ -427,10 +439,15 @@ export default function Requester() {
   };
 
   const handleRequestFormVisible = (vehicle: Vehicle) => {
-    if (vehicle.isVip) {
-      setIsVehicleVip(true);
-    } else {
+    if (role === "vip") {
+      setIsInitialFormVIPOpen(false);
       setIsRequestFormVisible(true);
+    } else {
+      if (vehicle.is_vip) {
+        setIsVehicleVip(true);
+      } else {
+        setIsRequestFormVisible(true);
+      }
     }
 
     setSelectedVehicle(vehicle);
@@ -469,8 +486,6 @@ export default function Requester() {
   };
 
   const handleCancel = (recommend_request_id: any) => {
-    console.log("giatay");
-    console.log("naa?", selectedVehicleRecommendation);
     setIsLoading(true);
     cancelRequestAPI(
       recommend_request_id,
@@ -491,6 +506,7 @@ export default function Requester() {
     setIsVehicleVip(false);
     setIsConfirmationAcceptedShow(false);
     setIsConfirmationCanceledShow(false);
+    setIsInitialFormVIPOpen(false);
   };
   const handleOnNextPressed = () => {
     setIsVehicleVip(false);
@@ -1205,30 +1221,56 @@ export default function Requester() {
                   <Text>No vehicles available</Text>
                 ) : (
                   <>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        color: Colors.primaryColor1,
-                      }}
-                    >
-                      Available vehicles from{" "}
-                      <Text style={{ fontWeight: "bold" }}>
-                        {formatDate(tripData.travel_date)},{" "}
-                        {formatTime(tripData.travel_time)}
-                      </Text>{" "}
-                      to{" "}
-                      <Text style={{ fontWeight: "bold" }}>
-                        {formatDate(tripData.return_date)},{" "}
-                        {formatTime(tripData.return_time)}
-                      </Text>
-                      . Preferred capacity:{" "}
-                      <Text style={{ fontWeight: "bold" }}>
-                        {tripData.capacity}
-                      </Text>
-                    </Text>
+                    {role === "vip" ? null : (
+                      <>
+                        <Text
+                          style={{
+                            fontSize: FontSizes.small,
+                            color: Colors.primaryColor1,
+                          }}
+                        >
+                          Available vehicles from{" "}
+                          <Text style={{ fontWeight: "bold" }}>
+                            {formatDate(tripData.travel_date)},{" "}
+                            {formatTime(tripData.travel_time)}
+                          </Text>{" "}
+                          to{" "}
+                          <Text style={{ fontWeight: "bold" }}>
+                            {formatDate(tripData.return_date)},{" "}
+                            {formatTime(tripData.return_time)}
+                          </Text>
+                          . Preferred capacity:{" "}
+                          <Text style={{ fontWeight: "bold" }}>
+                            {tripData.capacity}
+                          </Text>
+                        </Text>
+                      </>
+                    )}
+                    {/* {
+                            role === "vip"
+                              ? (setIsInitialFormVIPOpen(true),
+                                setSelectedPlateNumber(vehicle.plate_number),
+                                setSelectedModel(vehicle.model),
+                                setSelectedCapacity(vehicle.capacity))
+                              : vehicle.is_vip === true
+                              ? (setIsDisclaimerOpen(true),
+                                setSelectedPlateNumber(vehicle.plate_number),
+                                setSelectedModel(vehicle.model),
+                                setSelectedCapacity(vehicle.capacity))
+                              : openRequestForm(
+                                  vehicle.plate_number,
+                                  vehicle.model,
+                                  vehicle.capacity
+                                );
+                          } */}
                     {vehicles.map((vehicle, index) => (
                       <TouchableOpacity
-                        onPress={() => handleRequestFormVisible(vehicle)}
+                        onPress={() => {
+                          role === "vip"
+                            ? (setIsInitialFormVIPOpen(true),
+                              setSelectedVehicle(vehicle))
+                            : handleRequestFormVisible(vehicle);
+                        }}
                         key={index}
                         style={[
                           {
@@ -1358,8 +1400,6 @@ export default function Requester() {
                               {formatDate(recommend.return_date)},{" "}
                               {formatTime(recommend.return_time)}{" "}
                             </Text>
-                            is currently undergoing unexpected maintenance. We
-                            apologize for any inconvenience this may cause.{" "}
                             {recommend.message}
                           </Text>
                         </Text>
@@ -1785,6 +1825,18 @@ export default function Requester() {
         onRequestClose={handleRequestFormClose}
         content="Processing..."
         showContent
+      />
+      <InitialFormVip
+        visible={isInitialFormVIPOpen}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={handleRequestFormClose}
+        selectedVehicle={selectedVehicle}
+        setAddressData={setAddressData}
+        setTripData={setTripData}
+        tripData={tripData}
+        addressData={addressData}
+        handleRequestFormVisible={handleRequestFormVisible}
       />
     </>
   );
