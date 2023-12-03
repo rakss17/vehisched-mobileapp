@@ -20,7 +20,7 @@ export interface Vehicle {
   vehicle_type: string;
   vehicle_image: any;
   status: string;
-  isVip: boolean;
+  is_vip: boolean;
 }
 
 export interface UserData {
@@ -235,4 +235,17 @@ export interface Schedule {
   date: string;
   status: string;
   vehicle?: string;
+}
+
+export interface InitialFormVipProps {
+  visible: boolean;
+  transparent: any;
+  animationType: any;
+  onRequestClose: () => void;
+  setTripData: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  setAddressData: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  selectedVehicle?: any | undefined;
+  tripData: any;
+  addressData: any;
+  handleRequestFormVisible: (vehicle: Vehicle) => void;
 }
