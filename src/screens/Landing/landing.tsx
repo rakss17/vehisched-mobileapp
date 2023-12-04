@@ -17,6 +17,7 @@ import { SigninAPI } from "../../components/api/api";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Signup from "../../components/modals/signup";
 
 export default function Landing() {
   const [isLoading, setIsLoading] = useState(false);
@@ -75,6 +76,15 @@ export default function Landing() {
       setIsLoading,
       dispatch
     );
+  };
+
+  const [isSignupOpen, setSignupOpen] = useState(false)
+  const handleSignupOpen=() =>{
+    setSignupOpen(true)
+  }
+  
+  const handleCloseSignup = () => {
+    setSignupOpen(false);
   };
   return (
     <>
@@ -174,6 +184,18 @@ export default function Landing() {
                   <Button onPress={handleSignIn} text="Sign In"></Button>
                 </BackgroundColor>
               </View>
+              <View style={{marginTop:10, marginBottom:-35}}>
+              <TouchableOpacity onPress={handleSignupOpen}>
+                  <Text
+                    style={{
+                      textDecorationLine: "underline",
+                      color: Colors.secondaryColor3,
+                    }}
+                  >
+                    Create an Account
+                  </Text>
+                </TouchableOpacity>
+              </View>
               <BackgroundColor
                 style={{
                   marginTop: Viewport.height * 0.06,
@@ -183,6 +205,7 @@ export default function Landing() {
               />
             </View>
           </View>
+          {isSignupOpen && <Signup onCloseSignup={handleCloseSignup}/>}
         </ScrollView>
       </BackgroundColor>
     </>
