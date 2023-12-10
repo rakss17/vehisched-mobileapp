@@ -244,6 +244,9 @@ export default function Requester() {
       setIsTravelDateSelected(false);
     }
   };
+  useEffect(() => {
+    checkAutocompleteDisability();
+  },[checkAutocompleteDisability])
 
   const handleFromDateSelected = (selectedDate: Date) => {
     const formattedDate = selectedDate
@@ -268,6 +271,7 @@ export default function Requester() {
       setErrorMessages(updatedErrors);
       checkAutocompleteDisability();
     }
+    checkAutocompleteDisability();
   };
 
   const handleFromTimeSelected = (
@@ -281,7 +285,7 @@ export default function Requester() {
     const formattedHours = formatNumberToTwoDigits(hours);
     const formattedMinutes = formatNumberToTwoDigits(minutes);
 
-    checkAutocompleteDisability();
+    
     setTripData((prevData: any) => ({
       ...prevData,
       travel_time: `${formattedHours}:${formattedMinutes} ${period}`,
@@ -299,6 +303,7 @@ export default function Requester() {
       delete updatedErrors[0]?.travelTimeOnewayError;
       setErrorMessages(updatedErrors);
     }
+    checkAutocompleteDisability();
   };
 
   const handleToDateSelected = (selectedDate: Date) => {
@@ -431,7 +436,6 @@ export default function Requester() {
         setIsLoading
       );
     }
-    console.log(tripData);
   };
 
   const handleSetTripClose = () => {

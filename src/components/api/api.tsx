@@ -4,10 +4,10 @@ import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
 import { parse, format, isValid } from "date-fns";
 import { getTimeFormat } from "../function/function";
 
-export const serverSideUrl = "http://192.168.1.15:8000/media/";
+export const serverSideUrl = "http://192.168.1.115:8000/media/";
 
 export const api = axios.create({
-  baseURL: "http://192.168.1.15:8000/",
+  baseURL: "http://192.168.1.115:8000/",
 });
 
 export async function SigninAPI(
@@ -633,14 +633,15 @@ export async function acceptVehicleAPI(
 export async function cancelRequestAPI(
   requestId: any,
   setIsLoading: any,
-  fetchSchedule: any,
-  setSchedule: any,
-  setNextSchedule: any,
-  setVehicleRecommendation: any,
-  setSelectedCategory: any,
-  fetchRequestAPI: any,
-  setPendingSchedule: any,
-  setIsConfirmationCanceledShow: any
+  fetchSchedule?: any,
+  setSchedule?: any,
+  setNextSchedule?: any,
+  setVehicleRecommendation?: any,
+  setSelectedCategory?: any,
+  fetchRequestAPI?: any,
+  setPendingSchedule?: any,
+  setIsConfirmationCanceledShow?: any,
+  setOriginalRequestData?: any
 ) {
   const token = await AsyncStorage.getItem("token");
 
@@ -666,7 +667,7 @@ export async function cancelRequestAPI(
         undefined
       );
       fetchRequestAPI(
-        () => {},
+        setOriginalRequestData,
         undefined,
         setPendingSchedule,
         () => {}
@@ -702,3 +703,5 @@ export async function fetchVehicleVIPAPI(
     console.log(error);
   }
 }
+
+

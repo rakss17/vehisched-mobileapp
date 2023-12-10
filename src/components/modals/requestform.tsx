@@ -86,6 +86,7 @@ const RequestForm: React.FC<ModalProps> = ({
     vehicle: "",
     type: "",
     role: "",
+    merge_trip: false
   });
 
   const isCurrentStepValid = () => {
@@ -158,14 +159,13 @@ const RequestForm: React.FC<ModalProps> = ({
           setSelectedTravelType,
           setIsRequestSubmissionLoading
         );
+        console.log(requestFormData)
         setShowTextNote(false);
         setNumberOfPassengers(0);
         setPassengerData([]);
         setIsFirstFormShow(true);
         onRequestClose();
         setIsSecondFormShow(false);
-
-        console.log(requestFormData);
 
         break;
       default:

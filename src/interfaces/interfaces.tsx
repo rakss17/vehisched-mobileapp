@@ -40,6 +40,7 @@ export interface UserData {
 
 export interface Requests {
   requester_name: string;
+  request_id: any,
   office_dept: string;
   request_number: string;
   travel_date: string;

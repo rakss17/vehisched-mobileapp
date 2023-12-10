@@ -21,7 +21,7 @@ import EllipsisMenu from "../../components/ellipsismenu/ellipsismenu";
 import PromptDialog from "../../components/modals/promptdialog";
 import Confirmation from "../../components/modals/confirmation";
 import RequestDetails from "../../components/modals/requestdetails";
-import { fetchRequestAPI } from "../../components/api/api";
+import { cancelRequestAPI, fetchRequestAPI } from "../../components/api/api";
 import { formatDate } from "../../components/function/function";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
@@ -30,6 +30,7 @@ import {
 } from "../../components/api/websocket";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import Loading from "../../components/modals/loading";
 
 export default function Request() {
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
@@ -41,6 +42,7 @@ export default function Request() {
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [isConfirmation2Show, setIsConfirmation2Show] = useState(false);
   const [isRequestDetailsShow, setIsRequestDetailsShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [notifList, setNotifList] = useState<any[]>([]);
   const notifLength = notifList.filter((notif) => !notif.read_status).length;
   const personalInfo = useSelector(
@@ -130,6 +132,10 @@ export default function Request() {
     handleButtonPress("Pending");
   }, []);
 
+  const handleRequestFormClose = () => {
+    setIsLoading(false)
+  };
+
   const handleEllipsisMenu = (options: string, request: Requests) => {
     setSelectedRequest(request);
     if (options === "View request") {
@@ -149,7 +155,13 @@ export default function Request() {
   };
   const handleNextPressed = () => {
     setIsCancelModalShow(false);
-    setIsConfirmationShow(true);
+    cancelRequestAPI(selectedRequest.request_id, setIsLoading, () => {}, () => {}, () => {}, () => {}, () => {},
+     
+        fetchRequestAPI,
+        () => {},
+        setIsConfirmationShow,
+        
+        setOriginalRequestData)
   };
   const handleNext2Pressed = () => {
     setIsDeleteModalShow(false);
@@ -320,6 +332,14 @@ export default function Request() {
         onRequestClose={hanldeOnRequestClose}
         showContent
         adjustedSize
+      />
+      <Loading
+        animationType="fade"
+        visible={isLoading}
+        transparent={true}
+        onRequestClose={handleRequestFormClose}
+        content="Processing..."
+        showContent
       />
     </>
   );
