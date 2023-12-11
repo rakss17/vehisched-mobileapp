@@ -126,6 +126,7 @@ const RequestForm: React.FC<ModalProps> = ({
       destination: addressData.destination,
       distance: addressData.distance,
       role: role,
+      merge_trip: false
     }));
     switch (form) {
       case "Close":
@@ -159,7 +160,6 @@ const RequestForm: React.FC<ModalProps> = ({
           setSelectedTravelType,
           setIsRequestSubmissionLoading
         );
-        console.log(requestFormData)
         setShowTextNote(false);
         setNumberOfPassengers(0);
         setPassengerData([]);
