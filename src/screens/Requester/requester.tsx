@@ -803,71 +803,23 @@ export default function Requester() {
 
                   {selectedTravelCategory === "Round Trip" && (
                     <>
-                      <View
-                        style={[
-                          {
-                            width: Viewport.width * 1,
-                          },
-                          Styles.flexRow,
-                        ]}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 18,
+                      
+                      <View style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}>
+                      <Text style={{
+                            fontSize: FontSizes.normal,
                             color: Colors.primaryColor1,
                             fontWeight: "bold",
-                            marginBottom: Viewport.height * 0.05,
-                            paddingLeft: Viewport.width * 0.02,
-                          }}
-                        >
-                          Destination:{" "}
-                        </Text>
-                        <View
-                          style={[
-                            {
-                              gap: 10,
-                              width: Viewport.width * 0.6,
-                            },
-                            Styles.flexColumn,
-                          ]}
-                        >
-                          <AutoCompleteAddressGoogle
-                            travel_date={tripData.travel_date}
-                            travel_time={tripData.travel_time}
-                            setData={setTripData}
-                            setAddressData={setAddressData}
-                            isDisabled={isAutocompleteEditable}
-                            category={tripData.category}
-                          />
-                          {isTravelDateSelected ? (
-                            <Text
-                              style={[
-                                { paddingLeft: Viewport.width * 0.08 },
-                                Styles.textError,
-                              ]}
-                            >
-                              Select travel date and time first
-                            </Text>
-                          ) : (
-                            <Text
-                              style={[{ paddingLeft: 30 }, Styles.textError]}
-                            >
-                              {errorMessages[0]?.destinationError}
-                            </Text>
-                          )}
-                        </View>
-                      </View>
-
+                          }}>Departure</Text>
                       <View style={[{ gap: 30 }, Styles.flexRow]}>
                         <Text
                           style={{
-                            fontSize: FontSizes.normal,
+                            fontSize: FontSizes.small,
                             color: Colors.primaryColor1,
                             fontWeight: "bold",
                             marginBottom: Viewport.height * 0.08,
                           }}
                         >
-                          From:{" "}
+                          Date & Time:{" "}
                         </Text>
                         <View style={[{ gap: 10 }, Styles.flexColumn]}>
                           <DatePicker
@@ -896,17 +848,23 @@ export default function Requester() {
                           )}
                         </View>
                       </View>
-                      <View style={[{ gap: 35 }, Styles.flexRow]}>
-                        <Text
-                          style={{
+                      </View>
+                      <View style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}>
+                      <Text style={{
                             fontSize: FontSizes.normal,
                             color: Colors.primaryColor1,
                             fontWeight: "bold",
+                          }}>Arrival</Text>
+                      <View style={[{ gap: 35 }, Styles.flexRow]}>
+                        <Text
+                          style={{
+                            fontSize: FontSizes.small,
+                            color: Colors.primaryColor1,
+                            fontWeight: "bold",
                             marginBottom: Viewport.height * 0.08,
-                            marginLeft: Viewport.width * 0.064,
                           }}
                         >
-                          To:{" "}
+                          Date & Time:{" "}
                         </Text>
                         <View style={[{ gap: 10 }, Styles.flexColumn]}>
                           <DatePicker
@@ -930,6 +888,63 @@ export default function Requester() {
                           {errorMessages[0]?.returnTimeError && (
                             <Text style={Styles.textError}>
                               {errorMessages[0]?.returnTimeError}
+                            </Text>
+                          )}
+                        </View>
+                      </View>
+                      </View>
+                      <View
+                        style={[
+                          {
+                            width: Viewport.width * 1,
+                            gap: 10
+                          },
+                          Styles.flexRow,
+                        ]}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: Colors.primaryColor1,
+                            fontWeight: "bold",
+                            marginBottom: Viewport.height * 0.05,
+                            paddingLeft: Viewport.width * 0.02,
+                          }}
+                        >
+                          Destination:{" "}
+                        </Text>
+                        <View
+                          style={[
+                            {
+                              gap: 10,
+                              width: Viewport.width * 0.6,
+                              
+                            },
+                            Styles.flexColumn,
+                          ]}
+                        >
+                          <AutoCompleteAddressGoogle
+                            travel_date={tripData.travel_date}
+                            travel_time={tripData.travel_time}
+                            setData={setTripData}
+                            setAddressData={setAddressData}
+                            isDisabled={isAutocompleteEditable}
+                            category={tripData.category}
+                          />
+                          {isTravelDateSelected ? (
+                            <Text
+                              style={[
+                                { paddingLeft: Viewport.width * 0.08 },
+                                Styles.textError,
+                              ]}
+                            >
+                              Select departure date and time first
+                            </Text>
+                          ) : (
+                            <Text
+                              style={[{ paddingLeft: 30 }, Styles.textError]}
+                            >
+                              {errorMessages[0]?.destinationError}
                             </Text>
                           )}
                         </View>
@@ -1053,6 +1068,45 @@ export default function Requester() {
                           )}
                         </View>
                       </View>
+                      
+                      <View style={[{ gap: 40 }, Styles.flexRow]}>
+                        <Text
+                          style={{
+                            fontSize: FontSizes.small,
+                            color: Colors.primaryColor1,
+                            fontWeight: "bold",
+                            marginBottom: Viewport.height * 0.08,
+                            marginRight: Viewport.width * -0.09,
+                          }}
+                        >
+                          Date & Time:{" "}
+                        </Text>
+                        <View style={[{ gap: 10 }, Styles.flexColumn]}>
+                          <DatePicker
+                            key={datePickerKeyFromOneWay}
+                            button2
+                            onDateSelected={handleFromDateSelected}
+                          />
+                          {errorMessages[0]?.travelDateOnewayError && (
+                            <Text style={Styles.textError}>
+                              {errorMessages[0]?.travelDateOnewayError}
+                            </Text>
+                          )}
+                          <TimePicker
+                            key={datePickerKeyToOneWay}
+                            secondBG
+                            onTimeSelected={handleFromTimeSelected}
+                            selectedHours={selectedTime.hours}
+                            selectedMinutes={selectedTime.minutes}
+                            selectedPeriod={selectedTime.period}
+                          />
+                          {errorMessages[0]?.travelTimeOnewayError && (
+                            <Text style={Styles.textError}>
+                              {errorMessages[0]?.travelTimeOnewayError}
+                            </Text>
+                          )}
+                        </View>
+                      </View>
                       <View
                         style={[
                           {
@@ -1122,46 +1176,9 @@ export default function Requester() {
                           )}
                         </View>
                       </View>
-                      <View style={[{ gap: 40 }, Styles.flexRow]}>
-                        <Text
-                          style={{
-                            fontSize: FontSizes.normal,
-                            color: Colors.primaryColor1,
-                            fontWeight: "bold",
-                            marginBottom: Viewport.height * 0.08,
-                            marginRight: Viewport.width * -0.09,
-                          }}
-                        >
-                          Travel Date:{" "}
-                        </Text>
-                        <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                          <DatePicker
-                            key={datePickerKeyFromOneWay}
-                            button2
-                            onDateSelected={handleFromDateSelected}
-                          />
-                          {errorMessages[0]?.travelDateOnewayError && (
-                            <Text style={Styles.textError}>
-                              {errorMessages[0]?.travelDateOnewayError}
-                            </Text>
-                          )}
-                          <TimePicker
-                            key={datePickerKeyToOneWay}
-                            secondBG
-                            onTimeSelected={handleFromTimeSelected}
-                            selectedHours={selectedTime.hours}
-                            selectedMinutes={selectedTime.minutes}
-                            selectedPeriod={selectedTime.period}
-                          />
-                          {errorMessages[0]?.travelTimeOnewayError && (
-                            <Text style={Styles.textError}>
-                              {errorMessages[0]?.travelTimeOnewayError}
-                            </Text>
-                          )}
-                        </View>
-                      </View>
                     </>
                   )}
+                  
                   <View style={[{ gap: 22 }, Styles.flexRow]}>
                     <Text
                       style={{

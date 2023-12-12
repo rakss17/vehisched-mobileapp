@@ -74,5 +74,6 @@ export const Styles = StyleSheet.create({
   },
   textError: {
     color: "red",
+    fontSize: FontSizes.tiny
   },
 });
