@@ -326,7 +326,7 @@ const RequestForm: React.FC<ModalProps> = ({
                           onChangeText={(text) =>
                             updatePassengerData(index, text)
                           }
-                          placeholderText={`Type passenger ${
+                          placeholderText={`Type passenger name ${
                             index + 1
                           } here...`}
                           capitalizeWords={true}

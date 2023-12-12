@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Modal, Text, TextInput } from "react-native";
 import AutoCompleteAddressGoogle from "../autocompleteaddress/googleaddressinput";
 import DatePicker from "../datepicker/datepicker";
@@ -58,6 +58,9 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
       setIsTravelDateSelected(false);
     }
   };
+  useEffect(() => {
+    checkAutocompleteDisability();
+  },[checkAutocompleteDisability])
 
   const handleFromDateSelected = (selectedDate: Date) => {
     const formattedDate = selectedDate
@@ -414,21 +417,101 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
 
           {selectedTravelCategory === "Round Trip" && (
             <>
+              <View style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}>
+                      <Text style={{
+                            fontSize: FontSizes.normal,
+                            color: Colors.primaryColor1,
+                            fontWeight: "bold",
+                          }}>Departure</Text> 
+              <View style={[{ gap: 30 }, Styles.flexRow]}>
+                <Text
+                  style={{
+                    fontSize: FontSizes.small,
+                    color: Colors.primaryColor1,
+                    fontWeight: "bold",
+                    marginBottom: Viewport.height * 0.08,
+                  }}
+                >
+                  Date & Time:{" "}
+                </Text>
+                <View style={[{ gap: 10 }, Styles.flexColumn]}>
+                  <DatePicker button2 onDateSelected={handleFromDateSelected} />
+                  {errorMessages[0]?.travelDateError && (
+                    <Text style={Styles.textError}>
+                      {errorMessages[0]?.travelDateError}
+                    </Text>
+                  )}
+
+                  <TimePicker
+                    secondBG
+                    onTimeSelected={handleFromTimeSelected}
+                    selectedHours={selectedTime.hours}
+                    selectedMinutes={selectedTime.minutes}
+                    selectedPeriod={selectedTime.period}
+                  />
+                  {errorMessages[0]?.travelTimeError && (
+                    <Text style={Styles.textError}>
+                      {errorMessages[0]?.travelTimeError}
+                    </Text>
+                  )}
+                </View>
+              </View>
+              </View>
+              <View style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}>
+                      <Text style={{
+                            fontSize: FontSizes.normal,
+                            color: Colors.primaryColor1,
+                            fontWeight: "bold",
+                          }}>Arrival</Text>  
+              <View style={[{ gap: 35 }, Styles.flexRow]}>
+              <Text
+                  style={{
+                    fontSize: FontSizes.small,
+                    color: Colors.primaryColor1,
+                    fontWeight: "bold",
+                    marginBottom: Viewport.height * 0.08,
+                  }}
+                >
+                  Date & Time:{" "}
+                </Text>
+                <View style={[{ gap: 10 }, Styles.flexColumn]}>
+                  <DatePicker button2 onDateSelected={handleToDateSelected} />
+                  {errorMessages[0]?.returnDateError && (
+                    <Text style={Styles.textError}>
+                      {errorMessages[0]?.returnDateError}
+                    </Text>
+                  )}
+                  <TimePicker
+                    secondBG
+                    onTimeSelected={handleToTimeSelected}
+                    selectedHours={selectedTime.hours}
+                    selectedMinutes={selectedTime.minutes}
+                    selectedPeriod={selectedTime.period}
+                  />
+                  {errorMessages[0]?.returnTimeError && (
+                    <Text style={Styles.textError}>
+                      {errorMessages[0]?.returnTimeError}
+                    </Text>
+                  )}
+                </View>
+              </View>
+              </View>
               <View
                 style={[
                   {
                     width: Viewport.width * 1,
+                    gap: Viewport.width * 0.03
                   },
                   Styles.flexRow,
                 ]}
               >
                 <Text
                   style={{
-                    fontSize: 18,
+                    fontSize: FontSizes.small,
                     color: Colors.primaryColor1,
                     fontWeight: "bold",
                     marginBottom: Viewport.height * 0.05,
-                    paddingLeft: Viewport.width * 0.02,
+                    paddingLeft: Viewport.width * 0.05,
                   }}
                 >
                   Destination:{" "}
@@ -462,73 +545,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   ) : (
                     <Text style={[{ paddingLeft: 30 }, Styles.textError]}>
                       {errorMessages[0]?.destinationError}
-                    </Text>
-                  )}
-                </View>
-              </View>
-
-              <View style={[{ gap: 30 }, Styles.flexRow]}>
-                <Text
-                  style={{
-                    fontSize: FontSizes.normal,
-                    color: Colors.primaryColor1,
-                    fontWeight: "bold",
-                    marginBottom: Viewport.height * 0.08,
-                  }}
-                >
-                  From:{" "}
-                </Text>
-                <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                  <DatePicker button2 onDateSelected={handleFromDateSelected} />
-                  {errorMessages[0]?.travelDateError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.travelDateError}
-                    </Text>
-                  )}
-
-                  <TimePicker
-                    secondBG
-                    onTimeSelected={handleFromTimeSelected}
-                    selectedHours={selectedTime.hours}
-                    selectedMinutes={selectedTime.minutes}
-                    selectedPeriod={selectedTime.period}
-                  />
-                  {errorMessages[0]?.travelTimeError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.travelTimeError}
-                    </Text>
-                  )}
-                </View>
-              </View>
-              <View style={[{ gap: 35 }, Styles.flexRow]}>
-                <Text
-                  style={{
-                    fontSize: FontSizes.normal,
-                    color: Colors.primaryColor1,
-                    fontWeight: "bold",
-                    marginBottom: Viewport.height * 0.08,
-                    marginLeft: Viewport.width * 0.064,
-                  }}
-                >
-                  To:{" "}
-                </Text>
-                <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                  <DatePicker button2 onDateSelected={handleToDateSelected} />
-                  {errorMessages[0]?.returnDateError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.returnDateError}
-                    </Text>
-                  )}
-                  <TimePicker
-                    secondBG
-                    onTimeSelected={handleToTimeSelected}
-                    selectedHours={selectedTime.hours}
-                    selectedMinutes={selectedTime.minutes}
-                    selectedPeriod={selectedTime.period}
-                  />
-                  {errorMessages[0]?.returnTimeError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.returnTimeError}
                     </Text>
                   )}
                 </View>
@@ -647,6 +663,40 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   )}
                 </View>
               </View>
+              
+              <View style={[{ gap: 50 }, Styles.flexRow]}>
+                <Text
+                  style={{
+                    fontSize: FontSizes.small,
+                    color: Colors.primaryColor1,
+                    fontWeight: "bold",
+                    marginBottom: Viewport.height * 0.08,
+                    marginRight: Viewport.width * -0.09,
+                  }}
+                >
+                  Date & Time:{" "}
+                </Text>
+                <View style={[{ gap: 10 }, Styles.flexColumn]}>
+                  <DatePicker button2 onDateSelected={handleFromDateSelected} />
+                  {errorMessages[0]?.travelDateOnewayError && (
+                    <Text style={Styles.textError}>
+                      {errorMessages[0]?.travelDateOnewayError}
+                    </Text>
+                  )}
+                  <TimePicker
+                    secondBG
+                    onTimeSelected={handleFromTimeSelected}
+                    selectedHours={selectedTime.hours}
+                    selectedMinutes={selectedTime.minutes}
+                    selectedPeriod={selectedTime.period}
+                  />
+                  {errorMessages[0]?.travelTimeOnewayError && (
+                    <Text style={Styles.textError}>
+                      {errorMessages[0]?.travelTimeOnewayError}
+                    </Text>
+                  )}
+                </View>
+              </View>
               <View
                 style={[
                   {
@@ -655,29 +705,30 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   Styles.flexRow,
                 ]}
               >
-                {selectedTravelType?.includes("Drop") ? (
+                {selectedTravelType?.includes("Fetch") ? (
                   <Text
-                    style={{
-                      fontSize: 18,
-                      color: Colors.primaryColor1,
-                      fontWeight: "bold",
-                      marginBottom: Viewport.height * 0.05,
-                      paddingLeft: Viewport.width * 0.02,
-                    }}
-                  >
-                    Destination:{" "}
-                  </Text>
+                  style={{
+                    fontSize: FontSizes.small,
+                    color: Colors.primaryColor1,
+                    fontWeight: "bold",
+                    marginBottom: Viewport.height * 0.05,
+                    paddingLeft: Viewport.width * 0.04,
+                  }}
+                >
+                  Your Location:{" "}
+                </Text>
+                  
                 ) : (
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: FontSizes.small,
                       color: Colors.primaryColor1,
                       fontWeight: "bold",
                       marginBottom: Viewport.height * 0.05,
-                      paddingLeft: Viewport.width * 0.01,
+                      paddingLeft: Viewport.width * 0.08,
                     }}
                   >
-                    Your Location:{" "}
+                    Destination:{" "}
                   </Text>
                 )}
 
@@ -710,39 +761,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   ) : (
                     <Text style={[{ paddingLeft: 30 }, Styles.textError]}>
                       {errorMessages[0]?.destinationError}
-                    </Text>
-                  )}
-                </View>
-              </View>
-              <View style={[{ gap: 40 }, Styles.flexRow]}>
-                <Text
-                  style={{
-                    fontSize: FontSizes.normal,
-                    color: Colors.primaryColor1,
-                    fontWeight: "bold",
-                    marginBottom: Viewport.height * 0.08,
-                    marginRight: Viewport.width * -0.09,
-                  }}
-                >
-                  Travel Date:{" "}
-                </Text>
-                <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                  <DatePicker button2 onDateSelected={handleFromDateSelected} />
-                  {errorMessages[0]?.travelDateOnewayError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.travelDateOnewayError}
-                    </Text>
-                  )}
-                  <TimePicker
-                    secondBG
-                    onTimeSelected={handleFromTimeSelected}
-                    selectedHours={selectedTime.hours}
-                    selectedMinutes={selectedTime.minutes}
-                    selectedPeriod={selectedTime.period}
-                  />
-                  {errorMessages[0]?.travelTimeOnewayError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.travelTimeOnewayError}
                     </Text>
                   )}
                 </View>
