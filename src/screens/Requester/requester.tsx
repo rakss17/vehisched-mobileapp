@@ -1831,7 +1831,7 @@ export default function Requester() {
         transparent={true}
         onRequestClose={handleRequestFormClose}
         header="Disclaimer:"
-        content="This vehicle is prioritized for the chancellor, and your reservation will be canceled once the chancellor 
+        content="This vehicle is prioritized for the higher official, and your reservation will be canceled once the higher official 
         uses it during your trip."
         footer="Are you sure you want to use this vehicle?"
         onNextPressed={handleOnNextPressed}
