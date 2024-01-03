@@ -29,7 +29,7 @@ export function RequesterTabs() {
         tabBarActiveTintColor: Colors.primaryColor1,
         tabBarInactiveTintColor: Colors.secondaryColor4,
         tabBarStyle: {
-          height: Viewport.height * 0.1,
+          height: Viewport.height * 0.08,
           borderTopWidth: 5,
         },
         tabBarLabelStyle: {
@@ -49,7 +49,7 @@ export function RequesterTabs() {
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
-            <FontAwesomeIcon icon={faHome} color={color} size={25} />
+            <FontAwesomeIcon icon={faHome} color={color} size={20} />
           ),
           tabBarBadge: notifLength > 0 ? notifLength : undefined,
         }}
@@ -60,7 +60,7 @@ export function RequesterTabs() {
         options={{
           tabBarLabel: "Your request",
           tabBarIcon: ({ color }) => (
-            <FontAwesomeIcon icon={faClipboardList} color={color} size={25} />
+            <FontAwesomeIcon icon={faClipboardList} color={color} size={20} />
           ),
           tabBarBadge: notifLength > 0 ? notifLength : undefined,
         }}

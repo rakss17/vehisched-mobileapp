@@ -4,10 +4,10 @@ import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
 import { parse, format, isValid } from "date-fns";
 import { getTimeFormat } from "../function/function";
 
-export const serverSideUrl = "http://192.168.1.115:8000/media/";
+export const serverSideUrl = "http://192.168.1.15:8000/media/";
 
 export const api = axios.create({
-  baseURL: "http://192.168.1.115:8000/",
+  baseURL: "http://192.168.1.15:8000/",
 });
 
 export async function SigninAPI(
@@ -553,22 +553,14 @@ export async function fetchSchedule(
       );
       const vehicleRecommendation = response.data.vehicle_recommendation || [];
       setVehicleRecommendation(vehicleRecommendation);
-      if (
-        scheduleData ||
-        nextScheduleData ||
-        vehicleRecommendation
-      ) {
-      setSchedule(scheduleData);
-      setNextSchedule(nextScheduleData);
+      if (scheduleData || nextScheduleData || vehicleRecommendation) {
+        setSchedule(scheduleData);
+        setNextSchedule(nextScheduleData);
         setSelectedCategory("Ongoing Schedule");
-     
-    } else {
-      setSelectedCategory("Set Trip");
-    }
-    
-    
-      
-      
+      } else {
+        setSelectedCategory("Search Vehicle");
+      }
+
       if (setRefreshingSchedule) {
         setRefreshingSchedule(false);
       }
@@ -683,7 +675,11 @@ export async function cancelRequestAPI(
 
 export async function fetchVehicleVIPAPI(
   setVehicles: any,
-  setSelectedCategory: any
+  setSelectedCategory: any,
+  schedule?: any,
+  nextSchedule?: any,
+  vehicleRecommendation?: any,
+  setRefreshingVehicleVIP?: any
 ) {
   try {
     const token = await AsyncStorage.getItem("token");
@@ -696,12 +692,16 @@ export async function fetchVehicleVIPAPI(
         "Content-Type": "application/json",
       },
     });
-
+    if (
+      schedule.length === 0 &&
+      nextSchedule.length === 0 &&
+      vehicleRecommendation === 0
+    ) {
+      setSelectedCategory("Available Vehicle");
+    }
+    setRefreshingVehicleVIP(false);
     setVehicles(response.data);
-    setSelectedCategory("Available Vehicle");
   } catch (error) {
     console.log(error);
   }
 }
-
-

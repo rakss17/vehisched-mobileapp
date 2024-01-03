@@ -62,6 +62,7 @@ import InitialFormVip from "../../components/modals/initialformvip";
 
 export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
+  const [isVehicleVipAvailable, setIsVehicleVipAvailable] = useState(false);
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
   const [isRequestFormVisible, setIsRequestFormVisible] = useState(false);
   const [isInitialFormVIPOpen, setIsInitialFormVIPOpen] = useState(false);
@@ -93,6 +94,7 @@ export default function Requester() {
     category: "Round Trip",
   });
   const [isTravelDateSelected, setIsTravelDateSelected] = useState(true);
+  const [arrivalDisableDaysBefore, setArrivalDisableDaysBefore] = useState(0);
   const [addressData, setAddressData] = useState<any>({
     destination: "",
     distance: null,
@@ -117,6 +119,7 @@ export default function Requester() {
   const notifLength = notifList.filter((notif) => !notif.read_status).length;
   const [refreshing, setRefreshing] = React.useState(false);
   const [refreshingSchedule, setRefreshingSchedule] = React.useState(false);
+  const [refreshingVehicleVIP, setRefreshingVehicleVIP] = React.useState(false);
   const [selectedVehicleRecommendation, setSelectedVehicleRecommendation] =
     useState<string>("");
   const [selectedTrip, setSelectedTrip] = useState<string>("");
@@ -160,21 +163,59 @@ export default function Requester() {
   //   }, [])
   // );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchSchedule(
-        setSchedule,
-        setNextSchedule,
-        setVehicleRecommendation,
-        setSelectedCategory
-      );
-    }, [])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
 
+  //   }, [])
+  // );
   useEffect(() => {
     if (role === "vip") {
-      fetchVehicleVIPAPI(setVehicles, setSelectedCategory);
+      if (vehicles.length === 0) {
+        setIsVehicleVipAvailable(false);
+      } else if (vehicles.length > 0) {
+        setIsVehicleVipAvailable(true);
+      }
     }
+  }, [vehicles]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (role === "vip") {
+        fetchVehicleVIPAPI(
+          setVehicles,
+          setSelectedCategory,
+          schedule,
+          nextSchedule,
+          vehicleRecommendation,
+          () => {}
+        );
+        fetchSchedule(
+          setSchedule,
+          setNextSchedule,
+          setVehicleRecommendation,
+          setSelectedCategory
+        );
+      } else if (role === "requester") {
+        fetchSchedule(
+          setSchedule,
+          setNextSchedule,
+          setVehicleRecommendation,
+          setSelectedCategory
+        );
+      }
+    }, [])
+  );
+  const onRefreshVehicleVIP = React.useCallback(() => {
+    setRefreshingVehicleVIP(true);
+    setTimeout(() => {
+      fetchVehicleVIPAPI(
+        setVehicles,
+        setSelectedCategory,
+        () => {},
+        () => {},
+        () => {},
+        setRefreshingVehicleVIP
+      );
+    });
   }, []);
 
   const onRefreshSchedule = React.useCallback(() => {
@@ -236,8 +277,6 @@ export default function Requester() {
     }, 1000);
   }, []);
 
-  
-
   const checkAutocompleteDisability = () => {
     if (tripData.travel_date !== "" && tripData.travel_time !== "") {
       setIsAutocompleteEditable(true);
@@ -246,7 +285,7 @@ export default function Requester() {
   };
   useEffect(() => {
     checkAutocompleteDisability();
-  },[checkAutocompleteDisability])
+  }, [checkAutocompleteDisability]);
 
   const handleFromDateSelected = (selectedDate: Date) => {
     const formattedDate = selectedDate
@@ -256,6 +295,19 @@ export default function Requester() {
       ...prevData,
       travel_date: formattedDate,
     }));
+    if (formattedDate) {
+      let dateObject = new Date(formattedDate);
+      let currentDate = new Date();
+
+      if (dateObject > currentDate) {
+        [currentDate, dateObject] = [dateObject, currentDate];
+      }
+
+      const diffInTime = currentDate.getTime() - dateObject.getTime();
+      const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
+      setArrivalDisableDaysBefore(diffInDays);
+    }
+
     if (tripData.category === "Round Trip") {
       const updatedErrors = { ...errorMessages };
       delete updatedErrors[0]?.travelDateError;
@@ -285,7 +337,6 @@ export default function Requester() {
     const formattedHours = formatNumberToTwoDigits(hours);
     const formattedMinutes = formatNumberToTwoDigits(minutes);
 
-    
     setTripData((prevData: any) => ({
       ...prevData,
       travel_time: `${formattedHours}:${formattedMinutes} ${period}`,
@@ -529,22 +580,26 @@ export default function Requester() {
 
       {/* <ScrollView> */}
       <View style={Styles.container}>
-        {selectedCategory === "Set Trip" && (
-          <View style={[{ gap: Viewport.width * 0.26 }, Styles.flexRow]}>
+        {selectedCategory === "Search Vehicle" && (
+          <View style={[{ gap: Viewport.width * 0.05 }, Styles.flexRow]}>
             <Text
               style={{
-                fontSize: FontSizes.normal,
+                fontSize: FontSizes.small,
                 color: Colors.primaryColor1,
                 fontWeight: "bold",
-                marginLeft: 20,
+                marginLeft: 0,
               }}
             >
-              Set Trip
+              Search for available vehicle
             </Text>
             <Dropdown
               selectedCategory={selectedCategory}
               onCategoryChange={handleOnCategoryChange}
-              options={["Set Trip", "Available Vehicle", "Ongoing Schedule"]}
+              options={[
+                "Search Vehicle",
+                "Available Vehicle",
+                "Ongoing Schedule",
+              ]}
               showText
               showBG
               menuAdjusted
@@ -563,15 +618,49 @@ export default function Requester() {
             >
               Available Vehicle
             </Text>
-            <Dropdown
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleOnCategoryChange}
-              options={["Set Trip", "Available Vehicle", "Ongoing Schedule"]}
-              showText
-              showBG
-              menuAdjusted
-              dropdownText2
-            />
+            {role === "vip" ? (
+              <>
+                {isVehicleVipAvailable ? (
+                  <Dropdown
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={handleOnCategoryChange}
+                    options={["Available Vehicle", "Ongoing Schedule"]}
+                    showText
+                    showBG
+                    menuAdjusted
+                    dropdownText2
+                  />
+                ) : (
+                  <Dropdown
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={handleOnCategoryChange}
+                    options={[
+                      "Search Vehicle",
+                      "Available Vehicle",
+                      "Ongoing Schedule",
+                    ]}
+                    showText
+                    showBG
+                    menuAdjusted
+                    dropdownText2
+                  />
+                )}
+              </>
+            ) : (
+              <Dropdown
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleOnCategoryChange}
+                options={[
+                  "Search Vehicle",
+                  "Available Vehicle",
+                  "Ongoing Schedule",
+                ]}
+                showText
+                showBG
+                menuAdjusted
+                dropdownText2
+              />
+            )}
           </View>
         )}
         {selectedCategory === "Ongoing Schedule" && (
@@ -585,15 +674,49 @@ export default function Requester() {
             >
               Ongoing Schedule
             </Text>
-            <Dropdown
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleOnCategoryChange}
-              options={["Set Trip", "Available Vehicle", "Ongoing Schedule"]}
-              showText
-              showBG
-              menuAdjusted
-              dropdownText2
-            />
+            {role === "vip" ? (
+              <>
+                {isVehicleVipAvailable ? (
+                  <Dropdown
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={handleOnCategoryChange}
+                    options={["Available Vehicle", "Ongoing Schedule"]}
+                    showText
+                    showBG
+                    menuAdjusted
+                    dropdownText2
+                  />
+                ) : (
+                  <Dropdown
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={handleOnCategoryChange}
+                    options={[
+                      "Search Vehicle",
+                      "Available Vehicle",
+                      "Ongoing Schedule",
+                    ]}
+                    showText
+                    showBG
+                    menuAdjusted
+                    dropdownText2
+                  />
+                )}
+              </>
+            ) : (
+              <Dropdown
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleOnCategoryChange}
+                options={[
+                  "Search Vehicle",
+                  "Available Vehicle",
+                  "Ongoing Schedule",
+                ]}
+                showText
+                showBG
+                menuAdjusted
+                dropdownText2
+              />
+            )}
           </View>
         )}
 
@@ -614,7 +737,7 @@ export default function Requester() {
             Styles.flexColumn,
           ]}
         >
-          {selectedCategory === "Set Trip" && (
+          {selectedCategory === "Search Vehicle" && (
             <>
               <KeyboardAwareScrollView
                 // resetScrollToCoords={{ x: 0, y: 0 }}
@@ -696,6 +819,8 @@ export default function Requester() {
                           }}
                           text="Round Trip"
                           defaultBG
+                          width={Viewport.width * 0.3}
+                          height={Viewport.height * 0.06}
                         />
                       ) : (
                         <Button
@@ -730,6 +855,8 @@ export default function Requester() {
                           text="Round Trip"
                           transparentBG
                           transparentText
+                          width={Viewport.width * 0.3}
+                          height={Viewport.height * 0.06}
                         />
                       )}
                       {selectedTravelCategory === "One-way" ? (
@@ -763,6 +890,8 @@ export default function Requester() {
                           }}
                           text="One-way"
                           defaultBG
+                          width={Viewport.width * 0.3}
+                          height={Viewport.height * 0.06}
                         />
                       ) : (
                         <Button
@@ -796,6 +925,8 @@ export default function Requester() {
                           text="One-way"
                           transparentBG
                           transparentText
+                          width={Viewport.width * 0.3}
+                          height={Viewport.height * 0.06}
                         />
                       )}
                     </View>
@@ -803,101 +934,114 @@ export default function Requester() {
 
                   {selectedTravelCategory === "Round Trip" && (
                     <>
-                      
-                      <View style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}>
-                      <Text style={{
+                      <View
+                        style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}
+                      >
+                        <Text
+                          style={{
                             fontSize: FontSizes.normal,
                             color: Colors.primaryColor1,
                             fontWeight: "bold",
-                          }}>Departure</Text>
-                      <View style={[{ gap: 30 }, Styles.flexRow]}>
-                        <Text
-                          style={{
-                            fontSize: FontSizes.small,
-                            color: Colors.primaryColor1,
-                            fontWeight: "bold",
-                            marginBottom: Viewport.height * 0.08,
                           }}
                         >
-                          Date & Time:{" "}
+                          Departure
                         </Text>
-                        <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                          <DatePicker
-                            key={datePickerKeyFrom}
-                            button2
-                            onDateSelected={handleFromDateSelected}
-                          />
-                          {errorMessages[0]?.travelDateError && (
-                            <Text style={Styles.textError}>
-                              {errorMessages[0]?.travelDateError}
-                            </Text>
-                          )}
+                        <View style={[{ gap: 30 }, Styles.flexRow]}>
+                          <Text
+                            style={{
+                              fontSize: FontSizes.small,
+                              color: Colors.primaryColor1,
+                              fontWeight: "bold",
+                              marginBottom: Viewport.height * 0.08,
+                            }}
+                          >
+                            Date & Time:{" "}
+                          </Text>
+                          <View style={[{ gap: 10 }, Styles.flexColumn]}>
+                            <DatePicker
+                              key={datePickerKeyFrom}
+                              button2
+                              onDateSelected={handleFromDateSelected}
+                              disableDaysBefore={3}
+                            />
+                            {errorMessages[0]?.travelDateError && (
+                              <Text style={Styles.textError}>
+                                {errorMessages[0]?.travelDateError}
+                              </Text>
+                            )}
 
-                          <TimePicker
-                            key={timePickerKeyFrom}
-                            secondBG
-                            onTimeSelected={handleFromTimeSelected}
-                            selectedHours={selectedTime.hours}
-                            selectedMinutes={selectedTime.minutes}
-                            selectedPeriod={selectedTime.period}
-                          />
-                          {errorMessages[0]?.travelTimeError && (
-                            <Text style={Styles.textError}>
-                              {errorMessages[0]?.travelTimeError}
-                            </Text>
-                          )}
+                            <TimePicker
+                              key={timePickerKeyFrom}
+                              secondBG
+                              onTimeSelected={handleFromTimeSelected}
+                              selectedHours={selectedTime.hours}
+                              selectedMinutes={selectedTime.minutes}
+                              selectedPeriod={selectedTime.period}
+                            />
+                            {errorMessages[0]?.travelTimeError && (
+                              <Text style={Styles.textError}>
+                                {errorMessages[0]?.travelTimeError}
+                              </Text>
+                            )}
+                          </View>
                         </View>
                       </View>
-                      </View>
-                      <View style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}>
-                      <Text style={{
+                      <View
+                        style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}
+                      >
+                        <Text
+                          style={{
                             fontSize: FontSizes.normal,
                             color: Colors.primaryColor1,
                             fontWeight: "bold",
-                          }}>Arrival</Text>
-                      <View style={[{ gap: 35 }, Styles.flexRow]}>
-                        <Text
-                          style={{
-                            fontSize: FontSizes.small,
-                            color: Colors.primaryColor1,
-                            fontWeight: "bold",
-                            marginBottom: Viewport.height * 0.08,
                           }}
                         >
-                          Date & Time:{" "}
+                          Arrival
                         </Text>
-                        <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                          <DatePicker
-                            key={datePickerKeyTo}
-                            button2
-                            onDateSelected={handleToDateSelected}
-                          />
-                          {errorMessages[0]?.returnDateError && (
-                            <Text style={Styles.textError}>
-                              {errorMessages[0]?.returnDateError}
-                            </Text>
-                          )}
-                          <TimePicker
-                            key={timePickerKeyTo}
-                            secondBG
-                            onTimeSelected={handleToTimeSelected}
-                            selectedHours={selectedTime.hours}
-                            selectedMinutes={selectedTime.minutes}
-                            selectedPeriod={selectedTime.period}
-                          />
-                          {errorMessages[0]?.returnTimeError && (
-                            <Text style={Styles.textError}>
-                              {errorMessages[0]?.returnTimeError}
-                            </Text>
-                          )}
+                        <View style={[{ gap: 35 }, Styles.flexRow]}>
+                          <Text
+                            style={{
+                              fontSize: FontSizes.small,
+                              color: Colors.primaryColor1,
+                              fontWeight: "bold",
+                              marginBottom: Viewport.height * 0.08,
+                            }}
+                          >
+                            Date & Time:{" "}
+                          </Text>
+                          <View style={[{ gap: 10 }, Styles.flexColumn]}>
+                            <DatePicker
+                              key={datePickerKeyTo}
+                              button2
+                              onDateSelected={handleToDateSelected}
+                              disableDaysBefore={arrivalDisableDaysBefore}
+                            />
+                            {errorMessages[0]?.returnDateError && (
+                              <Text style={Styles.textError}>
+                                {errorMessages[0]?.returnDateError}
+                              </Text>
+                            )}
+                            <TimePicker
+                              key={timePickerKeyTo}
+                              secondBG
+                              onTimeSelected={handleToTimeSelected}
+                              selectedHours={selectedTime.hours}
+                              selectedMinutes={selectedTime.minutes}
+                              selectedPeriod={selectedTime.period}
+                            />
+                            {errorMessages[0]?.returnTimeError && (
+                              <Text style={Styles.textError}>
+                                {errorMessages[0]?.returnTimeError}
+                              </Text>
+                            )}
+                          </View>
                         </View>
-                      </View>
                       </View>
                       <View
                         style={[
                           {
                             width: Viewport.width * 1,
-                            gap: 10
+                            gap: 10,
                           },
                           Styles.flexRow,
                         ]}
@@ -918,7 +1062,6 @@ export default function Requester() {
                             {
                               gap: 10,
                               width: Viewport.width * 0.6,
-                              
                             },
                             Styles.flexColumn,
                           ]}
@@ -995,6 +1138,8 @@ export default function Requester() {
                                 }}
                                 text="Drop"
                                 defaultBG
+                                width={Viewport.width * 0.3}
+                                height={Viewport.height * 0.06}
                               />
                             ) : (
                               <Button
@@ -1016,6 +1161,8 @@ export default function Requester() {
                                 text="Drop"
                                 transparentBG
                                 transparentText
+                                width={Viewport.width * 0.3}
+                                height={Viewport.height * 0.06}
                               />
                             )}
                             {selectedTravelType === "Fetch" ? (
@@ -1037,6 +1184,8 @@ export default function Requester() {
                                 }}
                                 text="Fetch"
                                 defaultBG
+                                width={Viewport.width * 0.3}
+                                height={Viewport.height * 0.06}
                               />
                             ) : (
                               <Button
@@ -1058,6 +1207,8 @@ export default function Requester() {
                                 text="Fetch"
                                 transparentBG
                                 transparentText
+                                width={Viewport.width * 0.3}
+                                height={Viewport.height * 0.06}
                               />
                             )}
                           </View>
@@ -1068,7 +1219,7 @@ export default function Requester() {
                           )}
                         </View>
                       </View>
-                      
+
                       <View style={[{ gap: 40 }, Styles.flexRow]}>
                         <Text
                           style={{
@@ -1178,7 +1329,7 @@ export default function Requester() {
                       </View>
                     </>
                   )}
-                  
+
                   <View style={[{ gap: 22 }, Styles.flexRow]}>
                     <Text
                       style={{
@@ -1223,7 +1374,13 @@ export default function Requester() {
                     </View>
                   </View>
                   <View style={[{ gap: 50 }, Styles.flexRow]}>
-                    <Button onPress={handleSetTrip} text="Set Trip" defaultBG />
+                    <Button
+                      onPress={handleSetTrip}
+                      text="Proceed"
+                      width={Viewport.width * 0.9}
+                      height={Viewport.height * 0.06}
+                      defaultBG
+                    />
                   </View>
                 </View>
               </KeyboardAwareScrollView>
@@ -1237,6 +1394,14 @@ export default function Requester() {
                   paddingTop: Viewport.width * 0.1,
                   paddingBottom: Viewport.width * 0.45,
                 }}
+                refreshControl={
+                  role === "vip" ? (
+                    <RefreshControl
+                      refreshing={refreshingVehicleVIP}
+                      onRefresh={onRefreshVehicleVIP}
+                    />
+                  ) : undefined
+                }
               >
                 {vehicles.length === 0 ? (
                   <Text>No vehicles available</Text>
@@ -1422,6 +1587,12 @@ export default function Requester() {
                               {formatTime(recommend.return_time)}{" "}
                             </Text>
                             {recommend.message}
+                            {recommend.vehicle_data_recommendation ? (
+                              <Text>
+                                {" "}
+                                Press the vehicle that you would like to choose.
+                              </Text>
+                            ) : null}
                           </Text>
                         </Text>
                       </View>
@@ -1432,6 +1603,8 @@ export default function Requester() {
                             text="Cancel"
                             transparentBG
                             transparentText
+                            width={Viewport.width * 0.3}
+                            height={Viewport.height * 0.06}
                           />
                         ))}
                       {recommend.vehicle_data_recommendation &&
@@ -1549,6 +1722,8 @@ export default function Requester() {
                               text="Cancel"
                               transparentBG
                               transparentText
+                              width={Viewport.width * 0.3}
+                              height={Viewport.height * 0.06}
                             />
                             <Button
                               onPress={() =>
@@ -1559,6 +1734,8 @@ export default function Requester() {
                               }
                               text="Accept"
                               defaultBG
+                              width={Viewport.width * 0.3}
+                              height={Viewport.height * 0.06}
                             />
                           </View>
                         </>
@@ -1567,8 +1744,8 @@ export default function Requester() {
                   </View>
                 ))}
 
-                {pendingSchedule.length === 0 ? (
-                  <Text>No pending schedule available</Text>
+                {pendingSchedule.length === 0 && schedule.length === 0 ? (
+                  <Text>No pending schedule found</Text>
                 ) : (
                   <>
                     {pendingSchedule.map((schedule, index) => (
@@ -1652,8 +1829,8 @@ export default function Requester() {
                     ))}
                   </>
                 )}
-                {schedule.length === 0 ? (
-                  <Text>No schedule available</Text>
+                {schedule.length === 0 && pendingSchedule.length === 0 ? (
+                  <Text>No schedule found</Text>
                 ) : (
                   <>
                     {schedule.map((schedule, index) => (
@@ -1832,7 +2009,7 @@ export default function Requester() {
         onRequestClose={handleRequestFormClose}
         header="Disclaimer:"
         content="This vehicle is prioritized for the higher official, and your reservation will be canceled once the higher official 
-        uses it during your trip."
+        uses it during your reservation."
         footer="Are you sure you want to use this vehicle?"
         onNextPressed={handleOnNextPressed}
         showHeader

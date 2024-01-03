@@ -265,7 +265,13 @@ const RequestDetails: React.FC<ModalProps & { requestData: any | null }> = ({
               </View>
             </ScrollView>
             <View>
-              <Button onPress={onRequestClose} text="Close" defaultBG />
+              <Button
+                onPress={onRequestClose}
+                text="Close"
+                defaultBG
+                width={Viewport.width * 0.3}
+                height={Viewport.height * 0.06}
+              />
             </View>
           </View>
         </View>

@@ -6,7 +6,7 @@ import * as Notifications from "expo-notifications";
 import { api } from "./api";
 import { useFocusEffect } from "@react-navigation/native";
 
-const serverSideUrl = "192.168.1.8:8000";
+const serverSideUrl = "192.168.1.15:8000";
 
 export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
   useFocusEffect(

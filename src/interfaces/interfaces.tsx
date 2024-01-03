@@ -40,7 +40,7 @@ export interface UserData {
 
 export interface Requests {
   requester_name: string;
-  request_id: any,
+  request_id: any;
   office_dept: string;
   request_number: string;
   travel_date: string;
@@ -70,6 +70,8 @@ export interface ButtonProps {
   transparentBGAdjust?: boolean;
   transparentTextAdjust?: boolean;
   isHighlightedAdjust?: boolean;
+  height?: number | string;
+  width?: number | string;
 }
 
 export interface DropdownProps {
@@ -133,6 +135,7 @@ export interface DatePickerProps {
   onDateSelected: (date: Date) => void;
   button2?: boolean;
   selectedDate?: any;
+  disableDaysBefore?: number;
 }
 
 export interface TimePickerProps {
@@ -251,7 +254,7 @@ export interface InitialFormVipProps {
     travel_time: any;
     return_date: any;
     return_time: any;
-    category: any
+    category: any;
   };
   addressData: {
     destination: any;

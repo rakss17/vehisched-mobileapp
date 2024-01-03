@@ -60,7 +60,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
   };
   useEffect(() => {
     checkAutocompleteDisability();
-  },[checkAutocompleteDisability])
+  }, [checkAutocompleteDisability]);
 
   const handleFromDateSelected = (selectedDate: Date) => {
     const formattedDate = selectedDate
@@ -310,6 +310,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   }}
                   text="Round Trip"
                   defaultBG
+                  width={Viewport.width * 0.3}
+                  height={Viewport.height * 0.06}
                 />
               ) : (
                 <Button
@@ -344,6 +346,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   text="Round Trip"
                   transparentBG
                   transparentText
+                  width={Viewport.width * 0.3}
+                  height={Viewport.height * 0.06}
                 />
               )}
               {selectedTravelCategory === "One-way" ? (
@@ -377,6 +381,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   }}
                   text="One-way"
                   defaultBG
+                  width={Viewport.width * 0.3}
+                  height={Viewport.height * 0.06}
                 />
               ) : (
                 <Button
@@ -410,6 +416,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   text="One-way"
                   transparentBG
                   transparentText
+                  width={Viewport.width * 0.3}
+                  height={Viewport.height * 0.06}
                 />
               )}
             </View>
@@ -418,89 +426,100 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
           {selectedTravelCategory === "Round Trip" && (
             <>
               <View style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}>
-                      <Text style={{
-                            fontSize: FontSizes.normal,
-                            color: Colors.primaryColor1,
-                            fontWeight: "bold",
-                          }}>Departure</Text> 
-              <View style={[{ gap: 30 }, Styles.flexRow]}>
                 <Text
                   style={{
-                    fontSize: FontSizes.small,
+                    fontSize: FontSizes.normal,
                     color: Colors.primaryColor1,
                     fontWeight: "bold",
-                    marginBottom: Viewport.height * 0.08,
                   }}
                 >
-                  Date & Time:{" "}
+                  Departure
                 </Text>
-                <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                  <DatePicker button2 onDateSelected={handleFromDateSelected} />
-                  {errorMessages[0]?.travelDateError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.travelDateError}
-                    </Text>
-                  )}
+                <View style={[{ gap: 30 }, Styles.flexRow]}>
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+                      color: Colors.primaryColor1,
+                      fontWeight: "bold",
+                      marginBottom: Viewport.height * 0.08,
+                    }}
+                  >
+                    Date & Time:{" "}
+                  </Text>
+                  <View style={[{ gap: 10 }, Styles.flexColumn]}>
+                    <DatePicker
+                      button2
+                      onDateSelected={handleFromDateSelected}
+                    />
+                    {errorMessages[0]?.travelDateError && (
+                      <Text style={Styles.textError}>
+                        {errorMessages[0]?.travelDateError}
+                      </Text>
+                    )}
 
-                  <TimePicker
-                    secondBG
-                    onTimeSelected={handleFromTimeSelected}
-                    selectedHours={selectedTime.hours}
-                    selectedMinutes={selectedTime.minutes}
-                    selectedPeriod={selectedTime.period}
-                  />
-                  {errorMessages[0]?.travelTimeError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.travelTimeError}
-                    </Text>
-                  )}
+                    <TimePicker
+                      secondBG
+                      onTimeSelected={handleFromTimeSelected}
+                      selectedHours={selectedTime.hours}
+                      selectedMinutes={selectedTime.minutes}
+                      selectedPeriod={selectedTime.period}
+                    />
+                    {errorMessages[0]?.travelTimeError && (
+                      <Text style={Styles.textError}>
+                        {errorMessages[0]?.travelTimeError}
+                      </Text>
+                    )}
+                  </View>
                 </View>
-              </View>
               </View>
               <View style={[{ gap: 0, marginTop: 20 }, Styles.flexColumn]}>
-                      <Text style={{
-                            fontSize: FontSizes.normal,
-                            color: Colors.primaryColor1,
-                            fontWeight: "bold",
-                          }}>Arrival</Text>  
-              <View style={[{ gap: 35 }, Styles.flexRow]}>
-              <Text
+                <Text
                   style={{
-                    fontSize: FontSizes.small,
+                    fontSize: FontSizes.normal,
                     color: Colors.primaryColor1,
                     fontWeight: "bold",
-                    marginBottom: Viewport.height * 0.08,
                   }}
                 >
-                  Date & Time:{" "}
+                  Arrival
                 </Text>
-                <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                  <DatePicker button2 onDateSelected={handleToDateSelected} />
-                  {errorMessages[0]?.returnDateError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.returnDateError}
-                    </Text>
-                  )}
-                  <TimePicker
-                    secondBG
-                    onTimeSelected={handleToTimeSelected}
-                    selectedHours={selectedTime.hours}
-                    selectedMinutes={selectedTime.minutes}
-                    selectedPeriod={selectedTime.period}
-                  />
-                  {errorMessages[0]?.returnTimeError && (
-                    <Text style={Styles.textError}>
-                      {errorMessages[0]?.returnTimeError}
-                    </Text>
-                  )}
+                <View style={[{ gap: 35 }, Styles.flexRow]}>
+                  <Text
+                    style={{
+                      fontSize: FontSizes.small,
+                      color: Colors.primaryColor1,
+                      fontWeight: "bold",
+                      marginBottom: Viewport.height * 0.08,
+                    }}
+                  >
+                    Date & Time:{" "}
+                  </Text>
+                  <View style={[{ gap: 10 }, Styles.flexColumn]}>
+                    <DatePicker button2 onDateSelected={handleToDateSelected} />
+                    {errorMessages[0]?.returnDateError && (
+                      <Text style={Styles.textError}>
+                        {errorMessages[0]?.returnDateError}
+                      </Text>
+                    )}
+                    <TimePicker
+                      secondBG
+                      onTimeSelected={handleToTimeSelected}
+                      selectedHours={selectedTime.hours}
+                      selectedMinutes={selectedTime.minutes}
+                      selectedPeriod={selectedTime.period}
+                    />
+                    {errorMessages[0]?.returnTimeError && (
+                      <Text style={Styles.textError}>
+                        {errorMessages[0]?.returnTimeError}
+                      </Text>
+                    )}
+                  </View>
                 </View>
-              </View>
               </View>
               <View
                 style={[
                   {
                     width: Viewport.width * 1,
-                    gap: Viewport.width * 0.03
+                    gap: Viewport.width * 0.03,
                   },
                   Styles.flexRow,
                 ]}
@@ -590,6 +609,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                         }}
                         text="Drop"
                         defaultBG
+                        width={Viewport.width * 0.3}
+                        height={Viewport.height * 0.06}
                       />
                     ) : (
                       <Button
@@ -611,6 +632,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                         text="Drop"
                         transparentBG
                         transparentText
+                        width={Viewport.width * 0.3}
+                        height={Viewport.height * 0.06}
                       />
                     )}
                     {selectedTravelType === "Fetch" ? (
@@ -632,6 +655,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                         }}
                         text="Fetch"
                         defaultBG
+                        width={Viewport.width * 0.3}
+                        height={Viewport.height * 0.06}
                       />
                     ) : (
                       <Button
@@ -653,6 +678,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                         text="Fetch"
                         transparentBG
                         transparentText
+                        width={Viewport.width * 0.3}
+                        height={Viewport.height * 0.06}
                       />
                     )}
                   </View>
@@ -663,7 +690,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   )}
                 </View>
               </View>
-              
+
               <View style={[{ gap: 50 }, Styles.flexRow]}>
                 <Text
                   style={{
@@ -707,17 +734,16 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
               >
                 {selectedTravelType?.includes("Fetch") ? (
                   <Text
-                  style={{
-                    fontSize: FontSizes.small,
-                    color: Colors.primaryColor1,
-                    fontWeight: "bold",
-                    marginBottom: Viewport.height * 0.05,
-                    paddingLeft: Viewport.width * 0.04,
-                  }}
-                >
-                  Your Location:{" "}
-                </Text>
-                  
+                    style={{
+                      fontSize: FontSizes.small,
+                      color: Colors.primaryColor1,
+                      fontWeight: "bold",
+                      marginBottom: Viewport.height * 0.05,
+                      paddingLeft: Viewport.width * 0.04,
+                    }}
+                  >
+                    Your Location:{" "}
+                  </Text>
                 ) : (
                   <Text
                     style={{
@@ -774,8 +800,16 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
               text="Cancel"
               transparentBG
               transparentText
+              width={Viewport.width * 0.3}
+              height={Viewport.height * 0.06}
             />
-            <Button onPress={handleSetTrip} text="Next" defaultBG />
+            <Button
+              onPress={handleSetTrip}
+              text="Next"
+              defaultBG
+              width={Viewport.width * 0.3}
+              height={Viewport.height * 0.06}
+            />
           </View>
         </View>
       </View>

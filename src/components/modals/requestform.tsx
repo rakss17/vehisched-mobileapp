@@ -10,12 +10,6 @@ import {
 import InputField2 from "../inputfield/inputfield2";
 import { RequestFormDataProps, ModalProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
-import Dropdown from "../dropdown/dropdown";
-import AutoCompleteAddress from "../autocompleteaddress/autocompleteaddress";
-import DatePicker from "../datepicker/datepicker";
-import TimePicker from "../timepicker/timepicker";
-import UploadButton from "../buttons/upload";
-import DownloadButton from "../buttons/download";
 import Confirmation from "./confirmation";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -86,7 +80,7 @@ const RequestForm: React.FC<ModalProps> = ({
     vehicle: "",
     type: "",
     role: "",
-    merge_trip: false
+    merge_trip: false,
   });
 
   const isCurrentStepValid = () => {
@@ -126,7 +120,7 @@ const RequestForm: React.FC<ModalProps> = ({
       destination: addressData.destination,
       distance: addressData.distance,
       role: role,
-      merge_trip: false
+      merge_trip: false,
     }));
     switch (form) {
       case "Close":
@@ -341,11 +335,15 @@ const RequestForm: React.FC<ModalProps> = ({
                       transparentBG
                       transparentText
                       text="Close"
+                      width={Viewport.width * 0.3}
+                      height={Viewport.height * 0.06}
                     />
                     <Button
                       onPress={() => handleButtonPress("Second")}
                       defaultBG
                       text="Next"
+                      width={Viewport.width * 0.3}
+                      height={Viewport.height * 0.06}
                     />
                   </View>
                 </View>
@@ -581,11 +579,15 @@ const RequestForm: React.FC<ModalProps> = ({
                     transparentBG
                     transparentText
                     text="Back"
+                    width={Viewport.width * 0.3}
+                    height={Viewport.height * 0.06}
                   />
                   <Button
                     onPress={() => handleButtonPress("Submit")}
                     defaultBG
                     text="Submit"
+                    width={Viewport.width * 0.3}
+                    height={Viewport.height * 0.06}
                   />
                 </View>
               </>

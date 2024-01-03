@@ -19,6 +19,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   selectedDate: initialSelectedDate,
   onDateSelected,
   button2,
+  disableDaysBefore,
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     initialSelectedDate
@@ -51,7 +52,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     const maxSelectableDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() + 2
+      today.getDate() + (disableDaysBefore || 0)
     );
     const daysInMonth = new Date(
       displayedMonth.getFullYear(),
