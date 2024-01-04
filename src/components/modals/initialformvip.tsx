@@ -25,9 +25,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
   handleRequestFormVisible,
   selectedVehicle,
 }) => {
-  const [isOneWayClick, setIsOneWayClick] = useState(false);
-  const [isFetchSelect, setIsFetchSelect] = useState(false);
-  const [isAutocompleteDisabled, setIsAutocompleteDisabled] = useState(true);
+  const [arrivalDisableDaysBefore, setArrivalDisableDaysBefore] = useState(62);
   const [isTravelDateSelected, setIsTravelDateSelected] = useState(true);
   const [selectedTravelType, setSelectedTravelType] = useState<string | null>();
   const [errorMessages, setErrorMessages] = useState<any[]>([]);
@@ -74,6 +72,18 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
       const updatedErrors = { ...errorMessages };
       delete updatedErrors[0]?.travelDateError;
       setErrorMessages(updatedErrors);
+      if (formattedDate) {
+        let dateObject = new Date(formattedDate);
+        let currentDate = new Date();
+
+        if (dateObject > currentDate) {
+          [currentDate, dateObject] = [dateObject, currentDate];
+        }
+
+        const diffInTime = currentDate.getTime() - dateObject.getTime();
+        const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
+        setArrivalDisableDaysBefore(diffInDays);
+      }
       checkAutocompleteDisability();
     } else if (
       tripData.category === "One-way" ||
@@ -310,8 +320,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   }}
                   text="Round Trip"
                   defaultBG
-                  width={Viewport.width * 0.3}
-                  height={Viewport.height * 0.06}
                 />
               ) : (
                 <Button
@@ -346,8 +354,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   text="Round Trip"
                   transparentBG
                   transparentText
-                  width={Viewport.width * 0.3}
-                  height={Viewport.height * 0.06}
                 />
               )}
               {selectedTravelCategory === "One-way" ? (
@@ -381,8 +387,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   }}
                   text="One-way"
                   defaultBG
-                  width={Viewport.width * 0.3}
-                  height={Viewport.height * 0.06}
                 />
               ) : (
                 <Button
@@ -416,8 +420,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   text="One-way"
                   transparentBG
                   transparentText
-                  width={Viewport.width * 0.3}
-                  height={Viewport.height * 0.06}
                 />
               )}
             </View>
@@ -450,6 +452,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                     <DatePicker
                       button2
                       onDateSelected={handleFromDateSelected}
+                      disableDaysBefore={3}
                     />
                     {errorMessages[0]?.travelDateError && (
                       <Text style={Styles.textError}>
@@ -494,7 +497,11 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                     Date & Time:{" "}
                   </Text>
                   <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                    <DatePicker button2 onDateSelected={handleToDateSelected} />
+                    <DatePicker
+                      button2
+                      onDateSelected={handleToDateSelected}
+                      disableDaysBefore={arrivalDisableDaysBefore}
+                    />
                     {errorMessages[0]?.returnDateError && (
                       <Text style={Styles.textError}>
                         {errorMessages[0]?.returnDateError}
@@ -609,8 +616,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                         }}
                         text="Drop"
                         defaultBG
-                        width={Viewport.width * 0.3}
-                        height={Viewport.height * 0.06}
                       />
                     ) : (
                       <Button
@@ -632,8 +637,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                         text="Drop"
                         transparentBG
                         transparentText
-                        width={Viewport.width * 0.3}
-                        height={Viewport.height * 0.06}
                       />
                     )}
                     {selectedTravelType === "Fetch" ? (
@@ -655,8 +658,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                         }}
                         text="Fetch"
                         defaultBG
-                        width={Viewport.width * 0.3}
-                        height={Viewport.height * 0.06}
                       />
                     ) : (
                       <Button
@@ -678,8 +679,6 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                         text="Fetch"
                         transparentBG
                         transparentText
-                        width={Viewport.width * 0.3}
-                        height={Viewport.height * 0.06}
                       />
                     )}
                   </View>
@@ -704,7 +703,11 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   Date & Time:{" "}
                 </Text>
                 <View style={[{ gap: 10 }, Styles.flexColumn]}>
-                  <DatePicker button2 onDateSelected={handleFromDateSelected} />
+                  <DatePicker
+                    button2
+                    onDateSelected={handleFromDateSelected}
+                    disableDaysBefore={3}
+                  />
                   {errorMessages[0]?.travelDateOnewayError && (
                     <Text style={Styles.textError}>
                       {errorMessages[0]?.travelDateOnewayError}
@@ -800,16 +803,8 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
               text="Cancel"
               transparentBG
               transparentText
-              width={Viewport.width * 0.3}
-              height={Viewport.height * 0.06}
             />
-            <Button
-              onPress={handleSetTrip}
-              text="Next"
-              defaultBG
-              width={Viewport.width * 0.3}
-              height={Viewport.height * 0.06}
-            />
+            <Button onPress={handleSetTrip} text="Next" defaultBG />
           </View>
         </View>
       </View>

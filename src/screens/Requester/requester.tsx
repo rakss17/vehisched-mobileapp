@@ -85,6 +85,7 @@ export default function Requester() {
   const [schedule, setSchedule] = useState<any[]>([]);
   const [nextSchedule, setNextSchedule] = useState<any[]>([]);
   const [vehicleRecommendation, setVehicleRecommendation] = useState<any[]>([]);
+  const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
     travel_time: "",
@@ -536,7 +537,8 @@ export default function Requester() {
       setSelectedCategory,
       fetchRequestAPI,
       setPendingSchedule,
-      setIsConfirmationCanceledShow
+      setIsConfirmationCanceledShow,
+      setOriginalRequestData
     );
   };
 
