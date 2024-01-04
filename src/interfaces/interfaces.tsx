@@ -70,8 +70,6 @@ export interface ButtonProps {
   transparentBGAdjust?: boolean;
   transparentTextAdjust?: boolean;
   isHighlightedAdjust?: boolean;
-  height?: number | string;
-  width?: number | string;
 }
 
 export interface DropdownProps {
@@ -117,8 +115,8 @@ export interface ModalProps {
   tripData?: any;
   addressData?: any;
   setVehicles?: React.Dispatch<React.SetStateAction<any[]>>;
-  setTripData?: React.Dispatch<React.SetStateAction<any[]>>;
-  setAddressData?: React.Dispatch<React.SetStateAction<any[]>>;
+  setTripData?: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  setAddressData?: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
   setSelectedTravelCategory?: React.Dispatch<React.SetStateAction<any>>;
   setSelectedTravelType?: React.Dispatch<React.SetStateAction<any>>;
   setIsRequestSubmissionLoading?: any;

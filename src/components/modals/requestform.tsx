@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, View, Text, ScrollView } from "react-native";
 import Checkbox from "expo-checkbox";
 import {
@@ -29,11 +29,11 @@ const RequestForm: React.FC<ModalProps> = ({
   selectedVehicle,
   tripData,
   addressData,
-  setVehicles,
-  setTripData,
-  setAddressData,
-  setSelectedTravelCategory,
-  setSelectedTravelType,
+  setVehicles = () => {},
+  setTripData = () => {},
+  setAddressData = () => {},
+  setSelectedTravelCategory = () => {},
+  setSelectedTravelType = () => {},
   setIsRequestSubmissionLoading,
 }) => {
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
@@ -44,10 +44,12 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
   const [isThirdFormShow, setIsThirdFormShow] = useState(false);
-  const [showTextNote, setShowTextNote] = useState(false);
+  const [isDistanceExceed50, setIsDistanceExceed50] = useState(false);
   const [isTextErrorShow, setIsTextErrorShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
-  const [exceedsCapacity, setExceedsCapacity] = useState(false);
+  const [distance, setDistance] = useState(0);
+  const [fromPostRequestAPITrigger, setFromPostRequestAPITrigger] =
+    useState(false);
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
@@ -122,6 +124,7 @@ const RequestForm: React.FC<ModalProps> = ({
       role: role,
       merge_trip: false,
     }));
+    setDistance(addressData.distance);
     switch (form) {
       case "Close":
         setIsTextErrorShow(false);
@@ -152,9 +155,10 @@ const RequestForm: React.FC<ModalProps> = ({
           setAddressData,
           setSelectedTravelCategory,
           setSelectedTravelType,
-          setIsRequestSubmissionLoading
+          setIsRequestSubmissionLoading,
+          setIsDistanceExceed50,
+          distance
         );
-        setShowTextNote(false);
         setNumberOfPassengers(0);
         setPassengerData([]);
         setIsFirstFormShow(true);
@@ -179,34 +183,51 @@ const RequestForm: React.FC<ModalProps> = ({
     }));
   };
 
-  const handleNumberOfPassengersChange = (text: string) => {
-    const parsedNumber = parseInt(text, 10);
-    if (
-      !isNaN(parsedNumber) &&
-      parsedNumber >= 0 &&
-      selectedVehicle &&
-      parsedNumber <= selectedVehicle.capacity
-    ) {
-      setNumberOfPassengers(parsedNumber);
-      setPassengerData(Array(parsedNumber).fill(""));
-      setRequestFormData((prevData: any) => ({
-        ...prevData,
-        number_of_passenger: parsedNumber,
-      }));
-      setExceedsCapacity(false);
-    } else {
-      setNumberOfPassengers(0);
-      setPassengerData([]);
-      setRequestFormData((prevData: any) => ({
-        ...prevData,
-        number_of_passenger: 0,
-      }));
-      setExceedsCapacity(true);
-    }
-  };
+  useEffect(() => {
+    setNumberOfPassengers(selectedVehicle?.capacity);
+    setPassengerData(Array(selectedVehicle?.capacity).fill(""));
+    setRequestFormData((prevData: any) => ({
+      ...prevData,
+      number_of_passenger: selectedVehicle?.capacity,
+    }));
+  }, [selectedVehicle?.capacity]);
 
   const handleRequestClose = () => {
     setIsConfirmationShow(false);
+  };
+  const handleRequestCloseExceed = () => {
+    setIsDistanceExceed50(false);
+    setIsConfirmationShow(true);
+    setRequestFormData({
+      requester_name: "",
+      office: "",
+      number_of_passenger: null,
+      passenger_name: [],
+      destination: "",
+      distance: "",
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      purpose: "",
+      vehicle: "",
+      type: "",
+    });
+    setVehicles([]);
+    setTripData({
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      capacity: null,
+      category: "Round Trip",
+    });
+    setAddressData({
+      destination: "",
+      distance: null,
+    });
+    setSelectedTravelCategory("Round Trip");
+    setSelectedTravelType("");
   };
   return (
     <>
@@ -290,9 +311,9 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Maximum vehicle capacity: {selectedVehicle?.capacity}
+                    No. of passenger: {selectedVehicle?.capacity}
                   </Text>
-                  <InputField2
+                  {/* <InputField2
                     value={
                       requestFormData
                         ? requestFormData.number_of_passenger
@@ -306,7 +327,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     <Text style={{ color: "red" }}>
                       Exceeds seating capacity of the vehicle
                     </Text>
-                  )}
+                  )} */}
                   <KeyboardAwareScrollView
                     keyboardShouldPersistTaps="handled"
                     scrollEnabled={true}
@@ -335,15 +356,11 @@ const RequestForm: React.FC<ModalProps> = ({
                       transparentBG
                       transparentText
                       text="Close"
-                      width={Viewport.width * 0.3}
-                      height={Viewport.height * 0.06}
                     />
                     <Button
                       onPress={() => handleButtonPress("Second")}
                       defaultBG
                       text="Next"
-                      width={Viewport.width * 0.3}
-                      height={Viewport.height * 0.06}
                     />
                   </View>
                 </View>
@@ -579,15 +596,11 @@ const RequestForm: React.FC<ModalProps> = ({
                     transparentBG
                     transparentText
                     text="Back"
-                    width={Viewport.width * 0.3}
-                    height={Viewport.height * 0.06}
                   />
                   <Button
                     onPress={() => handleButtonPress("Submit")}
                     defaultBG
                     text="Submit"
-                    width={Viewport.width * 0.3}
-                    height={Viewport.height * 0.06}
                   />
                 </View>
               </>
@@ -603,6 +616,18 @@ const RequestForm: React.FC<ModalProps> = ({
         content="We will send you a notification about your request ASAP."
         footer="Thank you!"
         onRequestClose={handleRequestClose}
+        showContent
+        showHeader
+        showFooter
+      />
+      <Confirmation
+        visible={isDistanceExceed50}
+        animationType="fade"
+        transparent={true}
+        header="Note:"
+        content="This reservation requires a travel order for the vehicle's fuel and the driver's per diem because destinations exceed 50 kilometers. Please submit it to Motor Pool office."
+        footer="Thank you!"
+        onRequestClose={handleRequestCloseExceed}
         showContent
         showHeader
         showFooter

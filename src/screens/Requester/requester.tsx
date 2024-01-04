@@ -195,12 +195,13 @@ export default function Requester() {
           setSelectedCategory
         );
       } else if (role === "requester") {
-        fetchSchedule(
-          setSchedule,
-          setNextSchedule,
-          setVehicleRecommendation,
-          setSelectedCategory
-        );
+        // fetchSchedule(
+        //   setSchedule,
+        //   setNextSchedule,
+        //   setVehicleRecommendation,
+        //   setSelectedCategory
+        // );
+        setSelectedCategory("Search Vehicle");
       }
     }, [])
   );
@@ -295,23 +296,23 @@ export default function Requester() {
       ...prevData,
       travel_date: formattedDate,
     }));
-    if (formattedDate) {
-      let dateObject = new Date(formattedDate);
-      let currentDate = new Date();
-
-      if (dateObject > currentDate) {
-        [currentDate, dateObject] = [dateObject, currentDate];
-      }
-
-      const diffInTime = currentDate.getTime() - dateObject.getTime();
-      const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
-      setArrivalDisableDaysBefore(diffInDays);
-    }
 
     if (tripData.category === "Round Trip") {
       const updatedErrors = { ...errorMessages };
       delete updatedErrors[0]?.travelDateError;
       setErrorMessages(updatedErrors);
+      if (formattedDate) {
+        let dateObject = new Date(formattedDate);
+        let currentDate = new Date();
+
+        if (dateObject > currentDate) {
+          [currentDate, dateObject] = [dateObject, currentDate];
+        }
+
+        const diffInTime = currentDate.getTime() - dateObject.getTime();
+        const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
+        setArrivalDisableDaysBefore(diffInDays);
+      }
       checkAutocompleteDisability();
     } else if (
       tripData.category === "One-way" ||
@@ -819,8 +820,6 @@ export default function Requester() {
                           }}
                           text="Round Trip"
                           defaultBG
-                          width={Viewport.width * 0.3}
-                          height={Viewport.height * 0.06}
                         />
                       ) : (
                         <Button
@@ -855,8 +854,6 @@ export default function Requester() {
                           text="Round Trip"
                           transparentBG
                           transparentText
-                          width={Viewport.width * 0.3}
-                          height={Viewport.height * 0.06}
                         />
                       )}
                       {selectedTravelCategory === "One-way" ? (
@@ -890,8 +887,6 @@ export default function Requester() {
                           }}
                           text="One-way"
                           defaultBG
-                          width={Viewport.width * 0.3}
-                          height={Viewport.height * 0.06}
                         />
                       ) : (
                         <Button
@@ -925,8 +920,6 @@ export default function Requester() {
                           text="One-way"
                           transparentBG
                           transparentText
-                          width={Viewport.width * 0.3}
-                          height={Viewport.height * 0.06}
                         />
                       )}
                     </View>
@@ -1138,8 +1131,6 @@ export default function Requester() {
                                 }}
                                 text="Drop"
                                 defaultBG
-                                width={Viewport.width * 0.3}
-                                height={Viewport.height * 0.06}
                               />
                             ) : (
                               <Button
@@ -1161,8 +1152,6 @@ export default function Requester() {
                                 text="Drop"
                                 transparentBG
                                 transparentText
-                                width={Viewport.width * 0.3}
-                                height={Viewport.height * 0.06}
                               />
                             )}
                             {selectedTravelType === "Fetch" ? (
@@ -1184,8 +1173,6 @@ export default function Requester() {
                                 }}
                                 text="Fetch"
                                 defaultBG
-                                width={Viewport.width * 0.3}
-                                height={Viewport.height * 0.06}
                               />
                             ) : (
                               <Button
@@ -1207,8 +1194,6 @@ export default function Requester() {
                                 text="Fetch"
                                 transparentBG
                                 transparentText
-                                width={Viewport.width * 0.3}
-                                height={Viewport.height * 0.06}
                               />
                             )}
                           </View>
@@ -1237,6 +1222,7 @@ export default function Requester() {
                             key={datePickerKeyFromOneWay}
                             button2
                             onDateSelected={handleFromDateSelected}
+                            disableDaysBefore={3}
                           />
                           {errorMessages[0]?.travelDateOnewayError && (
                             <Text style={Styles.textError}>
@@ -1377,8 +1363,10 @@ export default function Requester() {
                     <Button
                       onPress={handleSetTrip}
                       text="Proceed"
-                      width={Viewport.width * 0.9}
-                      height={Viewport.height * 0.06}
+                      style={{
+                        width: Viewport.width * 0.9,
+                        height: Viewport.height * 0.06,
+                      }}
                       defaultBG
                     />
                   </View>
@@ -1603,8 +1591,6 @@ export default function Requester() {
                             text="Cancel"
                             transparentBG
                             transparentText
-                            width={Viewport.width * 0.3}
-                            height={Viewport.height * 0.06}
                           />
                         ))}
                       {recommend.vehicle_data_recommendation &&
@@ -1722,8 +1708,6 @@ export default function Requester() {
                               text="Cancel"
                               transparentBG
                               transparentText
-                              width={Viewport.width * 0.3}
-                              height={Viewport.height * 0.06}
                             />
                             <Button
                               onPress={() =>
@@ -1734,8 +1718,6 @@ export default function Requester() {
                               }
                               text="Accept"
                               defaultBG
-                              width={Viewport.width * 0.3}
-                              height={Viewport.height * 0.06}
                             />
                           </View>
                         </>
@@ -2008,8 +1990,7 @@ export default function Requester() {
         transparent={true}
         onRequestClose={handleRequestFormClose}
         header="Disclaimer:"
-        content="This vehicle is prioritized for the higher official, and your reservation will be canceled once the higher official 
-        uses it during your reservation."
+        content="This vehicle is prioritized for the higher official, and your reservation will be canceled once the higher official uses it during your reservation."
         footer="Are you sure you want to use this vehicle?"
         onNextPressed={handleOnNextPressed}
         showHeader

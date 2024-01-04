@@ -459,7 +459,9 @@ export async function postRequestFromAPI(
   setAddressData: any,
   setSelectedTravelCategory: any,
   setSelectedTravelType: any,
-  setIsRequestSubmissionLoading: any
+  setIsRequestSubmissionLoading: any,
+  setIsDistanceExceed50: any,
+  distance: any
 ) {
   const token = await AsyncStorage.getItem("token");
   const requestData = {
@@ -475,37 +477,41 @@ export async function postRequestFromAPI(
     })
     .then((response) => {
       setIsRequestSubmissionLoading(false);
-      setIsConfirmationShow(true);
-      setRequestFormData({
-        requester_name: "",
-        office: "",
-        number_of_passenger: null,
-        passenger_name: [],
-        destination: "",
-        distance: "",
-        travel_date: "",
-        travel_time: "",
-        return_date: "",
-        return_time: "",
-        purpose: "",
-        vehicle: "",
-        type: "",
-      });
-      setVehicles([]);
-      setTripData({
-        travel_date: "",
-        travel_time: "",
-        return_date: "",
-        return_time: "",
-        capacity: null,
-        category: "Round Trip",
-      });
-      setAddressData({
-        destination: "",
-        distance: null,
-      });
-      setSelectedTravelCategory("Round Trip");
-      setSelectedTravelType("");
+      if (distance > 50) {
+        setIsDistanceExceed50(true);
+      } else if (distance <= 50) {
+        setIsConfirmationShow(true);
+        setRequestFormData({
+          requester_name: "",
+          office: "",
+          number_of_passenger: null,
+          passenger_name: [],
+          destination: "",
+          distance: "",
+          travel_date: "",
+          travel_time: "",
+          return_date: "",
+          return_time: "",
+          purpose: "",
+          vehicle: "",
+          type: "",
+        });
+        setVehicles([]);
+        setTripData({
+          travel_date: "",
+          travel_time: "",
+          return_date: "",
+          return_time: "",
+          capacity: null,
+          category: "Round Trip",
+        });
+        setAddressData({
+          destination: "",
+          distance: null,
+        });
+        setSelectedTravelCategory("Round Trip");
+        setSelectedTravelType("");
+      }
     })
     .catch((error) => {
       setIsRequestSubmissionLoading(false);
