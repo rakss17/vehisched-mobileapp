@@ -152,22 +152,6 @@ export default function Requester() {
     setPendingSchedule
   );
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     fetchRequestAPI(
-  //       () => {},
-  //       undefined,
-  //       setPendingSchedule,
-  //       setSelectedCategory
-  //     );
-  //   }, [])
-  // );
-
-  // useFocusEffect(
-  //   React.useCallback(() => {
-
-  //   }, [])
-  // );
   useEffect(() => {
     if (role === "vip") {
       if (vehicles.length === 0) {
@@ -195,13 +179,12 @@ export default function Requester() {
           setSelectedCategory
         );
       } else if (role === "requester") {
-        // fetchSchedule(
-        //   setSchedule,
-        //   setNextSchedule,
-        //   setVehicleRecommendation,
-        //   setSelectedCategory
-        // );
-        setSelectedCategory("Search Vehicle");
+        fetchSchedule(
+          setSchedule,
+          setNextSchedule,
+          setVehicleRecommendation,
+          setSelectedCategory
+        );
       }
     }, [])
   );
@@ -1575,23 +1558,35 @@ export default function Requester() {
                               {formatTime(recommend.return_time)}{" "}
                             </Text>
                             {recommend.message}
-                            {recommend.vehicle_data_recommendation ? (
+                            {!recommend.vehicle_data_recommendation ||
+                            recommend.vehicle_data_recommendation.length ===
+                              0 ? null : (
                               <Text>
                                 {" "}
                                 Press the vehicle that you would like to choose.
                               </Text>
-                            ) : null}
+                            )}
                           </Text>
                         </Text>
                       </View>
                       {!recommend.vehicle_data_recommendation ||
                         (recommend.vehicle_data_recommendation.length === 0 && (
-                          <Button
-                            onPress={() => handleCancel(recommend.request_id)}
-                            text="Cancel"
-                            transparentBG
-                            transparentText
-                          />
+                          <View
+                            style={[
+                              {
+                                justifyContent: "center",
+                                width: Viewport.width * 0.85,
+                              },
+                              Styles.flexRow,
+                            ]}
+                          >
+                            <Button
+                              onPress={() => handleCancel(recommend.request_id)}
+                              text="Cancel"
+                              transparentBG
+                              transparentText
+                            />
+                          </View>
                         ))}
                       {recommend.vehicle_data_recommendation &&
                       recommend.vehicle_data_recommendation.length > 0 ? (
