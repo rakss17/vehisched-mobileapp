@@ -179,11 +179,23 @@ export default function Requester() {
           setVehicleRecommendation,
           setSelectedCategory
         );
+        fetchRequestAPI(
+          () => {},
+          setRefreshingSchedule,
+          setPendingSchedule,
+          setSelectedCategory
+        );
       } else if (role === "requester") {
         fetchSchedule(
           setSchedule,
           setNextSchedule,
           setVehicleRecommendation,
+          setSelectedCategory
+        );
+        fetchRequestAPI(
+          () => {},
+          setRefreshingSchedule,
+          setPendingSchedule,
           setSelectedCategory
         );
       }
@@ -477,7 +489,6 @@ export default function Requester() {
   const handleSetTripClose = () => {
     setIsSetTripVisible(false);
   };
-
   const handleRequestFormVisible = (vehicle: Vehicle) => {
     if (role === "vip") {
       setIsInitialFormVIPOpen(false);

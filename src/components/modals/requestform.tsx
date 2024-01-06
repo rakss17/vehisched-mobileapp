@@ -83,6 +83,7 @@ const RequestForm: React.FC<ModalProps> = ({
     type: "",
     role: "",
     merge_trip: false,
+    driver_name: "",
   });
 
   const isCurrentStepValid = () => {
@@ -123,6 +124,7 @@ const RequestForm: React.FC<ModalProps> = ({
       distance: addressData.distance,
       role: role,
       merge_trip: false,
+      driver_name: selectedVehicle?.driver_assigned_to,
     }));
     setDistance(addressData.distance);
     switch (form) {
