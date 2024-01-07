@@ -74,7 +74,10 @@ export default function Requester() {
   const [selectedVehicle, setSelectedVehicle] = useState<any | undefined>(
     undefined
   );
-  const [isAutocompleteEditable, setIsAutocompleteEditable] = useState(false);
+  const [isAutoCompleteAddressPressed, setIsAutoCompleteAddressPressed] =
+    useState(false);
+  const [isAutocompleteNotPressable, setIsAutocompleteNotPressable] =
+    useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTravelCategory, setSelectedTravelCategory] = useState<
     string | null
@@ -85,6 +88,7 @@ export default function Requester() {
   const [schedule, setSchedule] = useState<any[]>([]);
   const [nextSchedule, setNextSchedule] = useState<any[]>([]);
   const [vehicleRecommendation, setVehicleRecommendation] = useState<any[]>([]);
+  const [isFromSearchVehicle, setIsFromSearchVehicle] = useState(false);
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
@@ -124,9 +128,6 @@ export default function Requester() {
   const [selectedVehicleRecommendation, setSelectedVehicleRecommendation] =
     useState<string>("");
   const [selectedTrip, setSelectedTrip] = useState<string>("");
-  const [plateNumber, setSelectedPlateNumber] = useState("");
-  const [vehicleName, setSelectedModel] = useState("");
-  const [capacity, setSelectedCapacity] = useState("");
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
@@ -255,7 +256,7 @@ export default function Requester() {
         setDatePickerKeyFromOneWay((prevKey) => prevKey + 1);
         setDatePickerKeyToOneWay((prevKey) => prevKey + 1);
       }
-      setIsAutocompleteEditable(false);
+      setIsAutocompleteNotPressable(true);
       setIsTravelDateSelected(true);
       setSelectedTravelCategory("Round Trip");
       setSelectedTravelType("");
@@ -276,7 +277,7 @@ export default function Requester() {
 
   const checkAutocompleteDisability = () => {
     if (tripData.travel_date !== "" && tripData.travel_time !== "") {
-      setIsAutocompleteEditable(true);
+      setIsAutocompleteNotPressable(false);
       setIsTravelDateSelected(false);
     }
   };
@@ -392,7 +393,7 @@ export default function Requester() {
     setErrorMessages(updatedErrors);
   };
 
-  const handleSetTrip = () => {
+  const handleSearchVehicle = () => {
     let validationErrors: { [key: string]: string } = {};
     if (tripData.category === "Round Trip") {
       const allFieldsBlank =
@@ -481,12 +482,34 @@ export default function Requester() {
         tripData.return_time,
         tripData.capacity,
         setSelectedCategory,
-        setIsLoading
+        setIsLoading,
+        setIsFromSearchVehicle
       );
     }
   };
 
-  const handleSetTripClose = () => {
+  const handleSearchAnotherVehicle = () => {
+    setIsFromSearchVehicle(false);
+    setSelectedCategory("Search Vehicle");
+    setIsAutocompleteNotPressable(true);
+    setIsTravelDateSelected(true);
+    setSelectedTravelCategory("Round Trip");
+    setSelectedTravelType("");
+    setTripData({
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      capacity: null,
+      category: "Round Trip",
+    });
+    setAddressData({
+      destination: "",
+      distance: null,
+    });
+  };
+
+  const handleSearchVehicleClose = () => {
     setIsSetTripVisible(false);
   };
   const handleRequestFormVisible = (vehicle: Vehicle) => {
@@ -558,7 +581,27 @@ export default function Requester() {
     setIsVehicleVip(false);
     setIsConfirmationAcceptedShow(false);
     setIsConfirmationCanceledShow(false);
+  };
+  const handleInitialFormVIPClose = () => {
     setIsInitialFormVIPOpen(false);
+    setIsAutocompleteNotPressable(true);
+    setIsTravelDateSelected(true);
+    setSelectedTravelCategory("Round Trip");
+    setSelectedTravelType("");
+    setTripData((prevData: any) => ({
+      ...prevData,
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      capacity: null,
+      category: "Round Trip",
+    }));
+    setAddressData((prevData: any) => ({
+      ...prevData,
+      destination: "",
+      distance: null,
+    }));
   };
   const handleOnNextPressed = () => {
     setIsVehicleVip(false);
@@ -567,6 +610,25 @@ export default function Requester() {
 
   const handleOnCategoryChange = (options: string) => {
     setSelectedCategory(options);
+    setIsAutocompleteNotPressable(true);
+    setIsTravelDateSelected(true);
+    setSelectedTravelCategory("Round Trip");
+    setSelectedTravelType("");
+    setTripData({
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      capacity: null,
+      category: "Round Trip",
+    });
+    setAddressData({
+      destination: "",
+      distance: null,
+    });
+    const updatedErrors = { ...errorMessages };
+    delete updatedErrors[0];
+    setErrorMessages(updatedErrors);
   };
   return (
     <>
@@ -807,7 +869,7 @@ export default function Requester() {
                               destination: "",
                               distance: null,
                             });
-                            setIsAutocompleteEditable(false);
+                            setIsAutocompleteNotPressable(true);
                             setIsTravelDateSelected(true);
                           }}
                           style={{
@@ -840,7 +902,7 @@ export default function Requester() {
                               destination: "",
                               distance: null,
                             });
-                            setIsAutocompleteEditable(false);
+                            setIsAutocompleteNotPressable(true);
                             setIsTravelDateSelected(true);
                           }}
                           style={{
@@ -874,7 +936,7 @@ export default function Requester() {
                               destination: "",
                               distance: null,
                             });
-                            setIsAutocompleteEditable(false);
+                            setIsAutocompleteNotPressable(true);
                             setIsTravelDateSelected(true);
                           }}
                           style={{
@@ -906,7 +968,7 @@ export default function Requester() {
                               destination: "",
                               distance: null,
                             });
-                            setIsAutocompleteEditable(false);
+                            setIsAutocompleteNotPressable(true);
                             setIsTravelDateSelected(true);
                           }}
                           style={{
@@ -1060,8 +1122,14 @@ export default function Requester() {
                             travel_time={tripData.travel_time}
                             setData={setTripData}
                             setAddressData={setAddressData}
-                            isDisabled={isAutocompleteEditable}
+                            isDisabled={isAutocompleteNotPressable}
                             category={tripData.category}
+                            isAutoCompleteAddressPressed={
+                              isAutoCompleteAddressPressed
+                            }
+                            setIsAutoCompleteAddressPressed={
+                              setIsAutoCompleteAddressPressed
+                            }
                           />
                           {isTravelDateSelected ? (
                             <Text
@@ -1288,8 +1356,14 @@ export default function Requester() {
                             travel_time={tripData.travel_time}
                             setData={setTripData}
                             setAddressData={setAddressData}
-                            isDisabled={isAutocompleteEditable}
+                            isDisabled={isAutocompleteNotPressable}
                             category={tripData.category}
+                            isAutoCompleteAddressPressed={
+                              isAutoCompleteAddressPressed
+                            }
+                            setIsAutoCompleteAddressPressed={
+                              setIsAutoCompleteAddressPressed
+                            }
                           />
                           {isTravelDateSelected ? (
                             <Text
@@ -1357,7 +1431,7 @@ export default function Requester() {
                   </View>
                   <View style={[{ gap: 50 }, Styles.flexRow]}>
                     <Button
-                      onPress={handleSetTrip}
+                      onPress={handleSearchVehicle}
                       text="Proceed"
                       style={{
                         width: Viewport.width * 0.9,
@@ -1388,7 +1462,55 @@ export default function Requester() {
                 }
               >
                 {vehicles.length === 0 ? (
-                  <Text>No vehicles available</Text>
+                  <>
+                    {isFromSearchVehicle ? (
+                      <>
+                        <View style={Styles.flexColumn}>
+                          <Text>No available vehicle from </Text>
+                          <Text style={{ fontWeight: "bold" }}>
+                            {formatDate(tripData.travel_date)},{" "}
+                            {formatTime(tripData.travel_time)}
+                          </Text>
+                          <Text> to </Text>
+                          <Text style={{ fontWeight: "bold" }}>
+                            {formatDate(tripData.return_date)},{" "}
+                            {formatTime(tripData.return_time)}
+                          </Text>
+                          <Text>
+                            {" "}
+                            with {tripData.capacity} vehicle seating capacity
+                          </Text>
+                        </View>
+                        <Button
+                          text="Search for another vehicle"
+                          style={{
+                            width: Viewport.width * 0.7,
+                            height: Viewport.height * 0.06,
+                          }}
+                          defaultBG
+                          onPress={handleSearchAnotherVehicle}
+                        />
+                      </>
+                    ) : (
+                      <View
+                        style={[
+                          { gap: Viewport.height * 0.05 },
+                          Styles.flexColumn,
+                        ]}
+                      >
+                        <Text>No vehicles available</Text>
+                        <Button
+                          text="Search for available vehicle"
+                          style={{
+                            width: Viewport.width * 0.6,
+                            height: Viewport.height * 0.06,
+                          }}
+                          defaultBG
+                          onPress={handleSearchAnotherVehicle}
+                        />
+                      </View>
+                    )}
+                  </>
                 ) : (
                   <>
                     {role === "vip" ? null : (
@@ -1975,7 +2097,7 @@ export default function Requester() {
         animationType="fade"
         visible={isSetTripVisible}
         transparent={true}
-        onRequestClose={handleSetTripClose}
+        onRequestClose={handleSearchVehicleClose}
       />
       <RequestForm
         animationType="fade"
@@ -1991,6 +2113,7 @@ export default function Requester() {
         setSelectedTravelCategory={setSelectedTravelCategory}
         setSelectedTravelType={setSelectedTravelType}
         setIsRequestSubmissionLoading={setIsLoading}
+        setIsTravelDateSelected={setIsRequestFormVisible}
       />
       <PromptDialog
         animationType="fade"
@@ -2017,13 +2140,17 @@ export default function Requester() {
         visible={isInitialFormVIPOpen}
         animationType="fade"
         transparent={true}
-        onRequestClose={handleRequestFormClose}
+        onRequestClose={handleInitialFormVIPClose}
         selectedVehicle={selectedVehicle}
         setAddressData={setAddressData}
         setTripData={setTripData}
         tripData={tripData}
         addressData={addressData}
         handleRequestFormVisible={handleRequestFormVisible}
+        isTravelDateSelected={isTravelDateSelected}
+        setIsTravelDateSelected={setIsTravelDateSelected}
+        isAutocompleteNotPressable={isAutocompleteNotPressable}
+        setIsAutocompleteNotPressable={setIsAutocompleteNotPressable}
       />
     </>
   );

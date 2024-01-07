@@ -24,15 +24,21 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
   tripData,
   handleRequestFormVisible,
   selectedVehicle,
+  isTravelDateSelected,
+  setIsTravelDateSelected,
+  isAutocompleteNotPressable,
+  setIsAutocompleteNotPressable,
 }) => {
   const [arrivalDisableDaysBefore, setArrivalDisableDaysBefore] = useState(62);
-  const [isTravelDateSelected, setIsTravelDateSelected] = useState(true);
+
   const [selectedTravelType, setSelectedTravelType] = useState<string | null>();
   const [errorMessages, setErrorMessages] = useState<any[]>([]);
+  const [isAutoCompleteAddressPressed, setIsAutoCompleteAddressPressed] =
+    useState(false);
+
   const [selectedTravelCategory, setSelectedTravelCategory] = useState<
     string | null
   >("Round Trip");
-  const [isAutocompleteEditable, setIsAutocompleteEditable] = useState(false);
   const [selectedTime, setSelectedTime] = useState<{
     hours: number | null;
     minutes: number | null;
@@ -52,7 +58,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
   };
   const checkAutocompleteDisability = () => {
     if (tripData.travel_date !== "" && tripData.travel_time !== "") {
-      setIsAutocompleteEditable(true);
+      setIsAutocompleteNotPressable(false);
       setIsTravelDateSelected(false);
     }
   };
@@ -166,7 +172,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
     setErrorMessages(updatedErrors);
   };
 
-  const handleSetTrip = () => {
+  const handleNext = () => {
     let validationErrors: { [key: string]: string } = {};
     if (tripData.category === "Round Trip") {
       const allFieldsBlank =
@@ -244,8 +250,33 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
     }
   };
 
-  //   const handleSetTripClose = () => {
-  //     setIsSetTripVisible(false);
+  const handleInitialFormVIPClose = () => {
+    onRequestClose();
+    setIsAutocompleteNotPressable(true);
+    setIsTravelDateSelected(true);
+    setSelectedTravelCategory("Round Trip");
+    setSelectedTravelType("");
+    setTripData((prevData: any) => ({
+      ...prevData,
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      capacity: null,
+      category: "Round Trip",
+    }));
+    setAddressData((prevData: any) => ({
+      ...prevData,
+      destination: "",
+      distance: null,
+    }));
+    const updatedErrors = { ...errorMessages };
+    delete updatedErrors[0];
+    setErrorMessages(updatedErrors);
+  };
+
+  //   const handleNextClose = () => {
+  //     setIsNextVisible(false);
   //   };
   return (
     <Modal
@@ -311,7 +342,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                       destination: "",
                       distance: null,
                     });
-                    setIsAutocompleteEditable(false);
+                    setIsAutocompleteNotPressable(true);
                     setIsTravelDateSelected(true);
                   }}
                   style={{
@@ -344,7 +375,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                       destination: "",
                       distance: null,
                     });
-                    setIsAutocompleteEditable(false);
+                    setIsAutocompleteNotPressable(true);
                     setIsTravelDateSelected(true);
                   }}
                   style={{
@@ -378,7 +409,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                       destination: "",
                       distance: null,
                     });
-                    setIsAutocompleteEditable(false);
+                    setIsAutocompleteNotPressable(true);
                     setIsTravelDateSelected(true);
                   }}
                   style={{
@@ -410,7 +441,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                       destination: "",
                       distance: null,
                     });
-                    setIsAutocompleteEditable(false);
+                    setIsAutocompleteNotPressable(true);
                     setIsTravelDateSelected(true);
                   }}
                   style={{
@@ -556,8 +587,12 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                     travel_time={tripData.travel_time}
                     setData={setTripData}
                     setAddressData={setAddressData}
-                    isDisabled={isAutocompleteEditable}
+                    isDisabled={isAutocompleteNotPressable}
                     category={tripData.category}
+                    isAutoCompleteAddressPressed={isAutoCompleteAddressPressed}
+                    setIsAutoCompleteAddressPressed={
+                      setIsAutoCompleteAddressPressed
+                    }
                   />
                   {isTravelDateSelected ? (
                     <Text
@@ -775,8 +810,12 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                     travel_time={tripData.travel_time}
                     setData={setTripData}
                     setAddressData={setAddressData}
-                    isDisabled={isAutocompleteEditable}
+                    isDisabled={isAutocompleteNotPressable}
                     category={tripData.category}
+                    isAutoCompleteAddressPressed={isAutoCompleteAddressPressed}
+                    setIsAutoCompleteAddressPressed={
+                      setIsAutoCompleteAddressPressed
+                    }
                   />
                   {isTravelDateSelected ? (
                     <Text
@@ -799,12 +838,12 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
 
           <View style={[{ gap: 50 }, Styles.flexRow]}>
             <Button
-              onPress={onRequestClose}
+              onPress={handleInitialFormVIPClose}
               text="Cancel"
               transparentBG
               transparentText
             />
-            <Button onPress={handleSetTrip} text="Next" defaultBG />
+            <Button onPress={handleNext} text="Next" defaultBG />
           </View>
         </View>
       </View>

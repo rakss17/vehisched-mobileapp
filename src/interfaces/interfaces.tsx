@@ -120,6 +120,8 @@ export interface ModalProps {
   setSelectedTravelCategory?: React.Dispatch<React.SetStateAction<any>>;
   setSelectedTravelType?: React.Dispatch<React.SetStateAction<any>>;
   setIsRequestSubmissionLoading?: any;
+  setIsTravelDateSelected?: any;
+  setIsAutocompleteNotPressable?: any;
 }
 export interface CalendarData {
   key: string;
@@ -259,4 +261,8 @@ export interface InitialFormVipProps {
     distance: any;
   };
   handleRequestFormVisible: (vehicle: Vehicle) => void;
+  isTravelDateSelected?: any;
+  setIsTravelDateSelected?: any;
+  isAutocompleteNotPressable?: any;
+  setIsAutocompleteNotPressable?: any;
 }

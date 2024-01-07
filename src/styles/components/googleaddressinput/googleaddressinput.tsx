@@ -3,12 +3,12 @@ import { Viewport, FontSizes, Colors } from "../../globalstyles/globalstyles";
 
 export const AutoCompleteAddressGoogleStyle = StyleSheet.create({
   container: {
-    width: Viewport.width * 0.5,
+    width: Viewport.width * 0.8,
   },
   textInputContainer: {
     flexDirection: "row",
-    position: "relative",
-    width: Viewport.width * 0.6,
+
+    width: Viewport.width * 0.8,
   },
   textInput: {
     backgroundColor: "#FFFFFF",
@@ -17,26 +17,21 @@ export const AutoCompleteAddressGoogleStyle = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 15,
     flex: 1,
-    borderBottomWidth: 1,
-    width: Viewport.width * 0.09,
+    borderBottomWidth: 0,
+    width: Viewport.width * 0.8,
   },
   poweredContainer: {
     backgroundColor: Colors.primaryColor2,
   },
   listView: {
-    position: "absolute",
-    top: 50,
-    right: -40,
-
-    zIndex: 99999,
+    right: 0,
     width: Viewport.width * 0.8,
   },
   row: {
-    backgroundColor: Colors.primaryColor2,
+    backgroundColor: "white",
     padding: 13,
-    height: "auto",
+
     flexDirection: "row",
     width: Viewport.width * 0.8,
-    zIndex: 99999,
   },
 });

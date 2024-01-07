@@ -251,7 +251,8 @@ export async function handlePlaceSelect(
   travel_timee: any,
   setTripData: (data: any) => void,
   setAddressData: (addressData: any) => void,
-  category: any
+  category: any,
+  setLabelData: any
 ) {
   const date = parse(travel_timee, "hh:mm aa", new Date());
 
@@ -285,6 +286,7 @@ export async function handlePlaceSelect(
         distance: distance,
         destination: fullAddress,
       }));
+      setLabelData(fullAddress);
     } else if (
       category === "One-way - Drop" ||
       category === "One-way - Fetch" ||
@@ -316,6 +318,7 @@ export async function handlePlaceSelect(
         distance: distance,
         destination: fullAddress,
       }));
+      setLabelData(fullAddress);
     }
   } catch (error) {
     console.log("Error:", error);
@@ -379,7 +382,8 @@ export async function checkVehicleAvailability(
   preferred_end_travel_timee: any,
   preferred_capacity: any,
   setSelectedCategory: any,
-  setIsSetTripLoading: any
+  setIsSetTripLoading: any,
+  setIsFromSearchVehicle: any
 ) {
   const start_time_format = getTimeFormat(preferred_start_travel_timee);
 
@@ -426,6 +430,7 @@ export async function checkVehicleAvailability(
     })
     .then((response) => {
       setIsSetTripLoading(false);
+      setIsFromSearchVehicle(true);
       setVehicles(response.data);
 
       setSelectedCategory("Available Vehicle");
@@ -461,7 +466,12 @@ export async function postRequestFromAPI(
   setSelectedTravelType: any,
   setIsRequestSubmissionLoading: any,
   setIsDistanceExceed50: any,
-  distance: any
+  distance: any,
+  setNumberOfPassengers: any,
+  setPassengerData: any,
+  role: any,
+  setIsTravelDateSelected: any,
+  setIsAutocompleteNotPressable: any
 ) {
   const token = await AsyncStorage.getItem("token");
   const requestData = {
@@ -481,7 +491,8 @@ export async function postRequestFromAPI(
         setIsDistanceExceed50(true);
       } else if (distance <= 50) {
         setIsConfirmationShow(true);
-        setRequestFormData({
+        setRequestFormData((prevData: any) => ({
+          ...prevData,
           requester_name: "",
           office: "",
           number_of_passenger: null,
@@ -495,20 +506,28 @@ export async function postRequestFromAPI(
           purpose: "",
           vehicle: "",
           type: "",
-        });
-        setVehicles([]);
-        setTripData({
+        }));
+        {
+          role === "vip" ? null : setVehicles([]);
+        }
+        setIsTravelDateSelected(true);
+        setIsAutocompleteNotPressable(true);
+        setTripData((prevData: any) => ({
+          ...prevData,
           travel_date: "",
           travel_time: "",
           return_date: "",
           return_time: "",
           capacity: null,
           category: "Round Trip",
-        });
-        setAddressData({
+        }));
+        setAddressData((prevData: any) => ({
+          ...prevData,
           destination: "",
           distance: null,
-        });
+        }));
+        setNumberOfPassengers(0);
+        setPassengerData([]);
         setSelectedTravelCategory("Round Trip");
         setSelectedTravelType("");
       }

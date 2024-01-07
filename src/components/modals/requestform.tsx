@@ -35,6 +35,8 @@ const RequestForm: React.FC<ModalProps> = ({
   setSelectedTravelCategory = () => {},
   setSelectedTravelType = () => {},
   setIsRequestSubmissionLoading,
+  setIsTravelDateSelected,
+  setIsAutocompleteNotPressable,
 }) => {
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
@@ -159,14 +161,17 @@ const RequestForm: React.FC<ModalProps> = ({
           setSelectedTravelType,
           setIsRequestSubmissionLoading,
           setIsDistanceExceed50,
-          distance
+          distance,
+          setNumberOfPassengers,
+          setPassengerData,
+          role,
+          setIsTravelDateSelected,
+          setIsAutocompleteNotPressable
         );
-        setNumberOfPassengers(0);
-        setPassengerData([]);
+
         setIsFirstFormShow(true);
         onRequestClose();
         setIsSecondFormShow(false);
-
         break;
       default:
         break;
@@ -200,7 +205,8 @@ const RequestForm: React.FC<ModalProps> = ({
   const handleRequestCloseExceed = () => {
     setIsDistanceExceed50(false);
     setIsConfirmationShow(true);
-    setRequestFormData({
+    setRequestFormData((prevData: any) => ({
+      ...prevData,
       requester_name: "",
       office: "",
       number_of_passenger: null,
@@ -214,22 +220,28 @@ const RequestForm: React.FC<ModalProps> = ({
       purpose: "",
       vehicle: "",
       type: "",
-    });
-    setVehicles([]);
-    setTripData({
+    }));
+    {
+      role === "vip" ? null : setVehicles([]);
+    }
+    setTripData((prevData: any) => ({
+      ...prevData,
       travel_date: "",
       travel_time: "",
       return_date: "",
       return_time: "",
       capacity: null,
       category: "Round Trip",
-    });
-    setAddressData({
+    }));
+    setAddressData((prevData: any) => ({
+      ...prevData,
       destination: "",
       distance: null,
-    });
+    }));
     setSelectedTravelCategory("Round Trip");
     setSelectedTravelType("");
+    setIsTravelDateSelected(true);
+    setIsAutocompleteNotPressable(true);
   };
   return (
     <>

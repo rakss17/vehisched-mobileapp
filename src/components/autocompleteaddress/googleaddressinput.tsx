@@ -2,6 +2,14 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { handlePlaceSelect } from "../api/api";
 import { useEffect, useState, useRef } from "react";
 import { AutoCompleteAddressGoogleStyle } from "../../styles/components/googleaddressinput/googleaddressinput";
+import { View, TouchableOpacity, Modal, Text } from "react-native";
+import {
+  Colors,
+  Styles,
+  Viewport,
+} from "../../styles/globalstyles/globalstyles";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 interface AutoCompleteAddressGoogleProps {
   travel_date?: any;
@@ -10,6 +18,8 @@ interface AutoCompleteAddressGoogleProps {
   setAddressData: (addressData: any) => void;
   isDisabled?: boolean;
   category?: any;
+  isAutoCompleteAddressPressed?: any;
+  setIsAutoCompleteAddressPressed?: any;
   //   removeDestinationError: () => void;
 }
 
@@ -20,10 +30,13 @@ export default function AutoCompleteAddressGoogle({
   setAddressData,
   isDisabled,
   category,
+  isAutoCompleteAddressPressed,
+  setIsAutoCompleteAddressPressed,
 }: //   removeDestinationError,
 AutoCompleteAddressGoogleProps) {
   const [travel_date, setTravelDate] = useState(travelDateProp);
   const [travel_time, setTravelTime] = useState(travelTimeProp);
+  const [labelData, setLabelData] = useState("");
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY;
 
   const onPlaceSelectedRef = useRef<(data: any, details: any | null) => void>(
@@ -38,7 +51,8 @@ AutoCompleteAddressGoogleProps) {
         travel_time,
         setData,
         setAddressData,
-        category
+        category,
+        setLabelData
       );
       //   removeDestinationError();
     };
@@ -48,6 +62,7 @@ AutoCompleteAddressGoogleProps) {
     setData,
     setAddressData,
     category,
+    setLabelData,
     // removeDestinationError,
   ]);
 
@@ -57,23 +72,79 @@ AutoCompleteAddressGoogleProps) {
   }, [travelDateProp, travelTimeProp]);
 
   return (
-    <GooglePlacesAutocomplete
-      styles={AutoCompleteAddressGoogleStyle}
-      placeholder="Search here....."
-      onPress={(data, details = null) =>
-        onPlaceSelectedRef.current(data, details)
-      }
-      disableScroll={true}
-      query={{
-        key: apiKey,
-        language: "en",
-        types: ["establishment", "geocode"],
-        components: "country:PH",
-      }}
-      onFail={(error) => console.error(error)}
-      textInputProps={{
-        editable: isDisabled,
-      }}
-    />
+    <>
+      <TouchableOpacity
+        disabled={isDisabled}
+        style={{
+          backgroundColor: "#FFFFFF",
+          height: 44,
+          paddingVertical: 10,
+          paddingHorizontal: 0,
+          borderBottomWidth: 1,
+          marginLeft: Viewport.width * 0.1,
+          width: Viewport.width * 0.57,
+        }}
+        onPress={() => setIsAutoCompleteAddressPressed(true)}
+      >
+        <Text>{labelData !== "" ? labelData : "Search here....."}</Text>
+      </TouchableOpacity>
+      <Modal
+        visible={isAutoCompleteAddressPressed}
+        animationType="slide"
+        transparent={false}
+        onRequestClose={() => setIsAutoCompleteAddressPressed(false)}
+      >
+        <View
+          style={[
+            {
+              flex: 1,
+              backgroundColor: Colors.primaryColor2,
+            },
+            Styles.flexColumn,
+          ]}
+        >
+          <View
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              flexDirection: "row",
+              marginLeft: Viewport.width * 0.04,
+              marginTop: Viewport.height * 0.02,
+              flex: 1,
+              gap: Viewport.width * 0.01,
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: Viewport.width * 0.09,
+                height: Viewport.height * 0.055,
+              }}
+              onPress={() => setIsAutoCompleteAddressPressed(false)}
+            >
+              <FontAwesomeIcon size={23} color="red" icon={faXmark} />
+            </TouchableOpacity>
+            <GooglePlacesAutocomplete
+              styles={AutoCompleteAddressGoogleStyle}
+              placeholder="Search destination....."
+              onPress={(data, details = null) => {
+                onPlaceSelectedRef.current(data, details);
+                setIsAutoCompleteAddressPressed(false);
+              }}
+              query={{
+                key: apiKey,
+                language: "en",
+                types: ["establishment", "geocode"],
+                components: "country:PH",
+              }}
+              onFail={(error) => console.error(error)}
+              textInputProps={{ autoFocus: true }}
+            />
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 }
