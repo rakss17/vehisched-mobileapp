@@ -59,8 +59,14 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Countdown from "../../components/countdown/countdown";
 import Confirmation from "../../components/modals/confirmation";
 import InitialFormVip from "../../components/modals/initialformvip";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCircleLeft } from "@fortawesome/free-regular-svg-icons";
 
-export default function Requester() {
+interface RequesterProps {
+  setIsScrolled: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [isVehicleVipAvailable, setIsVehicleVipAvailable] = useState(false);
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
@@ -90,6 +96,8 @@ export default function Requester() {
   const [vehicleRecommendation, setVehicleRecommendation] = useState<any[]>([]);
   const [isFromSearchVehicle, setIsFromSearchVehicle] = useState(false);
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
+  const [isBackButtonPressed, setIsBackButtonPressed] = useState(false);
+  const [prevScrollY, setPrevScrollY] = useState(0);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
     travel_time: "",
@@ -581,6 +589,7 @@ export default function Requester() {
     setIsVehicleVip(false);
     setIsConfirmationAcceptedShow(false);
     setIsConfirmationCanceledShow(false);
+    setIsBackButtonPressed(false);
   };
   const handleInitialFormVIPClose = () => {
     setIsInitialFormVIPOpen(false);
@@ -614,21 +623,49 @@ export default function Requester() {
     setIsTravelDateSelected(true);
     setSelectedTravelCategory("Round Trip");
     setSelectedTravelType("");
-    setTripData({
+    setTripData((prevData: any) => ({
+      ...prevData,
       travel_date: "",
       travel_time: "",
       return_date: "",
       return_time: "",
       capacity: null,
       category: "Round Trip",
-    });
-    setAddressData({
+    }));
+    setAddressData((prevData: any) => ({
+      ...prevData,
       destination: "",
       distance: null,
-    });
+    }));
     const updatedErrors = { ...errorMessages };
     delete updatedErrors[0];
     setErrorMessages(updatedErrors);
+  };
+  const handleBackPrompt = () => {
+    setSelectedCategory("Search Vehicle");
+    setVehicles([]);
+    setIsAutocompleteNotPressable(true);
+    setIsTravelDateSelected(true);
+    setSelectedTravelCategory("Round Trip");
+    setSelectedTravelType("");
+    setTripData((prevData: any) => ({
+      ...prevData,
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      capacity: null,
+      category: "Round Trip",
+    }));
+    setAddressData((prevData: any) => ({
+      ...prevData,
+      destination: "",
+      distance: null,
+    }));
+    setIsBackButtonPressed(false);
+  };
+  const handleBackPressed = () => {
+    setIsBackButtonPressed(true);
   };
   return (
     <>
@@ -654,11 +691,7 @@ export default function Requester() {
             <Dropdown
               selectedCategory={selectedCategory}
               onCategoryChange={handleOnCategoryChange}
-              options={[
-                "Search Vehicle",
-                "Available Vehicle",
-                "Ongoing Schedule",
-              ]}
+              options={["Search Vehicle", "Ongoing Schedule"]}
               showText
               showBG
               menuAdjusted
@@ -667,59 +700,35 @@ export default function Requester() {
           </View>
         )}
         {selectedCategory === "Available Vehicle" && (
-          <View style={[{ gap: Viewport.width * 0.1 }, Styles.flexRow]}>
+          <View
+            style={[
+              {
+                gap: Viewport.width * 0,
+                width: Viewport.width * 1,
+                marginTop: Viewport.height * -0.05,
+              },
+              Styles.flexRow,
+            ]}
+          >
+            <TouchableOpacity onPress={handleBackPressed}>
+              <FontAwesomeIcon
+                style={{ marginLeft: Viewport.width * 0.05 }}
+                icon={faCircleLeft}
+                size={48}
+                color="#060E57"
+              />
+            </TouchableOpacity>
+
             <Text
               style={{
                 fontSize: FontSizes.normal,
                 color: Colors.primaryColor1,
                 fontWeight: "bold",
+                marginLeft: Viewport.width * 0.13,
               }}
             >
               Available Vehicle
             </Text>
-            {role === "vip" ? (
-              <>
-                {isVehicleVipAvailable ? (
-                  <Dropdown
-                    selectedCategory={selectedCategory}
-                    onCategoryChange={handleOnCategoryChange}
-                    options={["Available Vehicle", "Ongoing Schedule"]}
-                    showText
-                    showBG
-                    menuAdjusted
-                    dropdownText2
-                  />
-                ) : (
-                  <Dropdown
-                    selectedCategory={selectedCategory}
-                    onCategoryChange={handleOnCategoryChange}
-                    options={[
-                      "Search Vehicle",
-                      "Available Vehicle",
-                      "Ongoing Schedule",
-                    ]}
-                    showText
-                    showBG
-                    menuAdjusted
-                    dropdownText2
-                  />
-                )}
-              </>
-            ) : (
-              <Dropdown
-                selectedCategory={selectedCategory}
-                onCategoryChange={handleOnCategoryChange}
-                options={[
-                  "Search Vehicle",
-                  "Available Vehicle",
-                  "Ongoing Schedule",
-                ]}
-                showText
-                showBG
-                menuAdjusted
-                dropdownText2
-              />
-            )}
           </View>
         )}
         {selectedCategory === "Ongoing Schedule" && (
@@ -765,11 +774,7 @@ export default function Requester() {
               <Dropdown
                 selectedCategory={selectedCategory}
                 onCategoryChange={handleOnCategoryChange}
-                options={[
-                  "Search Vehicle",
-                  "Available Vehicle",
-                  "Ongoing Schedule",
-                ]}
+                options={["Search Vehicle", "Ongoing Schedule"]}
                 showText
                 showBG
                 menuAdjusted
@@ -814,6 +819,13 @@ export default function Requester() {
                     onRefresh={onRefresh}
                   />
                 }
+                onScroll={({ nativeEvent }) => {
+                  if (nativeEvent.contentOffset.y > 0) {
+                    setIsScrolled(true);
+                  } else {
+                    setIsScrolled(false);
+                  }
+                }}
               >
                 <View
                   style={[
@@ -1460,6 +1472,15 @@ export default function Requester() {
                     />
                   ) : undefined
                 }
+                onScroll={({ nativeEvent }) => {
+                  const currentScrollY = nativeEvent.contentOffset.y;
+                  if (currentScrollY > prevScrollY && currentScrollY > 0) {
+                    setIsScrolled(true);
+                  } else {
+                    setIsScrolled(false);
+                  }
+                  setPrevScrollY(currentScrollY);
+                }}
               >
                 {vehicles.length === 0 ? (
                   <>
@@ -1519,6 +1540,8 @@ export default function Requester() {
                           style={{
                             fontSize: FontSizes.small,
                             color: Colors.primaryColor1,
+                            marginTop: Viewport.height * -0.03,
+                            textAlign: "center",
                           }}
                         >
                           Available vehicles from{" "}
@@ -1642,6 +1665,15 @@ export default function Requester() {
                     onRefresh={onRefreshSchedule}
                   />
                 }
+                onScroll={({ nativeEvent }) => {
+                  const currentScrollY = nativeEvent.contentOffset.y;
+                  if (currentScrollY > prevScrollY && currentScrollY > 0) {
+                    setIsScrolled(true);
+                  } else {
+                    setIsScrolled(false);
+                  }
+                  setPrevScrollY(currentScrollY);
+                }}
               >
                 {vehicleRecommendation.map((recommend, index) => (
                   <View
@@ -2128,6 +2160,16 @@ export default function Requester() {
         showContent
         showFooter
       />
+      <PromptDialog
+        animationType="fade"
+        visible={isBackButtonPressed}
+        transparent={true}
+        onRequestClose={handleRequestFormClose}
+        content="Are you sure you want to go back?"
+        onNextPressed={handleBackPrompt}
+        showContent
+        style={{ height: Viewport.height * 0.2 }}
+      />
       <Loading
         animationType="fade"
         visible={isLoading}
@@ -2154,4 +2196,6 @@ export default function Requester() {
       />
     </>
   );
-}
+};
+
+export default Requester;

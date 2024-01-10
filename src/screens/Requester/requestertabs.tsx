@@ -11,6 +11,7 @@ import Requester from "./requester";
 import Request from "./request";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../interfaces/interfaces";
+import { Animated } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +23,8 @@ type RequesterTabsScreenRouteProp = RouteProp<
 export function RequesterTabs() {
   const route = useRoute<RequesterTabsScreenRouteProp>();
   const notifLength = route.params?.notifLength;
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -29,8 +32,9 @@ export function RequesterTabs() {
         tabBarActiveTintColor: Colors.primaryColor1,
         tabBarInactiveTintColor: Colors.secondaryColor4,
         tabBarStyle: {
-          height: Viewport.height * 0.08,
-          borderTopWidth: 5,
+          display: isScrolled ? "none" : "flex",
+          height: isScrolled ? 0 : Viewport.height * 0.08,
+          borderTopWidth: isScrolled ? 0 : 5,
         },
         tabBarLabelStyle: {
           fontSize: FontSizes.small,
@@ -45,7 +49,9 @@ export function RequesterTabs() {
     >
       <Tab.Screen
         name="Home"
-        component={Requester}
+        children={(props) => (
+          <Requester {...props} setIsScrolled={setIsScrolled} />
+        )}
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (

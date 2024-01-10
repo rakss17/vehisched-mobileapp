@@ -122,6 +122,8 @@ export interface ModalProps {
   setIsRequestSubmissionLoading?: any;
   setIsTravelDateSelected?: any;
   setIsAutocompleteNotPressable?: any;
+  setSelectedCategory?: any;
+  style?: StyleProp<ViewStyle>;
 }
 export interface CalendarData {
   key: string;

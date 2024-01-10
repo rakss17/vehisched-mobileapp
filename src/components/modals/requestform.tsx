@@ -36,7 +36,8 @@ const RequestForm: React.FC<ModalProps> = ({
   setSelectedTravelType = () => {},
   setIsRequestSubmissionLoading,
   setIsTravelDateSelected,
-  setIsAutocompleteNotPressable,
+  setIsAutocompleteNotPressable = () => {},
+  setSelectedCategory = () => {},
 }) => {
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
@@ -166,9 +167,10 @@ const RequestForm: React.FC<ModalProps> = ({
           setPassengerData,
           role,
           setIsTravelDateSelected,
-          setIsAutocompleteNotPressable
+          setIsAutocompleteNotPressable,
+          setSelectedCategory,
+          onRequestClose
         );
-
         setIsFirstFormShow(true);
         onRequestClose();
         setIsSecondFormShow(false);
@@ -242,6 +244,8 @@ const RequestForm: React.FC<ModalProps> = ({
     setSelectedTravelType("");
     setIsTravelDateSelected(true);
     setIsAutocompleteNotPressable(true);
+    setSelectedCategory("Ongoing Schedule");
+    onRequestClose();
   };
   return (
     <>

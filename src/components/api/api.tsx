@@ -4,7 +4,7 @@ import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
 import { parse, format, isValid } from "date-fns";
 import { getTimeFormat } from "../function/function";
 
-export const serverSideUrl = "http://192.168.1.11:8000/media/";
+export const serverSideUrl = "http://192.168.1.11:8000";
 
 export const api = axios.create({
   baseURL: "http://192.168.1.11:8000/",
@@ -471,7 +471,9 @@ export async function postRequestFromAPI(
   setPassengerData: any,
   role: any,
   setIsTravelDateSelected: any,
-  setIsAutocompleteNotPressable: any
+  setIsAutocompleteNotPressable: any,
+  setSelectedCategory: any,
+  onRequestClose: any
 ) {
   const token = await AsyncStorage.getItem("token");
   const requestData = {
@@ -489,6 +491,7 @@ export async function postRequestFromAPI(
       setIsRequestSubmissionLoading(false);
       if (distance > 50) {
         setIsDistanceExceed50(true);
+        setSelectedCategory("Ongoing Schedule");
       } else if (distance <= 50) {
         setIsConfirmationShow(true);
         setRequestFormData((prevData: any) => ({
@@ -530,6 +533,8 @@ export async function postRequestFromAPI(
         setPassengerData([]);
         setSelectedTravelCategory("Round Trip");
         setSelectedTravelType("");
+        setSelectedCategory("Ongoing Schedule");
+        onRequestClose();
       }
     })
     .catch((error) => {
