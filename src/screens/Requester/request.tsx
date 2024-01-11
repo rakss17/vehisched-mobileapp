@@ -32,7 +32,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import Loading from "../../components/modals/loading";
 
-export default function Request() {
+interface RequestProps {
+  setIsScrolled: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Request: React.FC<RequestProps> = ({ setIsScrolled }) => {
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
   const [requestData, setRequestData] = useState<any[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
@@ -42,6 +46,7 @@ export default function Request() {
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [isConfirmation2Show, setIsConfirmation2Show] = useState(false);
   const [isRequestDetailsShow, setIsRequestDetailsShow] = useState(false);
+  const [prevScrollY, setPrevScrollY] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [notifList, setNotifList] = useState<any[]>([]);
   const notifLength = notifList.filter((notif) => !notif.read_status).length;
@@ -133,7 +138,7 @@ export default function Request() {
   }, []);
 
   const handleRequestFormClose = () => {
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   const handleEllipsisMenu = (options: string, request: Requests) => {
@@ -155,13 +160,21 @@ export default function Request() {
   };
   const handleNextPressed = () => {
     setIsCancelModalShow(false);
-    cancelRequestAPI(selectedRequest.request_id, setIsLoading, () => {}, () => {}, () => {}, () => {}, () => {},
-     
-        fetchRequestAPI,
-        () => {},
-        setIsConfirmationShow,
-        
-        setOriginalRequestData)
+    cancelRequestAPI(
+      selectedRequest.request_id,
+      setIsLoading,
+      () => {},
+      () => {},
+      () => {},
+      () => {},
+      () => {},
+
+      fetchRequestAPI,
+      () => {},
+      setIsConfirmationShow,
+
+      setOriginalRequestData
+    );
   };
   const handleNext2Pressed = () => {
     setIsDeleteModalShow(false);
@@ -259,6 +272,15 @@ export default function Request() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        onScroll={({ nativeEvent }) => {
+          const currentScrollY = nativeEvent.contentOffset.y;
+          if (currentScrollY > prevScrollY && currentScrollY > 0) {
+            setIsScrolled(true);
+          } else {
+            setIsScrolled(false);
+          }
+          setPrevScrollY(currentScrollY);
+        }}
       >
         {requestData.length === 0 ? (
           <Text style={styles.noText}>No request found</Text>
@@ -343,7 +365,7 @@ export default function Request() {
       />
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   tableContainer: {
@@ -405,3 +427,5 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
 });
+
+export default Request;

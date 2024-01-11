@@ -62,7 +62,9 @@ export function RequesterTabs() {
       />
       <Tab.Screen
         name="Request"
-        component={Request}
+        children={(props) => (
+          <Request {...props} setIsScrolled={setIsScrolled} />
+        )}
         options={{
           tabBarLabel: "Your request",
           tabBarIcon: ({ color }) => (

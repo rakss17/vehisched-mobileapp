@@ -20,6 +20,7 @@ import {
 } from "../function/function";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { postRequestFromAPI } from "../api/api";
+import Csm from "./csm";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -50,9 +51,9 @@ const RequestForm: React.FC<ModalProps> = ({
   const [isDistanceExceed50, setIsDistanceExceed50] = useState(false);
   const [isTextErrorShow, setIsTextErrorShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
+  const [responseRequestID, setResponseRequestID] = useState(0);
   const [distance, setDistance] = useState(0);
-  const [fromPostRequestAPITrigger, setFromPostRequestAPITrigger] =
-    useState(false);
+  const [isCsmVisible, setCsmVisible] = useState(false);
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
@@ -169,7 +170,8 @@ const RequestForm: React.FC<ModalProps> = ({
           setIsTravelDateSelected,
           setIsAutocompleteNotPressable,
           setSelectedCategory,
-          onRequestClose
+          onRequestClose,
+          setResponseRequestID
         );
         setIsFirstFormShow(true);
         onRequestClose();
@@ -203,6 +205,7 @@ const RequestForm: React.FC<ModalProps> = ({
 
   const handleRequestClose = () => {
     setIsConfirmationShow(false);
+    setCsmVisible(true);
   };
   const handleRequestCloseExceed = () => {
     setIsDistanceExceed50(false);
@@ -650,6 +653,13 @@ const RequestForm: React.FC<ModalProps> = ({
         showHeader
         showFooter
       />
+      {isCsmVisible && (
+        <Csm
+          request={responseRequestID}
+          setCsmVisible={setCsmVisible}
+          setSelectedCategory={setSelectedCategory}
+        />
+      )}
     </>
   );
 };

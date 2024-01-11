@@ -473,7 +473,8 @@ export async function postRequestFromAPI(
   setIsTravelDateSelected: any,
   setIsAutocompleteNotPressable: any,
   setSelectedCategory: any,
-  onRequestClose: any
+  onRequestClose: any,
+  setResponseRequestID: any
 ) {
   const token = await AsyncStorage.getItem("token");
   const requestData = {
@@ -489,6 +490,7 @@ export async function postRequestFromAPI(
     })
     .then((response) => {
       setIsRequestSubmissionLoading(false);
+      setResponseRequestID(response.data.request_id);
       if (distance > 50) {
         setIsDistanceExceed50(true);
         setSelectedCategory("Ongoing Schedule");
@@ -539,6 +541,44 @@ export async function postRequestFromAPI(
     })
     .catch((error) => {
       setIsRequestSubmissionLoading(false);
+      console.log(error.response);
+      // if (error.response && error.response.data) {
+      //   setLoadingBarProgress(50);
+      //   setLoadingBarProgress(100);
+      //   const errorMessage = error.response.data.error || "An error occurred.";
+      //   toast.error(errorMessage, {
+      //     position: toast.POSITION.TOP_CENTER,
+      //     autoClose: false,
+      //   });
+      // } else {
+      //   toast.error("An unknown error occurred.", {
+      //     position: toast.POSITION.TOP_CENTER,
+      //     autoClose: false,
+      //   });
+      // }
+    });
+}
+
+export async function submitCSMAnswer(
+  data: any,
+  setIsConfirmationShow: any,
+  setIsLoading: any
+) {
+  const token = await AsyncStorage.getItem("token");
+
+  api
+    .post("api/v1/request/answer/", data, {
+      headers: {
+        Authorization: `Token ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      setIsLoading(false);
+      setIsConfirmationShow(true);
+    })
+    .catch((error) => {
+      setIsLoading(false);
       console.log(error.response);
       // if (error.response && error.response.data) {
       //   setLoadingBarProgress(50);
