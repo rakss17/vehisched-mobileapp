@@ -36,6 +36,7 @@ import {
   acceptVehicleAPI,
   cancelRequestAPI,
   checkVehicleAvailability,
+  checkVehicleOnProcess,
   fetchRequestAPI,
   fetchSchedule,
   fetchVehicleVIPAPI,
@@ -141,6 +142,11 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
   );
   const userName = personalInfo?.username;
   const role = personalInfo?.role;
+  const [vehicleOnProcessMessage, setVehicleOnProcessMessage] = useState("");
+  const [
+    isConfirmationOnProcessMessageShow,
+    setIsConfirmationOnProcessMessageShow,
+  ] = useState(false);
 
   const navigation = useNavigation() as any;
 
@@ -585,11 +591,33 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
   };
 
   const handleRequestFormClose = () => {
-    setIsRequestFormVisible(false);
     setIsVehicleVip(false);
     setIsConfirmationAcceptedShow(false);
     setIsConfirmationCanceledShow(false);
     setIsBackButtonPressed(false);
+    setIsConfirmationOnProcessMessageShow(false);
+  };
+  const handleMainRequestFormClose = () => {
+    setIsRequestFormVisible(false);
+    const button_action = "deselect_vehicle";
+    if (role === "requester") {
+      setIsLoading(true);
+      setIsRequestFormVisible(false);
+      checkVehicleOnProcess(
+        tripData.travel_date,
+        tripData.travel_time,
+        tripData.return_date,
+        tripData.return_time,
+        selectedVehicle.plate_number,
+        userName,
+        button_action,
+        setVehicleOnProcessMessage,
+        setIsConfirmationOnProcessMessageShow,
+        handleRequestFormVisible,
+        () => {},
+        setIsLoading
+      );
+    }
   };
   const handleInitialFormVIPClose = () => {
     setIsInitialFormVIPOpen(false);
@@ -1581,10 +1609,25 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
                     {vehicles.map((vehicle, index) => (
                       <TouchableOpacity
                         onPress={() => {
+                          const button_action = "select_vehicle";
                           role === "vip"
                             ? (setIsInitialFormVIPOpen(true),
                               setSelectedVehicle(vehicle))
-                            : handleRequestFormVisible(vehicle);
+                            : (setIsLoading(true),
+                              checkVehicleOnProcess(
+                                tripData.travel_date,
+                                tripData.travel_time,
+                                tripData.return_date,
+                                tripData.return_time,
+                                vehicle.plate_number,
+                                userName,
+                                button_action,
+                                setVehicleOnProcessMessage,
+                                setIsConfirmationOnProcessMessageShow,
+                                handleRequestFormVisible,
+                                vehicle,
+                                setIsLoading
+                              ));
                         }}
                         key={index}
                         style={[
@@ -2125,6 +2168,15 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
         showContent
         adjustedSize
       />
+      <Confirmation
+        visible={isConfirmationOnProcessMessageShow}
+        animationType="fade"
+        transparent={true}
+        content={vehicleOnProcessMessage}
+        onRequestClose={handleRequestFormClose}
+        showContent
+        adjustedSize
+      />
       <SetTripModal
         animationType="fade"
         visible={isSetTripVisible}
@@ -2135,7 +2187,7 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
         animationType="fade"
         visible={isRequestFormVisible}
         transparent={true}
-        onRequestClose={handleRequestFormClose}
+        onRequestClose={handleMainRequestFormClose}
         selectedVehicle={selectedVehicle}
         tripData={tripData}
         addressData={addressData}
