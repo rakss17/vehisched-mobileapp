@@ -268,3 +268,8 @@ export interface InitialFormVipProps {
   isAutocompleteNotPressable?: any;
   setIsAutocompleteNotPressable?: any;
 }
+
+// export interface CalendarSelectorProps {
+//   isCalandarSelectorVisible: any;
+//   vehicleOwnSchedule: any[]
+// }

@@ -62,6 +62,7 @@ import Confirmation from "../../components/modals/confirmation";
 import InitialFormVip from "../../components/modals/initialformvip";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircleLeft } from "@fortawesome/free-regular-svg-icons";
+// import CalendarSelector from "../../components/calendarselector/calendarselector";
 
 interface RequesterProps {
   setIsScrolled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -98,6 +99,7 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
   const [isFromSearchVehicle, setIsFromSearchVehicle] = useState(false);
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
   const [isBackButtonPressed, setIsBackButtonPressed] = useState(false);
+  const [isCalendarSelectorVisible, setIsCalendarSelectorVisible] = useState(false)
   const [prevScrollY, setPrevScrollY] = useState(0);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
@@ -140,6 +142,7 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
+  // const [vehicleOwnSchedule, setVehicleOwnSchedule] = useState<any[]>([])
   const userName = personalInfo?.username;
   const role = personalInfo?.role;
   const [vehicleOnProcessMessage, setVehicleOnProcessMessage] = useState("");
@@ -746,7 +749,26 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
           </View>
         )}
         {selectedCategory === "Available Vehicle" && (
-          <View
+          <>
+            {role === "vip" ? (<View
+            style={[{ gap: Viewport.width * 0.08 }, Styles.flexRow]}
+          ><Text
+          style={{
+            fontSize: FontSizes.normal,
+            color: Colors.primaryColor1,
+            fontWeight: "bold",
+          }}
+        >
+          Available Vehicle
+        </Text><Dropdown
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleOnCategoryChange}
+              options={["Available Vehicle", "Ongoing Schedule"]}
+              showText
+              showBG
+              menuAdjusted
+              dropdownText2
+            /></View>) : (<View
             style={[
               {
                 gap: Viewport.width * 0,
@@ -775,7 +797,10 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
             >
               Available Vehicle
             </Text>
-          </View>
+          </View>)}
+          
+          </>
+          
         )}
         {selectedCategory === "Ongoing Schedule" && (
           <View style={[{ gap: Viewport.width * 0.08 }, Styles.flexRow]}>
@@ -1631,6 +1656,10 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
                           role === "vip"
                             ? (setIsInitialFormVIPOpen(true),
                               setSelectedVehicle(vehicle))
+                            // ?(setIsCalendarSelectorVisible(true), 
+                            // fetchVehicleOwnSchedule(
+                            //   setVehicleOwnSchedule, 
+                            //   vehicle.plate_number))
                             : (setIsLoading(true),
                               checkVehicleOnProcess(
                                 tripData.travel_date,
@@ -2264,6 +2293,7 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
         isAutocompleteNotPressable={isAutocompleteNotPressable}
         setIsAutocompleteNotPressable={setIsAutocompleteNotPressable}
       />
+      {/* <CalendarSelector isCalandarSelectorVisible={isCalendarSelectorVisible} vehicleOwnSchedule={vehicleOwnSchedule}/> */}
     </>
   );
 };
