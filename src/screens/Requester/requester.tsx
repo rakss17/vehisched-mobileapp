@@ -591,12 +591,30 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
   };
 
   const handleRequestFormClose = () => {
-    setIsVehicleVip(false);
     setIsConfirmationAcceptedShow(false);
     setIsConfirmationCanceledShow(false);
     setIsBackButtonPressed(false);
     setIsConfirmationOnProcessMessageShow(false);
   };
+  const handleCloseIsVip = () => {
+    setIsVehicleVip(false)
+    const button_action = "deselect_vehicle";
+    setIsLoading(true);
+      checkVehicleOnProcess(
+        tripData.travel_date,
+        tripData.travel_time,
+        tripData.return_date,
+        tripData.return_time,
+        selectedVehicle.plate_number,
+        userName,
+        button_action,
+        setVehicleOnProcessMessage,
+        setIsConfirmationOnProcessMessageShow,
+        handleRequestFormVisible,
+        () => {},
+        setIsLoading
+      );
+  }
   const handleMainRequestFormClose = () => {
     setIsRequestFormVisible(false);
     const button_action = "deselect_vehicle";
@@ -2203,7 +2221,7 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
         animationType="fade"
         visible={isVehicleVip}
         transparent={true}
-        onRequestClose={handleRequestFormClose}
+        onRequestClose={handleCloseIsVip}
         header="Disclaimer:"
         content="This vehicle is prioritized for the higher official, and your reservation will be canceled once the higher official uses it during your reservation."
         footer="Are you sure you want to use this vehicle?"
