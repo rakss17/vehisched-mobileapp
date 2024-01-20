@@ -19,7 +19,7 @@ import {
   formatTime,
 } from "../function/function";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { postRequestFromAPI } from "../api/api";
+import useHeartbeat, { postRequestFromAPI } from "../api/api";
 import Csm from "./csm";
 
 const RequestForm: React.FC<ModalProps> = ({
@@ -89,6 +89,8 @@ const RequestForm: React.FC<ModalProps> = ({
     merge_trip: false,
     driver_name: "",
   });
+
+  useHeartbeat(visible);
 
   const isCurrentStepValid = () => {
     if (isFirstFormShow) {

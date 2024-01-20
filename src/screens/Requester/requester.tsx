@@ -99,7 +99,6 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
   const [isFromSearchVehicle, setIsFromSearchVehicle] = useState(false);
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
   const [isBackButtonPressed, setIsBackButtonPressed] = useState(false);
-  const [isCalendarSelectorVisible, setIsCalendarSelectorVisible] = useState(false)
   const [prevScrollY, setPrevScrollY] = useState(0);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
@@ -600,24 +599,24 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
     setIsConfirmationOnProcessMessageShow(false);
   };
   const handleCloseIsVip = () => {
-    setIsVehicleVip(false)
+    setIsVehicleVip(false);
     const button_action = "deselect_vehicle";
     setIsLoading(true);
-      checkVehicleOnProcess(
-        tripData.travel_date,
-        tripData.travel_time,
-        tripData.return_date,
-        tripData.return_time,
-        selectedVehicle.plate_number,
-        userName,
-        button_action,
-        setVehicleOnProcessMessage,
-        setIsConfirmationOnProcessMessageShow,
-        handleRequestFormVisible,
-        () => {},
-        setIsLoading
-      );
-  }
+    checkVehicleOnProcess(
+      tripData.travel_date,
+      tripData.travel_time,
+      tripData.return_date,
+      tripData.return_time,
+      selectedVehicle.plate_number,
+      userName,
+      button_action,
+      setVehicleOnProcessMessage,
+      setIsConfirmationOnProcessMessageShow,
+      handleRequestFormVisible,
+      () => {},
+      setIsLoading
+    );
+  };
   const handleMainRequestFormClose = () => {
     setIsRequestFormVisible(false);
     const button_action = "deselect_vehicle";
@@ -750,57 +749,60 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
         )}
         {selectedCategory === "Available Vehicle" && (
           <>
-            {role === "vip" ? (<View
-            style={[{ gap: Viewport.width * 0.08 }, Styles.flexRow]}
-          ><Text
-          style={{
-            fontSize: FontSizes.normal,
-            color: Colors.primaryColor1,
-            fontWeight: "bold",
-          }}
-        >
-          Available Vehicle
-        </Text><Dropdown
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleOnCategoryChange}
-              options={["Available Vehicle", "Ongoing Schedule"]}
-              showText
-              showBG
-              menuAdjusted
-              dropdownText2
-            /></View>) : (<View
-            style={[
-              {
-                gap: Viewport.width * 0,
-                width: Viewport.width * 1,
-                marginTop: Viewport.height * -0.05,
-              },
-              Styles.flexRow,
-            ]}
-          >
-            <TouchableOpacity onPress={handleBackPressed}>
-              <FontAwesomeIcon
-                style={{ marginLeft: Viewport.width * 0.05 }}
-                icon={faCircleLeft}
-                size={48}
-                color="#060E57"
-              />
-            </TouchableOpacity>
+            {role === "vip" ? (
+              <View style={[{ gap: Viewport.width * 0.08 }, Styles.flexRow]}>
+                <Text
+                  style={{
+                    fontSize: FontSizes.normal,
+                    color: Colors.primaryColor1,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Available Vehicle
+                </Text>
+                <Dropdown
+                  selectedCategory={selectedCategory}
+                  onCategoryChange={handleOnCategoryChange}
+                  options={["Available Vehicle", "Ongoing Schedule"]}
+                  showText
+                  showBG
+                  menuAdjusted
+                  dropdownText2
+                />
+              </View>
+            ) : (
+              <View
+                style={[
+                  {
+                    gap: Viewport.width * 0,
+                    width: Viewport.width * 1,
+                    marginTop: Viewport.height * -0.05,
+                  },
+                  Styles.flexRow,
+                ]}
+              >
+                <TouchableOpacity onPress={handleBackPressed}>
+                  <FontAwesomeIcon
+                    style={{ marginLeft: Viewport.width * 0.05 }}
+                    icon={faCircleLeft}
+                    size={48}
+                    color="#060E57"
+                  />
+                </TouchableOpacity>
 
-            <Text
-              style={{
-                fontSize: FontSizes.normal,
-                color: Colors.primaryColor1,
-                fontWeight: "bold",
-                marginLeft: Viewport.width * 0.13,
-              }}
-            >
-              Available Vehicle
-            </Text>
-          </View>)}
-          
+                <Text
+                  style={{
+                    fontSize: FontSizes.normal,
+                    color: Colors.primaryColor1,
+                    fontWeight: "bold",
+                    marginLeft: Viewport.width * 0.13,
+                  }}
+                >
+                  Available Vehicle
+                </Text>
+              </View>
+            )}
           </>
-          
         )}
         {selectedCategory === "Ongoing Schedule" && (
           <View style={[{ gap: Viewport.width * 0.08 }, Styles.flexRow]}>
@@ -1656,10 +1658,6 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
                           role === "vip"
                             ? (setIsInitialFormVIPOpen(true),
                               setSelectedVehicle(vehicle))
-                            // ?(setIsCalendarSelectorVisible(true), 
-                            // fetchVehicleOwnSchedule(
-                            //   setVehicleOwnSchedule, 
-                            //   vehicle.plate_number))
                             : (setIsLoading(true),
                               checkVehicleOnProcess(
                                 tripData.travel_date,
@@ -2293,7 +2291,6 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
         isAutocompleteNotPressable={isAutocompleteNotPressable}
         setIsAutocompleteNotPressable={setIsAutocompleteNotPressable}
       />
-      {/* <CalendarSelector isCalandarSelectorVisible={isCalendarSelectorVisible} vehicleOwnSchedule={vehicleOwnSchedule}/> */}
     </>
   );
 };

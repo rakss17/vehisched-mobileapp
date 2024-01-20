@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchPersonalInfo } from "../../redux/slices/personalInfoSlices";
 import { parse, format, isValid } from "date-fns";
 import { getTimeFormat } from "../function/function";
+import { useEffect } from "react";
 
 export const serverSideUrl = "http://192.168.1.11:8000";
 
@@ -835,10 +836,17 @@ export async function checkVehicleOnProcess(
         "Content-Type": "application/json",
       },
     })
-    .then((response) => {
+    .then(async (response) => {
       setIsLoading(false);
       if (response.data.message === "Vacant") {
         handleRequestFormVisible(vehicle);
+        await AsyncStorage.setItem(
+          "on_process_id",
+          JSON.stringify(response.data.on_process_id)
+        );
+      }
+      if (response.data.message === "Deselect vehicle") {
+        await AsyncStorage.removeItem("on_process_id");
       }
     })
     .catch((error) => {
@@ -853,4 +861,47 @@ export async function checkVehicleOnProcess(
         setVehicleOnProcessMessage("An unknown error occurred.");
       }
     });
+}
+
+export default function useHeartbeat(visible: boolean) {
+  useEffect(() => {
+    let intervalId: any;
+
+    const heartBeatOnProcessVehicle = async () => {
+      try {
+        const onProcessId = await AsyncStorage.getItem("on_process_id");
+        const token = await AsyncStorage.getItem("token");
+
+        if (onProcessId && token) {
+          api
+            .patch(
+              `/api/v1/vehicles/heartbeat-on-process-vehicle/${onProcessId}/`,
+              {},
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            )
+            .then((response) => {})
+            .catch((error) => {
+              console.error("Heartbeat failed:", error);
+            });
+        }
+      } catch (error) {
+        console.error("Failed to retrieve on_process_id or token:", error);
+      }
+    };
+
+    if (visible) {
+      intervalId = setInterval(heartBeatOnProcessVehicle, 30000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [visible]);
 }

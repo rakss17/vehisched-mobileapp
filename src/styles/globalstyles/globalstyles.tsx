@@ -10,8 +10,8 @@ export const BackgroundColor: React.FC<BackgroundColorProps> = ({
   return (
     <LinearGradient
       colors={["#060E57", "#CD931E"]}
-      start={{ x: 1, y: 0.5 }}
-      end={{ x: 0, y: 0 }}
+      // start={{ x: 1, y: 0.5 }}
+      // end={{ x: 0, y: 0 }}
       style={style}
     >
       {children}
@@ -74,6 +74,6 @@ export const Styles = StyleSheet.create({
   },
   textError: {
     color: "red",
-    fontSize: FontSizes.tiny
+    fontSize: FontSizes.tiny,
   },
 });
