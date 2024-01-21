@@ -28,6 +28,7 @@ export default function Dropdown(props: DropdownProps) {
         style={[
           DropdownStyles.dropdownToggle,
           props.showBG && DropdownStyles.showBG,
+          props.showBGPurpose && DropdownStyles.showBGPurpose,
         ]}
         onPress={handleMenuToggle}
       >
@@ -55,6 +56,30 @@ export default function Dropdown(props: DropdownProps) {
             </View>
           </>
         )}
+        {props.showTextPurpose && (
+          <>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: Viewport.width * 0.65,
+              }}
+            >
+              <View>
+                <Text style={DropdownStyles.label2}>{selectedOption}</Text>
+              </View>
+
+              <View>
+                <FontAwesomeIcon
+                  style={DropdownStyles.dropdownIcon3}
+                  icon={faCaretDown}
+                />
+              </View>
+            </View>
+          </>
+        )}
         {props.showIcon && (
           <>
             <FontAwesomeIcon
@@ -73,6 +98,8 @@ export default function Dropdown(props: DropdownProps) {
           style={[
             DropdownStyles.dropdownMenu,
             props.menuAdjusted && DropdownStyles.dropdownMenuAdjusted,
+            props.menuAdjustedPurpose &&
+              DropdownStyles.dropdownMenuAdjustedPurpose,
           ]}
           data={props.options}
           keyExtractor={(item, index) => index.toString()}

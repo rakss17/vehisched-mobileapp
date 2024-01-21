@@ -82,6 +82,9 @@ export interface DropdownProps {
   text?: string;
   dropdownText2?: any;
   selectedCategory?: any;
+  showBGPurpose?: boolean;
+  menuAdjustedPurpose?: boolean;
+  showTextPurpose?: boolean;
 }
 
 export interface InputFieldProps {

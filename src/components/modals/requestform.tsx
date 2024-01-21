@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, View, Text, ScrollView } from "react-native";
+import { Modal, View, Text, ScrollView, Alert } from "react-native";
 import Checkbox from "expo-checkbox";
 import {
   Styles,
@@ -21,6 +21,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import useHeartbeat, { postRequestFromAPI } from "../api/api";
 import Csm from "./csm";
+import Dropdown from "../dropdown/dropdown";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -54,6 +55,7 @@ const RequestForm: React.FC<ModalProps> = ({
   const [responseRequestID, setResponseRequestID] = useState(0);
   const [distance, setDistance] = useState(0);
   const [isCsmVisible, setCsmVisible] = useState(false);
+  const [isOtherPurpose, setIsOtherPurpose] = useState(false);
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
@@ -252,6 +254,29 @@ const RequestForm: React.FC<ModalProps> = ({
     setSelectedCategory("Ongoing Schedule");
     onRequestClose();
   };
+
+  const handleOnSelectPurpose = (options: string) => {
+    if (options === "Select purpose") {
+      Alert.alert("Please select a purpose");
+      setIsOtherPurpose(false);
+      setRequestFormData((prevData: any) => ({
+        ...prevData,
+        purpose: null,
+      }));
+    } else if (options === "Others - Please specify") {
+      setIsOtherPurpose(true);
+      setRequestFormData((prevData: any) => ({
+        ...prevData,
+        purpose: null,
+      }));
+    } else {
+      setIsOtherPurpose(false);
+      setRequestFormData((prevData: any) => ({
+        ...prevData,
+        purpose: options,
+      }));
+    }
+  };
   return (
     <>
       <Modal
@@ -313,18 +338,45 @@ const RequestForm: React.FC<ModalProps> = ({
                     </Text>
                   )}
                   <View style={{ marginTop: 0 }}>
-                    <InputField2
-                      value={requestFormData.purpose}
-                      adjustedWidth
-                      onChangeText={(text) =>
-                        setRequestFormData({
-                          ...requestFormData,
-                          purpose: text,
-                        })
-                      }
-                      placeholderText="Type purpose here...."
-                      capitalizeWords={false}
+                    <Dropdown
+                      selectedCategory={requestFormData.purpose}
+                      onCategoryChange={handleOnSelectPurpose}
+                      options={[
+                        "Select purpose",
+                        "Send/pick up university official",
+                        "Send/pick up university personnel or employee",
+                        "Send/pick up university guest",
+                        "Send/submit importants documents",
+                        "Site visit",
+                        "Attend meeting/seminar/orientation/training",
+                        "Occular inspection",
+                        "Strategic Planning",
+                        "Year end review",
+                        "Mail documents",
+                        "Extension project",
+                        "Others - Please specify",
+                      ]}
+                      showTextPurpose
+                      showBGPurpose
+                      menuAdjustedPurpose
+                      dropdownText2
                     />
+                    {isOtherPurpose && (
+                      <View style={{ marginTop: Viewport.height * 0.02 }}>
+                        <InputField2
+                          value={requestFormData.purpose}
+                          adjustedWidth
+                          onChangeText={(text) =>
+                            setRequestFormData({
+                              ...requestFormData,
+                              purpose: text,
+                            })
+                          }
+                          placeholderText="Type purpose here...."
+                          capitalizeWords={false}
+                        />
+                      </View>
+                    )}
                   </View>
 
                   <Text

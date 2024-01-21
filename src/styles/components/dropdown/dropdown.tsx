@@ -20,6 +20,15 @@ export const DropdownStyles = StyleSheet.create({
     borderBottomWidth: 2,
     color: "white",
   },
+  showBGPurpose: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: Viewport.width * 0.7,
+    height: Viewport.height * 0.06,
+    backgroundColor: "transparent",
+    borderBottomWidth: 1,
+    color: "white",
+  },
   dropdownDefault: {
     marginRight: 5,
   },
@@ -30,6 +39,10 @@ export const DropdownStyles = StyleSheet.create({
   dropdownIcon2: {
     fontSize: FontSizes.normal,
     color: Colors.secondaryColor1,
+  },
+  dropdownIcon3: {
+    fontSize: FontSizes.normal,
+    color: Colors.secondaryColor2,
   },
   dropdownMenu: {
     position: "absolute",
@@ -55,6 +68,19 @@ export const DropdownStyles = StyleSheet.create({
     backgroundColor: Colors.secondaryColor1,
     zIndex: 999,
   },
+  dropdownMenuAdjustedPurpose: {
+    position: "absolute",
+    top: 45,
+    left: Viewport.width * 0.0,
+    right: 0,
+    width: Viewport.width * 0.7,
+    height: Viewport.height * 0.4,
+    borderWidth: 2,
+    borderColor: Colors.primaryColor2,
+    borderRadius: 4,
+    backgroundColor: Colors.secondaryColor1,
+    zIndex: 999,
+  },
   dropdownMenuItem: {
     padding: 10,
   },
@@ -68,5 +94,9 @@ export const DropdownStyles = StyleSheet.create({
   label: {
     fontSize: FontSizes.small,
     color: Colors.secondaryColor1,
+  },
+  label2: {
+    fontSize: FontSizes.small,
+    color: Colors.secondaryColor2,
   },
 });
