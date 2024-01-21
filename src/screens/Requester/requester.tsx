@@ -167,7 +167,8 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
     setNextSchedule,
     setVehicleRecommendation,
     fetchRequestAPI,
-    setPendingSchedule
+    setPendingSchedule,
+    setIsRequestFormVisible
   );
 
   useEffect(() => {

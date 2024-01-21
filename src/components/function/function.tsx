@@ -8,7 +8,8 @@ export const useAppState = (
   setAPIData12?: Function,
   setAPIData13?: Function,
   fetchAPI2?: Function,
-  setAPIData2?: Function
+  setAPIData2?: Function,
+  setDataBoolean?: Function
 ) => {
   useEffect(() => {
     const handleBackPress = () => {
@@ -57,6 +58,10 @@ export const useAppState = (
           setAPIData2,
           () => {}
         );
+      }
+    } else if (nextAppState === "background" || nextAppState === "inactive") {
+      if (setDataBoolean) {
+        setDataBoolean(false);
       }
     }
   };
