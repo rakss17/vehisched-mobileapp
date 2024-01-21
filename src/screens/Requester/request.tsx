@@ -32,11 +32,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import Loading from "../../components/modals/loading";
 
-interface RequestProps {
-  setIsScrolled: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const Request: React.FC<RequestProps> = ({ setIsScrolled }) => {
+export default function Request() {
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
   const [requestData, setRequestData] = useState<any[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
@@ -272,15 +268,6 @@ const Request: React.FC<RequestProps> = ({ setIsScrolled }) => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        onScroll={({ nativeEvent }) => {
-          const currentScrollY = nativeEvent.contentOffset.y;
-          if (currentScrollY > prevScrollY && currentScrollY > 0) {
-            setIsScrolled(true);
-          } else {
-            setIsScrolled(false);
-          }
-          setPrevScrollY(currentScrollY);
-        }}
       >
         {requestData.length === 0 ? (
           <Text style={styles.noText}>No request found</Text>
@@ -365,7 +352,7 @@ const Request: React.FC<RequestProps> = ({ setIsScrolled }) => {
       />
     </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   tableContainer: {
@@ -427,5 +414,3 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
 });
-
-export default Request;

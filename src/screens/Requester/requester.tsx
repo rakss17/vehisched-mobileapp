@@ -62,13 +62,8 @@ import Confirmation from "../../components/modals/confirmation";
 import InitialFormVip from "../../components/modals/initialformvip";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircleLeft } from "@fortawesome/free-regular-svg-icons";
-// import CalendarSelector from "../../components/calendarselector/calendarselector";
 
-interface RequesterProps {
-  setIsScrolled: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
+export default function Requester() {
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [isVehicleVipAvailable, setIsVehicleVipAvailable] = useState(false);
   const [isSetTripVisible, setIsSetTripVisible] = useState(false);
@@ -893,13 +888,6 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
                     onRefresh={onRefresh}
                   />
                 }
-                onScroll={({ nativeEvent }) => {
-                  if (nativeEvent.contentOffset.y > 0) {
-                    setIsScrolled(true);
-                  } else {
-                    setIsScrolled(false);
-                  }
-                }}
               >
                 <View
                   style={[
@@ -1546,15 +1534,6 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
                     />
                   ) : undefined
                 }
-                onScroll={({ nativeEvent }) => {
-                  const currentScrollY = nativeEvent.contentOffset.y;
-                  if (currentScrollY > prevScrollY && currentScrollY > 0) {
-                    setIsScrolled(true);
-                  } else {
-                    setIsScrolled(false);
-                  }
-                  setPrevScrollY(currentScrollY);
-                }}
               >
                 {vehicles.length === 0 ? (
                   <>
@@ -1754,15 +1733,6 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
                     onRefresh={onRefreshSchedule}
                   />
                 }
-                onScroll={({ nativeEvent }) => {
-                  const currentScrollY = nativeEvent.contentOffset.y;
-                  if (currentScrollY > prevScrollY && currentScrollY > 0) {
-                    setIsScrolled(true);
-                  } else {
-                    setIsScrolled(false);
-                  }
-                  setPrevScrollY(currentScrollY);
-                }}
               >
                 {vehicleRecommendation.map((recommend, index) => (
                   <View
@@ -2294,6 +2264,4 @@ const Requester: React.FC<RequesterProps> = ({ setIsScrolled }) => {
       />
     </>
   );
-};
-
-export default Requester;
+}
