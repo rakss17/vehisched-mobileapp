@@ -94,7 +94,7 @@ export default function Requester() {
   const [isFromSearchVehicle, setIsFromSearchVehicle] = useState(false);
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
   const [isBackButtonPressed, setIsBackButtonPressed] = useState(false);
-  const [prevScrollY, setPrevScrollY] = useState(0);
+  const [isProceedButtonDisable, setIsProceedButtonDisable] = useState(false)
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
     travel_time: "",
@@ -404,7 +404,15 @@ export default function Requester() {
     delete updatedErrors[0]?.returnTimeError;
     setErrorMessages(updatedErrors);
   };
+  useEffect(() => {
+    if(!tripData.travel_date || !tripData.travel_time || !tripData.return_date || !tripData.return_time 
+      || !tripData.capacity || !tripData.capacity || !addressData.destination){
+        setIsProceedButtonDisable(true)
+    } else {
+      setIsProceedButtonDisable(false)
+    }
 
+  }, [tripData, addressData])
   const handleSearchVehicle = () => {
     let validationErrors: { [key: string]: string } = {};
     if (tripData.category === "Round Trip") {
@@ -1512,6 +1520,7 @@ export default function Requester() {
                         height: Viewport.height * 0.06,
                       }}
                       defaultBG
+                      disabled={isProceedButtonDisable}
                     />
                   </View>
                 </View>

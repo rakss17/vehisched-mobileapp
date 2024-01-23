@@ -2,9 +2,10 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { handlePlaceSelect } from "../api/api";
 import { useEffect, useState, useRef } from "react";
 import { AutoCompleteAddressGoogleStyle } from "../../styles/components/googleaddressinput/googleaddressinput";
-import { View, TouchableOpacity, Modal, Text } from "react-native";
+import { View, TouchableOpacity, Modal, Text, ActivityIndicator } from "react-native";
 import {
   Colors,
+  FontSizes,
   Styles,
   Viewport,
 } from "../../styles/globalstyles/globalstyles";
@@ -37,6 +38,7 @@ AutoCompleteAddressGoogleProps) {
   const [travel_date, setTravelDate] = useState(travelDateProp);
   const [travel_time, setTravelTime] = useState(travelTimeProp);
   const [labelData, setLabelData] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY;
 
   const onPlaceSelectedRef = useRef<(data: any, details: any | null) => void>(
@@ -45,6 +47,7 @@ AutoCompleteAddressGoogleProps) {
 
   useEffect(() => {
     onPlaceSelectedRef.current = (data, details) => {
+      
       handlePlaceSelect(
         details,
         travel_date,
@@ -67,6 +70,12 @@ AutoCompleteAddressGoogleProps) {
   ]);
 
   useEffect(() => {
+    if(labelData) {
+      setIsLoading(false)
+    }
+  }, [labelData])
+
+  useEffect(() => {
     setTravelDate(travelDateProp);
     setTravelTime(travelTimeProp);
   }, [travelDateProp, travelTimeProp]);
@@ -83,10 +92,20 @@ AutoCompleteAddressGoogleProps) {
           borderBottomWidth: 1,
           marginLeft: Viewport.width * 0.1,
           width: Viewport.width * 0.57,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between'
         }}
         onPress={() => setIsAutoCompleteAddressPressed(true)}
       >
         <Text>{labelData !== "" ? labelData : "Search here....."}</Text>
+        {isLoading && (
+          <ActivityIndicator
+          size={FontSizes.normal}
+          color={Colors.primaryColor1}
+        />
+        )}
+        
       </TouchableOpacity>
       <Modal
         visible={isAutoCompleteAddressPressed}
@@ -132,6 +151,7 @@ AutoCompleteAddressGoogleProps) {
               onPress={(data, details = null) => {
                 onPlaceSelectedRef.current(data, details);
                 setIsAutoCompleteAddressPressed(false);
+                setIsLoading(true)
               }}
               query={{
                 key: apiKey,
