@@ -16,12 +16,10 @@ import {
   Viewport,
   FontSizes,
   Colors,
-  pageMargin,
 } from "../../styles/globalstyles/globalstyles";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
 import { Vehicle } from "../../interfaces/interfaces";
-import { todayMockData } from "../../components/mockdata/mockdata";
 import SetTripModal from "../../components/modals/settrip";
 import RequestForm from "../../components/modals/requestform";
 import PromptDialog from "../../components/modals/promptdialog";
@@ -30,7 +28,6 @@ import DatePicker from "../../components/datepicker/datepicker";
 import TimePicker from "../../components/timepicker/timepicker";
 import AutoCompleteAddressGoogle from "../../components/autocompleteaddress/googleaddressinput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import PagerView from "react-native-pager-view";
 import Carousel from "react-native-reanimated-carousel";
 import {
   acceptVehicleAPI,
@@ -42,11 +39,10 @@ import {
   fetchVehicleVIPAPI,
   serverSideUrl,
 } from "../../components/api/api";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import {
   formatDate,
   formatTime,
-  getTimeFormat,
   useAppState,
 } from "../../components/function/function";
 import Loading from "../../components/modals/loading";
@@ -94,7 +90,7 @@ export default function Requester() {
   const [isFromSearchVehicle, setIsFromSearchVehicle] = useState(false);
   const [originalRequestData, setOriginalRequestData] = useState<any[]>([]);
   const [isBackButtonPressed, setIsBackButtonPressed] = useState(false);
-  const [isProceedButtonDisable, setIsProceedButtonDisable] = useState(false)
+  const [isProceedButtonDisable, setIsProceedButtonDisable] = useState(false);
   const [tripData, setTripData] = useState<any>({
     travel_date: "",
     travel_time: "",
@@ -136,7 +132,6 @@ export default function Requester() {
   const personalInfo = useSelector(
     (state: RootState) => state.personalInfo.data
   );
-  // const [vehicleOwnSchedule, setVehicleOwnSchedule] = useState<any[]>([])
   const userName = personalInfo?.username;
   const role = personalInfo?.role;
   const [vehicleOnProcessMessage, setVehicleOnProcessMessage] = useState("");
@@ -405,14 +400,20 @@ export default function Requester() {
     setErrorMessages(updatedErrors);
   };
   useEffect(() => {
-    if(!tripData.travel_date || !tripData.travel_time || !tripData.return_date || !tripData.return_time 
-      || !tripData.capacity || !tripData.capacity || !addressData.destination){
-        setIsProceedButtonDisable(true)
+    if (
+      !tripData.travel_date ||
+      !tripData.travel_time ||
+      !tripData.return_date ||
+      !tripData.return_time ||
+      !tripData.capacity ||
+      !tripData.capacity ||
+      !addressData.destination
+    ) {
+      setIsProceedButtonDisable(true);
     } else {
-      setIsProceedButtonDisable(false)
+      setIsProceedButtonDisable(false);
     }
-
-  }, [tripData, addressData])
+  }, [tripData, addressData]);
   const handleSearchVehicle = () => {
     let validationErrors: { [key: string]: string } = {};
     if (tripData.category === "Round Trip") {

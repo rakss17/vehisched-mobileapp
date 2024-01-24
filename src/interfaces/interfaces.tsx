@@ -7,6 +7,7 @@ export type RootStackParamList = {
   Requester: undefined;
   Driver: undefined;
   GateGuard: undefined;
+  Profile: undefined;
   LoadingScreen: { message: string };
   RequesterTabs: { notifLength: number };
 };
@@ -89,11 +90,12 @@ export interface DropdownProps {
 
 export interface InputFieldProps {
   value: string;
-  placeholder: string;
+  placeholder?: string;
   secureTextEntry?: boolean;
   icon?: any;
   onChangeText?: (text: string) => void;
   autoCapitalize?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 export interface BackgroundColorProps {

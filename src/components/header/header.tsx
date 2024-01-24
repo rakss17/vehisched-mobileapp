@@ -17,8 +17,8 @@ export default function Header() {
     if (options === "Sign Out") {
       AsyncStorage.removeItem("token");
       navigation.navigate("Landing");
-    } else {
-      alert("Under Development");
+    } else if (options === "Profile") {
+      navigation.navigate("Profile");
     }
   };
   return (
@@ -61,7 +61,7 @@ export default function Header() {
 
           <Dropdown
             showIcon
-            options={["Profile", "Settings", "Sign Out"]}
+            options={["Profile", "Sign Out"]}
             onCategoryChange={handleDropdown}
           />
         </View>

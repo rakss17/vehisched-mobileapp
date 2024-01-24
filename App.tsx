@@ -10,6 +10,7 @@ import { Props } from "./src/components/loadingscreen/loadingscreen";
 import { Provider } from "react-redux";
 import { store, persistor } from "./src/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
+import Profile from "./src/screens/Profile/profile";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ export default function App() {
           <StatusBar style="light" />
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Landing" component={Landing} />
+            <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="Requester" component={RequesterTabs} />
             <Stack.Screen name="Driver" component={DriverTabs} />
             <Stack.Screen name="GateGuard" component={GateGuardTabs} />

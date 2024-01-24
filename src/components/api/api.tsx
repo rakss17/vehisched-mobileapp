@@ -5,10 +5,10 @@ import { parse, format, isValid } from "date-fns";
 import { getTimeFormat } from "../function/function";
 import { useEffect } from "react";
 
-export const serverSideUrl = "http://192.168.150.175:8000";
+export const serverSideUrl = "http://192.168.1.11:8000";
 
 export const api = axios.create({
-  baseURL: "http://192.168.150.175:8000/",
+  baseURL: "http://192.168.1.11:8000/",
 });
 
 export async function SigninAPI(
@@ -82,6 +82,57 @@ export async function SignoutAPI(navigation: any, setIsLoading: any) {
     //   navigation.navigate("Landing");
     //   setIsLoading(false);
     // }
+  }
+}
+
+export async function changePassword(
+  old_password: any,
+  new_password: any,
+  validationErrors: any,
+  setErrorMessages: any,
+  setIsLoading: any,
+  setIsConfirmationChangePasswordVisible: any,
+  setMessage: any,
+  setData: any
+) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await api.post(
+      "api/v1/accounts/change_password/",
+      {
+        old_password: old_password,
+        new_password: new_password,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          // Include your authentication token here
+          Authorization: `Token ${token}`,
+        },
+      }
+    );
+    if (response.data.message) {
+      setMessage(response.data.message);
+      setIsConfirmationChangePasswordVisible(true);
+      setIsLoading(false);
+      setData((prevData: any) => ({
+        ...prevData,
+        old_password: "",
+        new_password: "",
+        confirm_new_password: "",
+      }));
+    }
+    console.log(response.data);
+  } catch (error: any) {
+    setIsLoading(false);
+    console.log(error.response.data.error);
+    if (error.response.data.error) {
+      validationErrors.invalidOldPassword = error.response.data.error;
+    }
+    const errorArray = [validationErrors];
+
+    setErrorMessages(errorArray);
   }
 }
 
