@@ -5,10 +5,10 @@ import { parse, format, isValid } from "date-fns";
 import { getTimeFormat } from "../function/function";
 import { useEffect } from "react";
 
-export const serverSideUrl = "http://192.168.1.11:8000";
+export const serverSideUrl = "http://192.168.150.175:8000";
 
 export const api = axios.create({
-  baseURL: "http://192.168.1.11:8000/",
+  baseURL: "http://192.168.150.175:8000/",
 });
 
 export async function SigninAPI(
@@ -91,6 +91,7 @@ export async function tripScanned(
   setScannedCompleted: any,
   setScannedAlreadyCompleted: any,
   setScannedTripNotFound: any,
+  setScannedNotYet: any,
   fetchOnTrips: (onTripsData: any) => void,
   setOnTripsData: any,
   setScanButtonPressed: any
@@ -120,6 +121,10 @@ export async function tripScanned(
       } else if (response.data.type === "Already Completed") {
         setScanButtonPressed(false);
         setScannedAlreadyCompleted(true);
+        fetchOnTrips(setOnTripsData);
+      } else if (response.data.type === "Not Yet") {
+        setScanButtonPressed(false);
+        setScannedNotYet(true);
         fetchOnTrips(setOnTripsData);
       }
     })

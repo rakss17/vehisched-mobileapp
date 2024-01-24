@@ -38,6 +38,7 @@ export default function GateGuard() {
   const [scannedCompleted, setScannedCompleted] = useState(false);
   const [scannedAlreadyCompleted, setScannedAlreadyCompleted] = useState(false);
   const [scannedTripNotFound, setScannedTripNotFound] = useState(false);
+  const [scannedNotYet, setScannedNotYet] = useState(false);
   const [scanButtonPressed, setScanButtonPressed] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -77,6 +78,7 @@ export default function GateGuard() {
       setScannedCompleted,
       setScannedAlreadyCompleted,
       setScannedTripNotFound,
+      setScannedNotYet,
       fetchOnTrips,
       setOnTripsData,
       setScanButtonPressed
@@ -88,6 +90,7 @@ export default function GateGuard() {
     setScannedCompleted(false);
     setScannedAlreadyCompleted(false);
     setScannedTripNotFound(false);
+    setScannedNotYet(false)
   };
   const handleShowTripDetails = (trip: Schedule) => {
     setSelectedTrip([trip]);
@@ -333,7 +336,7 @@ export default function GateGuard() {
                       },
                     ]}
                   >
-                    Trip no. {trip.id}
+                    Trip no. {trip.trip_id}
                   </Text>
                   <Text
                     style={[
@@ -483,7 +486,7 @@ export default function GateGuard() {
         visible={scannedAuthorized}
         animationType="fade"
         transparent={true}
-        content="Trip Authorized!"
+        content="Trip Authorized."
         onRequestClose={handleCloseScanner}
         showContent
         adjustedSize
@@ -492,7 +495,7 @@ export default function GateGuard() {
         visible={scannedCompleted}
         animationType="fade"
         transparent={true}
-        content="Trip Completed!"
+        content="Trip Completed."
         onRequestClose={handleCloseScanner}
         showContent
         adjustedSize
@@ -501,7 +504,7 @@ export default function GateGuard() {
         visible={scannedAlreadyCompleted}
         animationType="fade"
         transparent={true}
-        content="Trip Already Completed!"
+        content="Trip Already Completed."
         onRequestClose={handleCloseScanner}
         showContent
         adjustedSize
@@ -510,7 +513,16 @@ export default function GateGuard() {
         visible={scannedTripNotFound}
         animationType="fade"
         transparent={true}
-        content="Trip Not Found!"
+        content="Trip Not Found."
+        onRequestClose={handleCloseScanner}
+        showContent
+        adjustedSize
+      />
+      <Confirmation
+        visible={scannedNotYet}
+        animationType="fade"
+        transparent={true}
+        content="Trip unauthorized due to being off schedule."
         onRequestClose={handleCloseScanner}
         showContent
         adjustedSize

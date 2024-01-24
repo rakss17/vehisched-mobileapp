@@ -149,9 +149,20 @@ AutoCompleteAddressGoogleProps) {
               styles={AutoCompleteAddressGoogleStyle}
               placeholder="Search destination....."
               onPress={(data, details = null) => {
+                // if (details) {
+                //   const isPlaceInMindanao = details.address_components.some(
+                //     (component:any) => component.structured_formatting.secondary_text === "Lanao del Sur, Philippines"
+                //   );
+          
+                //   if (!isPlaceInMindanao) {
+                //     console.log("Selected place is not in Mindanao");
+                //     return;
+                //   }
+                // }
                 onPlaceSelectedRef.current(data, details);
                 setIsAutoCompleteAddressPressed(false);
                 setIsLoading(true)
+                console.log(data)
               }}
               query={{
                 key: apiKey,
