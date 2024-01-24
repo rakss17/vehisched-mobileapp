@@ -404,6 +404,7 @@ export default function Profile() {
                 >
                   <InputField3
                     value={data.old_password}
+                    secureTextEntry
                     style={{
                       backgroundColor: "white",
                       width: Viewport.width * 0.5,
@@ -475,6 +476,7 @@ export default function Profile() {
                 >
                   <InputField3
                     value={data.new_password}
+                    secureTextEntry
                     style={{
                       backgroundColor: "white",
                       width: Viewport.width * 0.5,
@@ -560,6 +562,7 @@ export default function Profile() {
                 >
                   <InputField3
                     value={data.confirm_new_password}
+                    secureTextEntry
                     style={{
                       backgroundColor: "white",
                       width: Viewport.width * 0.5,
