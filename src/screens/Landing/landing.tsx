@@ -13,20 +13,27 @@ import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/buttons/button";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "../../interfaces/interfaces";
-import { SigninAPI } from "../../components/api/api";
+import { SigninAPI, resetPassword } from "../../components/api/api";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import InputField3 from "../../components/inputfield/inputfield3";
+import Loading from "../../components/modals/loading";
+import Confirmation from "../../components/modals/confirmation";
 
 export default function Landing() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [errorMessages, setErrorMessages] = useState<any[]>([]);
   const [isChecked, setIsChecked] = useState(false);
   const [email, setEmail] = useState("");
   const [isForgotPasswordEmailVisible, setIsForgotPasswordEmailVisible] =
     useState(false);
+  const [
+    isConfirmationSubmittedEmailVisible,
+    setIsConfirmationSubmittedEmailVisible,
+  ] = useState(true);
   const [data, setData] = useState({
     username: "",
     password: "",
@@ -102,6 +109,14 @@ export default function Landing() {
 
     setErrorMessages(errorArray);
     if (Object.keys(validationErrors).length === 0) {
+      setIsProcessing(true);
+      resetPassword(
+        email,
+        setEmail,
+        setIsProcessing,
+        setIsConfirmationSubmittedEmailVisible,
+        setIsForgotPasswordEmailVisible
+      );
     }
   };
   const handleForgotPasswordPressed = () => {
@@ -114,6 +129,10 @@ export default function Landing() {
     const updatedErrors = { ...errorMessages };
     delete updatedErrors[0];
     setErrorMessages(updatedErrors);
+  };
+  const handleClose = () => {
+    setIsProcessing(false);
+    setIsConfirmationSubmittedEmailVisible(false);
   };
   return (
     <>
@@ -355,6 +374,23 @@ export default function Landing() {
           </View>
         </View>
       </Modal>
+      <Loading
+        animationType="fade"
+        visible={isProcessing}
+        transparent={true}
+        onRequestClose={handleClose}
+        content="Processing..."
+        showContent
+      />
+      <Confirmation
+        visible={isConfirmationSubmittedEmailVisible}
+        animationType="fade"
+        transparent={true}
+        content="We've emailed you the instructions. Please check your email."
+        onRequestClose={handleClose}
+        showContent
+        adjustedSize
+      />
     </>
   );
 }

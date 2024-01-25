@@ -136,6 +136,36 @@ export async function changePassword(
   }
 }
 
+export async function resetPassword(
+  email: any,
+  setEmail: any,
+  setIsProcessing: any,
+  setIsConfirmationSubmittedEmailVisible: any,
+  setIsForgotPasswordEmailVisible: any
+) {
+  try {
+    let response = await api.post(
+      "api/v1/accounts/users/reset_password/",
+      {
+        email: email,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    setIsProcessing(false);
+    setEmail("");
+    setIsConfirmationSubmittedEmailVisible(true);
+    setIsForgotPasswordEmailVisible(false);
+  } catch (error) {
+    setIsProcessing(false);
+    console.log("There was an error!", error);
+  }
+}
+
 export async function tripScanned(
   requestId: any,
   setScannedAuthorized: any,

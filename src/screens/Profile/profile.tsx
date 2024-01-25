@@ -101,7 +101,6 @@ export default function Profile() {
 
     setErrorMessages(errorArray);
     if (Object.keys(validationErrors).length === 0) {
-      console.log(data);
       setIsLoading(true);
       changePassword(
         data.old_password,
