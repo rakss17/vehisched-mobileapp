@@ -105,7 +105,7 @@ const RequestForm: React.FC<ModalProps> = ({
 
     return true;
   };
-  console.log(requestFormData);
+
   const handleButtonPress = (form: string) => {
     if (
       form !== "Close" &&
