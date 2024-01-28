@@ -90,17 +90,14 @@ const RequestForm: React.FC<ModalProps> = ({
     role: "",
     merge_trip: false,
     driver_name: "",
+    vehicle_capacity: null,
   });
 
   useHeartbeat(visible);
 
   const isCurrentStepValid = () => {
     if (isFirstFormShow) {
-      if (
-        !requestFormData.purpose ||
-        !requestFormData.number_of_passenger ||
-        !passengerData.every((passenger) => passenger.trim() !== "")
-      ) {
+      if (!requestFormData.purpose) {
         setIsTextErrorShow(true);
         return false;
       }
@@ -108,7 +105,7 @@ const RequestForm: React.FC<ModalProps> = ({
 
     return true;
   };
-
+  console.log(requestFormData);
   const handleButtonPress = (form: string) => {
     if (
       form !== "Close" &&
@@ -133,10 +130,18 @@ const RequestForm: React.FC<ModalProps> = ({
       role: role,
       merge_trip: false,
       driver_name: selectedVehicle?.driver_assigned_to,
+      vehicle_capacity: selectedVehicle?.capacity,
     }));
     setDistance(addressData.distance);
     switch (form) {
       case "Close":
+        setRequestFormData((prevData: any) => ({
+          ...prevData,
+          vehicle: "",
+          number_of_passenger: null,
+          passenger_name: [],
+          purpose: "",
+        }));
         setIsTextErrorShow(false);
         onRequestClose();
         break;
@@ -148,11 +153,13 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
         setIsThirdFormShow(false);
+
         break;
       case "SecondBack":
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
         setIsThirdFormShow(false);
+
         break;
       case "Submit":
         setIsRequestSubmissionLoading(true);
@@ -192,19 +199,23 @@ const RequestForm: React.FC<ModalProps> = ({
     updatedPassengerData[index] = value;
     setPassengerData(updatedPassengerData);
 
+    const numberOfPassenger = updatedPassengerData.reduce(
+      (count, name) => (name ? count + 1 : count),
+      0
+    );
+    setNumberOfPassengers(numberOfPassenger);
+    const filteredPassengerData = updatedPassengerData.filter(
+      (name) => name !== ""
+    );
     setRequestFormData((prevData: any) => ({
       ...prevData,
-      passenger_name: updatedPassengerData,
+      number_of_passenger: numberOfPassenger,
+      passenger_name: filteredPassengerData,
     }));
   };
 
   useEffect(() => {
-    setNumberOfPassengers(selectedVehicle?.capacity);
     setPassengerData(Array(selectedVehicle?.capacity).fill(""));
-    setRequestFormData((prevData: any) => ({
-      ...prevData,
-      number_of_passenger: selectedVehicle?.capacity,
-    }));
   }, [selectedVehicle?.capacity]);
 
   const handleRequestClose = () => {

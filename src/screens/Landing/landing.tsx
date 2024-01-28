@@ -33,7 +33,7 @@ export default function Landing() {
   const [
     isConfirmationSubmittedEmailVisible,
     setIsConfirmationSubmittedEmailVisible,
-  ] = useState(true);
+  ] = useState(false);
   const [data, setData] = useState({
     username: "",
     password: "",
