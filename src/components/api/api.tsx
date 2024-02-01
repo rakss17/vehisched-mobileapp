@@ -5,11 +5,24 @@ import { parse, format, isValid } from "date-fns";
 import { getTimeFormat } from "../function/function";
 import { useEffect } from "react";
 
-export const serverSideUrl = "http://192.168.1.11:8000";
+const debug = false;
 
-export const api = axios.create({
-  baseURL: "http://192.168.1.11:8000/",
-});
+export let serverSideUrl: any;
+export let api: any;
+
+if (debug) {
+  serverSideUrl = "http://localhost:8000/media/";
+
+  api = axios.create({
+    baseURL: "http://localhost:8000/",
+  });
+} else {
+  serverSideUrl = "https://vehisched-backend.keannu1.duckdns.org/media/";
+
+  api = axios.create({
+    baseURL: "https://vehisched-backend.keannu1.duckdns.org/",
+  });
+}
 
 export async function SigninAPI(
   data: any,
@@ -190,7 +203,7 @@ export async function tripScanned(
         },
       }
     )
-    .then((response) => {
+    .then((response: any) => {
       if (response.data.type === "Authorized") {
         setScanButtonPressed(false);
         setScannedAuthorized(true);
@@ -209,7 +222,7 @@ export async function tripScanned(
         fetchOnTrips(setOnTripsData);
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.log(error.response);
       if (error.response.status === 404) {
         setScanButtonPressed(false);
@@ -426,12 +439,12 @@ export async function fetchRequestAPI(
         "Content-Type": "application/json",
       },
     })
-    .then((response) => {
+    .then((response: any) => {
       const responseData = Array.isArray(response.data)
         ? response.data
         : [response.data];
 
-      const updatedData = responseData.map((item) => {
+      const updatedData = responseData.map((item: any) => {
         if (item.passenger_name) {
           const validJson = item.passenger_name.replace(/'/g, '"');
           const passengerNamesArray = JSON.parse(validJson);
@@ -456,7 +469,7 @@ export async function fetchRequestAPI(
         setRefreshing(false);
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.error("Error fetching request list:", error);
     });
 }
@@ -515,14 +528,14 @@ export async function checkVehicleAvailability(
         "Content-Type": "application/json",
       },
     })
-    .then((response) => {
+    .then((response: any) => {
       setIsSetTripLoading(false);
       setIsFromSearchVehicle(true);
       setVehicles(response.data);
 
       setSelectedCategory("Available Vehicle");
     })
-    .catch((error) => {
+    .catch(() => {
       setIsSetTripLoading(false);
       // if (error.response && error.response.data) {
       //   setLoadingBarProgress(50);
@@ -575,7 +588,7 @@ export async function postRequestFromAPI(
         "Content-Type": "application/json",
       },
     })
-    .then((response) => {
+    .then((response: any) => {
       setIsRequestSubmissionLoading(false);
       setResponseRequestID(response.data.request_id);
       if (distance > 50) {
@@ -626,7 +639,7 @@ export async function postRequestFromAPI(
         onRequestClose();
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       setIsRequestSubmissionLoading(false);
       console.log(error.response);
       // if (error.response && error.response.data) {
@@ -660,11 +673,11 @@ export async function submitCSMAnswer(
         "Content-Type": "application/json",
       },
     })
-    .then((response) => {
+    .then(() => {
       setIsLoading(false);
       setIsConfirmationShow(true);
     })
-    .catch((error) => {
+    .catch((error: any) => {
       setIsLoading(false);
       console.log(error.response);
       // if (error.response && error.response.data) {
@@ -699,7 +712,7 @@ export async function fetchSchedule(
         "Content-Type": "application/json",
       },
     })
-    .then((response) => {
+    .then((response: any) => {
       const tripData = response.data.trip_data || [];
       const scheduleData = tripData.filter(
         (item: any) => !item.next_schedule_travel_date
@@ -722,7 +735,7 @@ export async function fetchSchedule(
         setRefreshingSchedule(false);
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.error("Error fetching schedule list:", error);
     });
 }
@@ -755,7 +768,7 @@ export async function acceptVehicleAPI(
         },
       }
     )
-    .then((response) => {
+    .then(() => {
       fetchSchedule(
         setSchedule,
         setNextSchedule,
@@ -773,7 +786,7 @@ export async function acceptVehicleAPI(
       setIsLoading(false);
       setIsConfirmationAcceptedShow(true);
     })
-    .catch((error) => {
+    .catch((error: any) => {
       setIsLoading(false);
       console.log(error);
     });
@@ -807,7 +820,7 @@ export async function cancelRequestAPI(
         },
       }
     )
-    .then((response) => {
+    .then(() => {
       fetchSchedule(
         setSchedule,
         setNextSchedule,
@@ -824,7 +837,7 @@ export async function cancelRequestAPI(
       setIsLoading(false);
       setIsConfirmationCanceledShow(true);
     })
-    .catch((error) => {
+    .catch((error: any) => {
       setIsLoading(false);
       console.log(error);
     });
@@ -922,7 +935,7 @@ export async function checkVehicleOnProcess(
         "Content-Type": "application/json",
       },
     })
-    .then(async (response) => {
+    .then(async (response: any) => {
       setIsLoading(false);
       if (response.data.message === "Vacant") {
         handleRequestFormVisible(vehicle);
@@ -935,7 +948,7 @@ export async function checkVehicleOnProcess(
         await AsyncStorage.removeItem("on_process_id");
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.log(error.response.data.message);
       if (error.response && error.response.data) {
         setIsLoading(false);
@@ -970,8 +983,8 @@ export default function useHeartbeat(visible: boolean) {
                 },
               }
             )
-            .then((response) => {})
-            .catch((error) => {
+            .then(() => {})
+            .catch((error: any) => {
               console.error("Heartbeat failed:", error);
             });
         }

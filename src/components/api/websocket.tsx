@@ -6,13 +6,21 @@ import * as Notifications from "expo-notifications";
 import { api } from "./api";
 import { useFocusEffect } from "@react-navigation/native";
 
-const serverSideUrl = "192.168.1.11:8000";
+const debug = false;
+
+let serverSideUrl: any;
+
+if (debug) {
+  serverSideUrl = "ws://localhost:8000/";
+} else {
+  serverSideUrl = "wss://vehisched-backend.keannu1.duckdns.org";
+}
 
 export function NotificationApprovalScheduleReminderWebsocket(userName: any) {
   useFocusEffect(
     React.useCallback(() => {
       const newSocket = new WebSocket(
-        `ws://${serverSideUrl}/ws/notification/approval_schedule-reminder/?requester_name=${userName}`
+        `${serverSideUrl}/ws/notification/approval_schedule-reminder/?requester_name=${userName}`
       );
 
       newSocket.onopen = async (event) => {
