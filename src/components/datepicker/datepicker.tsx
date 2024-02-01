@@ -19,6 +19,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   selectedDate: initialSelectedDate,
   onDateSelected,
   button2,
+  disableDaysBefore,
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     initialSelectedDate
@@ -51,7 +52,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     const maxSelectableDate = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() + 2
+      today.getDate() + (disableDaysBefore || 0)
     );
     const daysInMonth = new Date(
       displayedMonth.getFullYear(),
@@ -151,6 +152,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
               data={generateCalendar()}
               keyExtractor={(item) => item.key}
               numColumns={7}
+              scrollEnabled={false}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() =>
@@ -217,10 +219,10 @@ const styles = StyleSheet.create({
   dropdown2: {
     position: "absolute",
     top: Viewport.height * 0.07,
-    left: Viewport.width * -0.1,
+    left: Viewport.width * -0.15,
     right: 0,
     width: Viewport.width * 0.8,
-    backgroundColor: "white",
+    backgroundColor: Colors.primaryColor2,
     borderWidth: 1,
     borderColor: "lightgray",
     borderRadius: 10,
@@ -240,7 +242,7 @@ const styles = StyleSheet.create({
   button2: {
     width: Viewport.width * 0.6,
     height: Viewport.height * 0.06,
-    backgroundColor: Colors.primaryColor2,
+    backgroundColor: "transparent",
     borderBottomWidth: 1,
     gap: 15,
     display: "flex",
@@ -275,7 +277,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "white",
+    borderColor: Colors.primaryColor2,
   },
   today: {
     color: Colors.primaryColor1,
@@ -302,7 +304,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   disabled: {
-    backgroundColor: Colors.secondaryColor1,
+    backgroundColor: "transparent",
     borderRadius: 10,
   },
   disabledText: {

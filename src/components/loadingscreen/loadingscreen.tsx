@@ -1,5 +1,4 @@
 import { View, ActivityIndicator, Text } from "react-native";
-
 import {
   Styles,
   Viewport,
@@ -9,7 +8,6 @@ import {
 } from "../../styles/globalstyles/globalstyles";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../interfaces/interfaces";
-import { StackNavigationProp } from "@react-navigation/stack";
 
 type LoadingScreenRouteProp = RouteProp<RootStackParamList, "LoadingScreen">;
 

@@ -8,10 +8,15 @@ import {
   Styles,
 } from "../../styles/globalstyles/globalstyles";
 import Button from "../buttons/button";
+import { formatDate, formatTime } from "../function/function";
 
-const RequestDetails: React.FC<
-  ModalProps & { requestData: Requests | null }
-> = ({ animationType, visible, onRequestClose, transparent, requestData }) => {
+const RequestDetails: React.FC<ModalProps & { requestData: any | null }> = ({
+  animationType,
+  visible,
+  onRequestClose,
+  transparent,
+  requestData,
+}) => {
   return (
     <>
       <Modal
@@ -67,10 +72,10 @@ const RequestDetails: React.FC<
                 >
                   <Text style={{ fontSize: FontSizes.small }}>
                     <Text style={{ fontWeight: "bold" }}>Request number: </Text>
-                    {requestData?.request_number}
+                    {requestData?.request_id}
                   </Text>
                 </View>
-                <View
+                {/* <View
                   style={[
                     {
                       width: Viewport.width * 0.75,
@@ -82,7 +87,7 @@ const RequestDetails: React.FC<
                     <Text style={{ fontWeight: "bold" }}>Request name: </Text>
                     {requestData?.requester_name}
                   </Text>
-                </View>
+                </View> */}
                 <View
                   style={[
                     {
@@ -93,7 +98,7 @@ const RequestDetails: React.FC<
                 >
                   <Text style={{ fontSize: FontSizes.small }}>
                     <Text style={{ fontWeight: "bold" }}>Office/dept: </Text>
-                    {requestData?.office_dept}
+                    {requestData?.office}
                   </Text>
                 </View>
                 <View
@@ -107,6 +112,19 @@ const RequestDetails: React.FC<
                   <Text style={{ fontSize: FontSizes.small }}>
                     <Text style={{ fontWeight: "bold" }}>Destination: </Text>
                     {requestData?.destination}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    {
+                      width: Viewport.width * 0.75,
+                    },
+                    Styles.flexRow,
+                  ]}
+                >
+                  <Text style={{ fontSize: FontSizes.small }}>
+                    <Text style={{ fontWeight: "bold" }}>Distance: </Text>
+                    {requestData?.distance} km
                   </Text>
                 </View>
                 <View
@@ -137,12 +155,7 @@ const RequestDetails: React.FC<
                       Passenger name{"("}s{")"}:{" "}
                     </Text>
 
-                    {requestData?.passenger_name &&
-                    requestData.passenger_name.length > 0
-                      ? requestData.passenger_name.length > 1
-                        ? requestData.passenger_name.join(", ")
-                        : requestData.passenger_name[0]
-                      : "No passenger(s)"}
+                    {requestData?.passenger_name}
                   </Text>
                 </View>
                 <View
@@ -155,7 +168,7 @@ const RequestDetails: React.FC<
                 >
                   <Text style={{ fontSize: FontSizes.small }}>
                     <Text style={{ fontWeight: "bold" }}>Travel date: </Text>
-                    {requestData?.travel_date}
+                    {formatDate(requestData?.travel_date)}
                   </Text>
                 </View>
                 <View
@@ -168,7 +181,33 @@ const RequestDetails: React.FC<
                 >
                   <Text style={{ fontSize: FontSizes.small }}>
                     <Text style={{ fontWeight: "bold" }}>Travel time: </Text>
-                    {requestData?.time}
+                    {formatTime(requestData?.travel_time)}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    {
+                      width: Viewport.width * 0.75,
+                    },
+                    Styles.flexRow,
+                  ]}
+                >
+                  <Text style={{ fontSize: FontSizes.small }}>
+                    <Text style={{ fontWeight: "bold" }}>Return date: </Text>
+                    {formatDate(requestData?.return_date)}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    {
+                      width: Viewport.width * 0.75,
+                    },
+                    Styles.flexRow,
+                  ]}
+                >
+                  <Text style={{ fontSize: FontSizes.small }}>
+                    <Text style={{ fontWeight: "bold" }}>Return time: </Text>
+                    {formatTime(requestData?.return_time)}
                   </Text>
                 </View>
                 <View
@@ -193,8 +232,8 @@ const RequestDetails: React.FC<
                   ]}
                 >
                   <Text style={{ fontSize: FontSizes.small }}>
-                    <Text style={{ fontWeight: "bold" }}>Urgent: </Text>
-                    {requestData?.urgent ? "Yes" : "No"}
+                    <Text style={{ fontWeight: "bold" }}>Travel type: </Text>
+                    {requestData?.type}
                   </Text>
                 </View>
                 <View
@@ -226,7 +265,11 @@ const RequestDetails: React.FC<
               </View>
             </ScrollView>
             <View>
-              <Button onPress={onRequestClose} text="Close" defaultBG />
+              <Button
+                onPress={onRequestClose}
+                text="Close"
+                defaultBG
+              />
             </View>
           </View>
         </View>

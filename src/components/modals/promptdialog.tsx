@@ -22,6 +22,7 @@ const PromptDialog: React.FC<ModalProps> = ({
   showHeader,
   showContent,
   showFooter,
+  style,
 }) => {
   return (
     <Modal
@@ -58,6 +59,7 @@ const PromptDialog: React.FC<ModalProps> = ({
               borderRadius: 10,
               padding: 20,
             },
+            style,
           ]}
         >
           {showHeader && (

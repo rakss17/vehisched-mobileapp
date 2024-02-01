@@ -110,10 +110,9 @@ const TimePicker: React.FC<TimePickerProps> = ({
               }
             }}
           />
-        </View>
-        <View style={styles.arrowContainer}>
-          {renderArrowButton("hours", "up")}
-          {renderArrowButton("hours", "down")}
+          <View>
+            <Text style={{ fontSize: FontSizes.normal }}>:</Text>
+          </View>
         </View>
 
         <View style={styles.timePicker}>
@@ -135,9 +134,13 @@ const TimePicker: React.FC<TimePickerProps> = ({
           />
         </View>
         <View style={styles.arrowContainer}>
+          {renderArrowButton("hours", "up")}
+          {renderArrowButton("hours", "down")}
+        </View>
+        {/* <View style={styles.arrowContainer}>
           {renderArrowButton("minutes", "up")}
           {renderArrowButton("minutes", "down")}
-        </View>
+        </View> */}
         <View style={styles.timePicker}>
           <Text style={styles.pickerText}>
             {selectedPeriod !== null ? selectedPeriod : "- -"}
@@ -189,7 +192,7 @@ const styles = StyleSheet.create({
     width: Viewport.width * 0.6,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.primaryColor2,
+    backgroundColor: "transparent",
     borderRadius: 10,
     gap: 10,
     borderBottomWidth: 1,

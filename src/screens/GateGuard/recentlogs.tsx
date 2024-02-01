@@ -251,7 +251,7 @@ export default function RecentLogs() {
                       },
                     ]}
                   >
-                    Trip no. {trip.id}
+                    Trip no. {trip.trip_id}
                   </Text>
                   <Text
                     style={[

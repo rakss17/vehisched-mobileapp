@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Modal, View, Text, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Modal, View, Text, ScrollView, Alert } from "react-native";
 import Checkbox from "expo-checkbox";
 import {
   Styles,
@@ -10,13 +10,18 @@ import {
 import InputField2 from "../inputfield/inputfield2";
 import { RequestFormDataProps, ModalProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
-import Dropdown from "../dropdown/dropdown";
-import AutoCompleteAddress from "../autocompleteaddress/autocompleteaddress";
-import DatePicker from "../datepicker/datepicker";
-import TimePicker from "../timepicker/timepicker";
-import UploadButton from "../buttons/upload";
-import DownloadButton from "../buttons/download";
 import Confirmation from "./confirmation";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import {
+  format12to24HourFormat,
+  formatDate,
+  formatTime,
+} from "../function/function";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import useHeartbeat, { postRequestFromAPI } from "../api/api";
+import Csm from "./csm";
+import Dropdown from "../dropdown/dropdown";
 
 const RequestForm: React.FC<ModalProps> = ({
   visible,
@@ -24,110 +29,78 @@ const RequestForm: React.FC<ModalProps> = ({
   animationType,
   onRequestClose,
   selectedVehicle,
+  tripData,
+  addressData,
+  setVehicles = () => {},
+  setTripData = () => {},
+  setAddressData = () => {},
+  setSelectedTravelCategory = () => {},
+  setSelectedTravelType = () => {},
+  setIsRequestSubmissionLoading,
+  setIsTravelDateSelected,
+  setIsAutocompleteNotPressable = () => {},
+  setSelectedCategory = () => {},
 }) => {
-  const [requestFormData, setRequestFormatData] =
-    useState<RequestFormDataProps>({
-      requester_name: "",
-      office_dept: "",
-      number_of_passenger: 0,
-      passenger_name: [],
-      destination: "",
-      date: "",
-      time: "",
-      purpose: "",
-      urgent: false,
-      vehicle: "",
-    });
   const [numberOfPassengers, setNumberOfPassengers] = useState(0);
   const [passengerData, setPassengerData] = useState(
     Array(numberOfPassengers).fill("")
   );
-  const [distanceToUSTPFormatted, setDistanceToUSTPFormatted] =
-    useState<any>("");
-  const [selectedOffice, setSelectedOffice] = useState("Select office/dept");
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<{
-    hours: number | null;
-    minutes: number | null;
-    period: string | null;
-  }>({
-    hours: null,
-    minutes: null,
-    period: null,
-  });
 
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
   const [isThirdFormShow, setIsThirdFormShow] = useState(false);
-  const [showTextNote, setShowTextNote] = useState(false);
-  const [isFourthFormShow, setIsFourthFormShow] = useState(false);
-  const [isFifthFormShow, setIsFifthFormShow] = useState(false);
-  const [isUrgentYes, setIsUrgentYes] = useState(false);
-  const [isUrgentNo, setIsUrgentNo] = useState(false);
-  const [isSixthFormShow, setIsSixthFormShow] = useState(false);
-  const [isSeventhFormShow, setIsSeventhFormShow] = useState(false);
+  const [isDistanceExceed50, setIsDistanceExceed50] = useState(false);
   const [isTextErrorShow, setIsTextErrorShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
-  const [exceedsCapacity, setExceedsCapacity] = useState(false);
+  const [responseRequestID, setResponseRequestID] = useState(0);
+  const [distance, setDistance] = useState(0);
+  const [isCsmVisible, setCsmVisible] = useState(false);
+  const [isOtherPurpose, setIsOtherPurpose] = useState(false);
+  const personalInfo = useSelector(
+    (state: RootState) => state.personalInfo.data
+  );
+  const firstName = personalInfo?.first_name;
+  const lastName = personalInfo?.last_name;
+  const middleName = personalInfo?.middle_name;
+  const userID = personalInfo?.id;
+  const office = personalInfo?.office;
+  const role = personalInfo?.role;
 
-  const handleDistanceCalculated = (distance: any) => {
-    setDistanceToUSTPFormatted(distance);
-    if (distance > 50) {
-      setShowTextNote(true);
-    } else if (distance < 50) {
-      setShowTextNote(false);
-    }
-  };
+  const convertTravel12to24HourConverted = format12to24HourFormat(
+    tripData.travel_time
+  );
+  const convertReturn12to24HourConverted = format12to24HourFormat(
+    tripData.return_time
+  );
 
-  const handleAddressCalculated = (address: string) => {
-    setRequestFormatData((prevData) => ({
-      ...prevData,
-      destination: address,
-    }));
-  };
+  const [requestFormData, setRequestFormData] = useState<any>({
+    requester_name: "",
+    office: "",
+    number_of_passenger: null,
+    passenger_name: [],
+    destination: "",
+    distance: "",
+    travel_date: "",
+    travel_time: "",
+    return_date: "",
+    return_time: "",
+    purpose: "",
+    vehicle: "",
+    type: "",
+    role: "",
+    merge_trip: false,
+    driver_name: "",
+    vehicle_capacity: null,
+  });
 
-  const handleOfficeChange = (selectedOption: string) => {
-    setSelectedOffice(selectedOption);
-    setRequestFormatData((prevData) => ({
-      ...prevData,
-      office_dept: selectedOption,
-    }));
-  };
+  useHeartbeat(visible);
+
   const isCurrentStepValid = () => {
     if (isFirstFormShow) {
-      if (!requestFormData.requester_name || !requestFormData.office_dept) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isSecondFormShow) {
-      if (
-        !requestFormData.number_of_passenger ||
-        !passengerData.every((passenger) => passenger.trim() !== "")
-      ) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isThirdFormShow) {
-      if (!requestFormData.destination) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isFourthFormShow) {
-      if (!requestFormData.time || !requestFormData.date) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isFifthFormShow) {
       if (!requestFormData.purpose) {
         setIsTextErrorShow(true);
         return false;
       }
-      if (!isUrgentYes && !isUrgentNo) {
-        setIsTextErrorShow(true);
-        return false;
-      }
-    } else if (isSixthFormShow || isSeventhFormShow) {
-      // Add any additional validation logic for these steps
     }
 
     return true;
@@ -138,19 +111,37 @@ const RequestForm: React.FC<ModalProps> = ({
       form !== "Close" &&
       form !== "First" &&
       form !== "SecondBack" &&
-      form !== "ThirdBack" &&
-      form !== "FourthBack" &&
-      form !== "FifthBack" &&
       !isCurrentStepValid()
     ) {
       return;
     }
-    setRequestFormatData((prevData) => ({
+    setRequestFormData((prevData: any) => ({
       ...prevData,
-      vehicle: selectedVehicle?.vehicle_name,
+      requester_name: userID,
+      office: office,
+      vehicle: selectedVehicle?.plate_number,
+      travel_date: tripData.travel_date,
+      return_date: tripData.return_date,
+      travel_time: convertTravel12to24HourConverted,
+      return_time: convertReturn12to24HourConverted,
+      type: tripData.category,
+      destination: addressData.destination,
+      distance: addressData.distance,
+      role: role,
+      merge_trip: false,
+      driver_name: selectedVehicle?.driver_assigned_to,
+      vehicle_capacity: selectedVehicle?.capacity,
     }));
+    setDistance(addressData.distance);
     switch (form) {
       case "Close":
+        setRequestFormData((prevData: any) => ({
+          ...prevData,
+          vehicle: "",
+          number_of_passenger: null,
+          passenger_name: [],
+          purpose: "",
+        }));
         setIsTextErrorShow(false);
         onRequestClose();
         break;
@@ -162,98 +153,40 @@ const RequestForm: React.FC<ModalProps> = ({
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
         setIsThirdFormShow(false);
+
         break;
       case "SecondBack":
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
         setIsThirdFormShow(false);
-        break;
-      case "Third":
-        setIsSecondFormShow(false);
-        setIsThirdFormShow(true);
-        setIsFourthFormShow(false);
-        break;
-      case "ThirdBack":
-        setIsSecondFormShow(false);
-        setIsThirdFormShow(true);
-        setIsFourthFormShow(false);
-        break;
-      case "Fourth":
-        setIsThirdFormShow(false);
-        setIsFourthFormShow(true);
-        setIsFifthFormShow(false);
-        break;
-      case "FourthBack":
-        setIsThirdFormShow(false);
-        setIsFourthFormShow(true);
-        setIsFifthFormShow(false);
-        break;
-      case "Fifth":
-        setIsFourthFormShow(false);
-        setIsFifthFormShow(true);
-        setIsSixthFormShow(false);
-        setIsSeventhFormShow(false);
-        break;
-      case "FifthBack":
-        setIsFourthFormShow(false);
-        setIsFifthFormShow(true);
-        setIsSixthFormShow(false);
-        setIsSeventhFormShow(false);
-        break;
-      case "Sixth":
-        setIsFifthFormShow(false);
-        if (distanceToUSTPFormatted > 50) {
-          setIsSixthFormShow(true);
-          setIsSeventhFormShow(false);
-        } else if (distanceToUSTPFormatted < 50) {
-          setIsSixthFormShow(false);
-          setIsSeventhFormShow(true);
-        }
-        break;
-      case "SeventhBack":
-        if (distanceToUSTPFormatted < 50) {
-          setIsFifthFormShow(true);
-          setIsSeventhFormShow(false);
-        } else if (distanceToUSTPFormatted > 50) {
-          setIsSixthFormShow(true);
-          setIsSeventhFormShow(false);
-        }
-        break;
-      case "Seventh":
-        setIsSixthFormShow(false);
-        setIsSeventhFormShow(true);
+
         break;
       case "Submit":
-        setRequestFormatData({
-          requester_name: "",
-          office_dept: "",
-          number_of_passenger: 0,
-          passenger_name: [],
-          destination: "",
-          date: "",
-          time: "",
-          purpose: "",
-          urgent: false,
-          vehicle: "",
-        });
-        setSelectedDate(null);
-        setSelectedTime({
-          hours: null,
-          minutes: null,
-          period: null,
-        });
-        setShowTextNote(false);
-        setDistanceToUSTPFormatted("");
-        setSelectedOffice("Select office/dept");
-        setNumberOfPassengers(0);
-        setPassengerData([]);
-        setIsSeventhFormShow(false);
+        setIsRequestSubmissionLoading(true);
+        postRequestFromAPI(
+          requestFormData,
+          setIsConfirmationShow,
+          setRequestFormData,
+          setVehicles,
+          setTripData,
+          setAddressData,
+          setSelectedTravelCategory,
+          setSelectedTravelType,
+          setIsRequestSubmissionLoading,
+          setIsDistanceExceed50,
+          distance,
+          setNumberOfPassengers,
+          setPassengerData,
+          role,
+          setIsTravelDateSelected,
+          setIsAutocompleteNotPressable,
+          setSelectedCategory,
+          onRequestClose,
+          setResponseRequestID
+        );
         setIsFirstFormShow(true);
         onRequestClose();
-        setIsConfirmationShow(true);
-
-        console.log(requestFormData);
-
+        setIsSecondFormShow(false);
         break;
       default:
         break;
@@ -266,85 +199,94 @@ const RequestForm: React.FC<ModalProps> = ({
     updatedPassengerData[index] = value;
     setPassengerData(updatedPassengerData);
 
-    setRequestFormatData((prevData) => ({
+    const numberOfPassenger = updatedPassengerData.reduce(
+      (count, name) => (name ? count + 1 : count),
+      0
+    );
+    setNumberOfPassengers(numberOfPassenger);
+    const filteredPassengerData = updatedPassengerData.filter(
+      (name) => name !== ""
+    );
+    setRequestFormData((prevData: any) => ({
       ...prevData,
-      passenger_name: updatedPassengerData,
+      number_of_passenger: numberOfPassenger,
+      passenger_name: filteredPassengerData,
     }));
   };
 
-  const handleNumberOfPassengersChange = (text: string) => {
-    const parsedNumber = parseInt(text, 10);
-    if (
-      !isNaN(parsedNumber) &&
-      parsedNumber >= 0 &&
-      selectedVehicle &&
-      parsedNumber <= selectedVehicle.capacity
-    ) {
-      setNumberOfPassengers(parsedNumber);
-      setPassengerData(Array(parsedNumber).fill(""));
-      setRequestFormatData((prevData) => ({
-        ...prevData,
-        number_of_passenger: parsedNumber,
-      }));
-      setExceedsCapacity(false);
-    } else {
-      setNumberOfPassengers(0);
-      setPassengerData([]);
-      setRequestFormatData((prevData) => ({
-        ...prevData,
-        number_of_passenger: 0,
-      }));
-      setExceedsCapacity(true);
-    }
-  };
-
-  const handleToDateSelected = (selectedDate: Date) => {
-    const formattedDate = selectedDate.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    setRequestFormatData((prevData) => ({
-      ...prevData,
-      date: formattedDate,
-    }));
-    setSelectedDate(selectedDate);
-  };
-
-  const handleTimeSelected = (
-    hours: number,
-    minutes: number,
-    period: string
-  ) => {
-    const formatNumberToTwoDigits = (number: number) => {
-      return number < 10 ? `0${number}` : `${number}`;
-    };
-    const formattedHours = formatNumberToTwoDigits(hours);
-    const formattedMinutes = formatNumberToTwoDigits(minutes);
-
-    setRequestFormatData((prevData) => ({
-      ...prevData,
-      time: `${formattedHours}:${formattedMinutes} ${period}`,
-    }));
-    setSelectedTime({
-      hours,
-      minutes,
-      period,
-    });
-  };
-
-  const [selectedFileName, setSelectedFileName] = useState<string>("");
-
-  const handleFileSelected = (fileName: string) => {
-    setSelectedFileName(fileName);
-  };
-
-  const downloadUrl =
-    "https://docs.google.com/document/d/1HJ3MiD0j2Ef77Qcgmvl64JG1DKQxLHL5/edit?usp=drive_link&ouid=115657237309251643032&rtpof=true&sd=true";
-  const buttonText = "Download Template";
+  useEffect(() => {
+    setPassengerData(Array(selectedVehicle?.capacity).fill(""));
+  }, [selectedVehicle?.capacity]);
 
   const handleRequestClose = () => {
     setIsConfirmationShow(false);
+    setCsmVisible(true);
+  };
+  const handleRequestCloseExceed = () => {
+    setIsDistanceExceed50(false);
+    setIsConfirmationShow(true);
+    setRequestFormData((prevData: any) => ({
+      ...prevData,
+      requester_name: "",
+      office: "",
+      number_of_passenger: null,
+      passenger_name: [],
+      destination: "",
+      distance: "",
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      purpose: "",
+      vehicle: "",
+      type: "",
+    }));
+    {
+      role === "vip" ? null : setVehicles([]);
+    }
+    setTripData((prevData: any) => ({
+      ...prevData,
+      travel_date: "",
+      travel_time: "",
+      return_date: "",
+      return_time: "",
+      capacity: null,
+      category: "Round Trip",
+    }));
+    setAddressData((prevData: any) => ({
+      ...prevData,
+      destination: "",
+      distance: null,
+    }));
+    setSelectedTravelCategory("Round Trip");
+    setSelectedTravelType("");
+    setIsTravelDateSelected(true);
+    setIsAutocompleteNotPressable(true);
+    setSelectedCategory("Ongoing Schedule");
+    onRequestClose();
+  };
+
+  const handleOnSelectPurpose = (options: string) => {
+    if (options === "Select purpose") {
+      Alert.alert("Please select a purpose");
+      setIsOtherPurpose(false);
+      setRequestFormData((prevData: any) => ({
+        ...prevData,
+        purpose: null,
+      }));
+    } else if (options === "Others - Please specify") {
+      setIsOtherPurpose(true);
+      setRequestFormData((prevData: any) => ({
+        ...prevData,
+        purpose: null,
+      }));
+    } else {
+      setIsOtherPurpose(false);
+      setRequestFormData((prevData: any) => ({
+        ...prevData,
+        purpose: options,
+      }));
+    }
   };
   return (
     <>
@@ -357,7 +299,8 @@ const RequestForm: React.FC<ModalProps> = ({
         <View
           style={[
             {
-              flex: 1,
+              height: Viewport.height * 1,
+              width: Viewport.width * 1,
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               zIndex: 1,
             },
@@ -369,276 +312,84 @@ const RequestForm: React.FC<ModalProps> = ({
               {
                 backgroundColor: Colors.primaryColor2,
                 width: Viewport.width * 0.9,
-                height: Viewport.height * 0.65,
-                gap: 20,
+                height: Viewport.height * 0.7,
+                paddingBottom: Viewport.height * 0.03,
                 borderRadius: 10,
+                gap: 5,
               },
               Styles.flexColumn,
             ]}
           >
             {isFirstFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  alignItems: "center",
-                  gap: 20,
-                }}
-              >
-                <View style={{}}>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    What's your name and office/dept?
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the fields!
-                  </Text>
-                )}
-
-                <InputField2
-                  value={requestFormData.requester_name}
-                  onChangeText={(text) =>
-                    setRequestFormatData({
-                      ...requestFormData,
-                      requester_name: text,
-                    })
-                  }
-                  placeholderText="Requester's name"
-                  capitalizeWords={true}
-                />
-                <Dropdown
-                  showBG
-                  menuAdjusted
-                  showText
-                  text={selectedOffice}
-                  onCategoryChange={handleOfficeChange}
-                  options={["CITC", "COT", "CEA", "CSM", "CSTE", "SHS"]}
-                />
-                <View style={[{ gap: 60, marginTop: 20 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("Close")}
-                    transparentBG
-                    transparentText
-                    text="Close"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Second")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isSecondFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View style={{}}>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    What is the number of passengers? And who are they?
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the fields!
-                  </Text>
-                )}
-                <InputField2
-                  value={requestFormData.number_of_passenger.toString()}
-                  keyboardType="numeric"
-                  onChangeText={handleNumberOfPassengersChange}
-                  placeholderText="No. of passenger(s)"
-                />
-                {exceedsCapacity && (
-                  <Text style={{ color: "red" }}>
-                    Exceeds seating capacity of the vehicle
-                  </Text>
-                )}
-                <ScrollView>
-                  {passengerData.map((passenger, index) => (
-                    <View style={{ marginVertical: 15 }} key={index}>
-                      <InputField2
-                        value={passenger}
-                        onChangeText={(text) =>
-                          updatePassengerData(index, text)
-                        }
-                        placeholderText={`Passenger ${index + 1}`}
-                        capitalizeWords={true}
-                      />
-                    </View>
-                  ))}
-                </ScrollView>
-
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("First")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Third")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isThirdFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
+              <>
                 <View
                   style={{
+                    height: Viewport.height * 0.6,
                     width: Viewport.width * 0.8,
+                    alignItems: "center",
+                    gap: 10,
                   }}
                 >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    What is your destination?
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the field!
-                  </Text>
-                )}
-                <View style={{ paddingLeft: 40 }}>
-                  <AutoCompleteAddress
-                    onDistanceCalculated={handleDistanceCalculated}
-                    onAddressSelected={handleAddressCalculated}
-                  />
-                </View>
-                <View>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      marginLeft: Viewport.width * 0.1,
-                      marginTop: Viewport.height * 0.01,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Distance: {distanceToUSTPFormatted} km
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      marginTop: Viewport.height * 0.04,
-                      textAlign: "left",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Requesters traveling to destinations that exceed 50
-                    kilometers are required to provide a travel order for the
-                    vehicle's fuel and the driver's per diem.
-                  </Text>
-                  {showTextNote && (
+                  <View style={{}}>
                     <Text
                       style={{
-                        fontSize: FontSizes.small,
-                        marginTop: Viewport.height * 0.04,
-                        textAlign: "left",
+                        fontSize: FontSizes.normal,
+
                         fontWeight: "bold",
                       }}
                     >
-                      Please provide the travel order document on the last part
-                      of this form.
+                      Purpose and passenger
+                    </Text>
+                  </View>
+                  {isTextErrorShow && (
+                    <Text
+                      style={{ color: "#F30F0F", fontSize: FontSizes.small }}
+                    >
+                      Please fill-out the fields
                     </Text>
                   )}
-                </View>
+                  <View style={{ marginTop: 0 }}>
+                    <Dropdown
+                      selectedCategory={requestFormData.purpose}
+                      onCategoryChange={handleOnSelectPurpose}
+                      options={[
+                        "Select purpose",
+                        "Send/pick up university official",
+                        "Send/pick up university personnel or employee",
+                        "Send/pick up university guest",
+                        "Send/submit importants documents",
+                        "Site visit",
+                        "Attend meeting/seminar/orientation/training",
+                        "Occular inspection",
+                        "Strategic Planning",
+                        "Year end review",
+                        "Mail documents",
+                        "Extension project",
+                        "Others - Please specify",
+                      ]}
+                      showTextPurpose
+                      showBGPurpose
+                      menuAdjustedPurpose
+                      dropdownText2
+                    />
+                    {isOtherPurpose && (
+                      <View style={{ marginTop: Viewport.height * 0.02 }}>
+                        <InputField2
+                          value={requestFormData.purpose}
+                          adjustedWidth
+                          onChangeText={(text) =>
+                            setRequestFormData({
+                              ...requestFormData,
+                              purpose: text,
+                            })
+                          }
+                          placeholderText="Type purpose here...."
+                          capitalizeWords={false}
+                        />
+                      </View>
+                    )}
+                  </View>
 
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("SecondBack")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Fourth")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isFourthFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    When is your preferred travel date and time?
-                  </Text>
                   <Text
                     style={{
                       fontSize: FontSizes.small,
@@ -646,274 +397,86 @@ const RequestForm: React.FC<ModalProps> = ({
                       fontWeight: "bold",
                     }}
                   >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
+                    No. of passenger: {selectedVehicle?.capacity}
                   </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the fields!
-                  </Text>
-                )}
-                <DatePicker
-                  button2
-                  selectedDate={selectedDate}
-                  onDateSelected={handleToDateSelected}
-                />
-
-                <TimePicker
-                  secondBG
-                  onTimeSelected={handleTimeSelected}
-                  selectedHours={selectedTime.hours}
-                  selectedMinutes={selectedTime.minutes}
-                  selectedPeriod={selectedTime.period}
-                />
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("ThirdBack")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Fifth")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isFifthFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Is it urgent? And what is your purpose?
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
-                  </Text>
-                </View>
-                {isTextErrorShow && (
-                  <Text style={{ color: "#F30F0F", fontSize: FontSizes.small }}>
-                    Please fill-out the fields!
-                  </Text>
-                )}
-                <View
-                  style={[
-                    {
-                      gap: 10,
-                      width: Viewport.width * 0.7,
-                    },
-                    Styles.flexRow,
-                  ]}
-                >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Urgent Request?
-                  </Text>
-                  <Checkbox
-                    disabled={false}
-                    value={isUrgentYes}
-                    onValueChange={(newValue) => {
-                      setIsUrgentYes(newValue);
-                      setIsUrgentNo(!newValue);
-                    }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Yes
-                  </Text>
-                  <Checkbox
-                    disabled={false}
-                    value={isUrgentNo}
-                    onValueChange={(newValue) => {
-                      setIsUrgentNo(newValue);
-                      setIsUrgentYes(!newValue);
-                    }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    No
-                  </Text>
-                </View>
-                {isUrgentYes && (
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Please provide a brief statement explaining the urgency or
-                    importance of your purpose for requesting the reservation.
-                  </Text>
-                )}
-                <View style={{ marginTop: 20 }}>
-                  <InputField2
-                    value={requestFormData.purpose}
-                    adjustedWidth
-                    onChangeText={(text) =>
-                      setRequestFormatData({
-                        ...requestFormData,
-                        purpose: text,
-                      })
+                  {/* <InputField2
+                    value={
+                      requestFormData
+                        ? requestFormData.number_of_passenger
+                        : null
                     }
-                    placeholderText="Purpose"
-                    capitalizeWords={false}
+                    keyboardType="numeric"
+                    onChangeText={handleNumberOfPassengersChange}
+                    placeholderText="No. of passenger(s)"
                   />
-                </View>
+                  {exceedsCapacity && (
+                    <Text style={{ color: "red" }}>
+                      Exceeds seating capacity of the vehicle
+                    </Text>
+                  )} */}
+                  <KeyboardAwareScrollView
+                    keyboardShouldPersistTaps="handled"
+                    scrollEnabled={true}
+                    enableAutomaticScroll={true}
+                    enableOnAndroid={true}
+                  >
+                    {passengerData.map((passenger, index) => (
+                      <View style={{ marginVertical: 15 }} key={index}>
+                        <InputField2
+                          value={passenger}
+                          onChangeText={(text) =>
+                            updatePassengerData(index, text)
+                          }
+                          placeholderText={`Type passenger name ${
+                            index + 1
+                          } here...`}
+                          capitalizeWords={true}
+                        />
+                      </View>
+                    ))}
+                  </KeyboardAwareScrollView>
 
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("FourthBack")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Sixth")}
-                    defaultBG
-                    text="Next"
-                  />
+                  <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                    <Button
+                      onPress={() => handleButtonPress("Close")}
+                      transparentBG
+                      transparentText
+                      text="Close"
+                    />
+                    <Button
+                      onPress={() => handleButtonPress("Second")}
+                      defaultBG
+                      text="Next"
+                    />
+                  </View>
                 </View>
-              </View>
+              </>
             )}
-            {isSixthFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
-                >
+            {isSecondFormShow && (
+              <>
+                <ScrollView>
                   <Text
                     style={{
                       fontSize: FontSizes.normal,
-
+                      marginTop: Viewport.height * 0.02,
                       fontWeight: "bold",
+                      textAlign: "center",
                     }}
                   >
-                    Download and Upload Travel Order Document
+                    Request Form
                   </Text>
-
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
-                  </Text>
-                </View>
-
-                <DownloadButton
-                  downloadUrl={downloadUrl}
-                  buttonText={buttonText}
-                />
-                <UploadButton
-                  selectedFileName={selectedFileName}
-                  onFileSelected={handleFileSelected}
-                />
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
-                  <Button
-                    onPress={() => handleButtonPress("FifthBack")}
-                    transparentBG
-                    transparentText
-                    text="Back"
-                  />
-                  <Button
-                    onPress={() => handleButtonPress("Seventh")}
-                    defaultBG
-                    text="Next"
-                  />
-                </View>
-              </View>
-            )}
-            {isSeventhFormShow && (
-              <View
-                style={{
-                  height: Viewport.height * 0.5,
-                  width: Viewport.width * 0.8,
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <View
-                  style={{
-                    width: Viewport.width * 0.8,
-                  }}
+                  {/* {isTextErrorShow && (
+                <Text
+                  style={{ color: "#F30F0F", fontSize: FontSizes.small }}
                 >
-                  <Text
-                    style={{
-                      fontSize: FontSizes.normal,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Please confirm your details before submitting. Thank you.
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: FontSizes.small,
-
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Vehicle: {selectedVehicle?.vehicle_name}
-                  </Text>
-                </View>
-
-                <ScrollView
-                  style={[
-                    {
-                      width: Viewport.width * 0.75,
-                    },
-                  ]}
-                >
+                  Please fill-out the fields!
+                </Text>
+              )} */}
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
@@ -922,58 +485,37 @@ const RequestForm: React.FC<ModalProps> = ({
                       <Text style={{ fontWeight: "bold" }}>
                         Requester's name:{" "}
                       </Text>
-                      {requestFormData.requester_name}
+                      {lastName}, {firstName} {middleName}
                     </Text>
                   </View>
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Office/dept:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {requestFormData.office_dept}
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>Office: {""}</Text>
+                      {office}
                     </Text>
                   </View>
+
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      No. of Passenger{"("}s{")"}:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Number of passenger{"("}s{")"}: {""}
+                      </Text>
                       {requestFormData.number_of_passenger}
                     </Text>
                   </View>
@@ -981,16 +523,15 @@ const RequestForm: React.FC<ModalProps> = ({
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
                     <Text style={{ fontSize: FontSizes.small }}>
                       <Text style={{ fontWeight: "bold" }}>
-                        Passenger's name{"("}s{")"}:{" "}
+                        Passenger{"("}s{")"}: {""}
                       </Text>
-
                       {requestFormData.passenger_name.length > 1
                         ? requestFormData.passenger_name.join(", ")
                         : requestFormData.passenger_name[0]}
@@ -1000,139 +541,144 @@ const RequestForm: React.FC<ModalProps> = ({
                     style={[
                       {
                         width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
-                    <Text style={{ fontSize: FontSizes.small, marginTop: 5 }}>
-                      <Text style={{ fontWeight: "bold" }}>Destination: </Text>
-                      {requestFormData.destination}
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Travel date: {""}
+                      </Text>
+                      {formatDate(tripData.travel_date)}
                     </Text>
                   </View>
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Distance:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {distanceToUSTPFormatted}
-                      {" km"}
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Travel time: {""}
+                      </Text>
+                      {formatTime(tripData.travel_time)}
                     </Text>
                   </View>
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Date:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {requestFormData.date}
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Return date: {""}
+                      </Text>
+                      {formatDate(tripData.return_date)}
                     </Text>
                   </View>
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Time:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {requestFormData.time}
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Return time: {""}
+                      </Text>
+                      {formatTime(tripData.return_time)}
                     </Text>
                   </View>
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Urgent:
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: FontSizes.small,
-                      }}
-                    >
-                      {" "}
-                      {isUrgentYes ? "Yes" : "No"}
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>Vehicle: {""}</Text>
+                      {selectedVehicle?.plate_number} {selectedVehicle?.model}
                     </Text>
                   </View>
                   <View
                     style={[
                       {
                         width: Viewport.width * 0.75,
-                        marginTop: 5,
+                        marginTop: Viewport.height * 0.01,
                       },
                       Styles.flexRow,
                     ]}
                   >
-                    <Text style={{ fontSize: FontSizes.small, marginTop: 5 }}>
-                      <Text style={{ fontWeight: "bold" }}>Purpose: </Text>
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Destination: {""}
+                      </Text>
+                      {addressData.destination}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>Distance: {""}</Text>
+                      {addressData.distance} km
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Travel type: {""}
+                      </Text>
+                      {tripData.category}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      {
+                        width: Viewport.width * 0.75,
+                        marginTop: Viewport.height * 0.01,
+                      },
+                      Styles.flexRow,
+                    ]}
+                  >
+                    <Text style={{ fontSize: FontSizes.small }}>
+                      <Text style={{ fontWeight: "bold" }}>Purpose: {""}</Text>
                       {requestFormData.purpose}
                     </Text>
                   </View>
                 </ScrollView>
-
-                <View style={[{ gap: 60, marginTop: 0 }, Styles.flexRow]}>
+                <View style={[{ gap: 60, marginTop: 20 }, Styles.flexRow]}>
                   <Button
-                    onPress={() => handleButtonPress("SeventhBack")}
+                    onPress={() => handleButtonPress("First")}
                     transparentBG
                     transparentText
                     text="Back"
@@ -1143,7 +689,7 @@ const RequestForm: React.FC<ModalProps> = ({
                     text="Submit"
                   />
                 </View>
-              </View>
+              </>
             )}
           </View>
         </View>
@@ -1160,6 +706,25 @@ const RequestForm: React.FC<ModalProps> = ({
         showHeader
         showFooter
       />
+      <Confirmation
+        visible={isDistanceExceed50}
+        animationType="fade"
+        transparent={true}
+        header="Note:"
+        content="This reservation requires a travel order for the vehicle's fuel and the driver's per diem because destinations exceed 50 kilometers. Please submit it to Motor Pool office."
+        footer="Thank you!"
+        onRequestClose={handleRequestCloseExceed}
+        showContent
+        showHeader
+        showFooter
+      />
+      {isCsmVisible && (
+        <Csm
+          request={responseRequestID}
+          setCsmVisible={setCsmVisible}
+          setSelectedCategory={setSelectedCategory}
+        />
+      )}
     </>
   );
 };

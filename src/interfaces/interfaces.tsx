@@ -7,7 +7,9 @@ export type RootStackParamList = {
   Requester: undefined;
   Driver: undefined;
   GateGuard: undefined;
+  Profile: undefined;
   LoadingScreen: { message: string };
+  RequesterTabs: { notifLength: number };
 };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -19,7 +21,7 @@ export interface Vehicle {
   vehicle_type: string;
   vehicle_image: any;
   status: string;
-  isVip: boolean;
+  is_vip: boolean;
 }
 
 export interface UserData {
@@ -39,6 +41,7 @@ export interface UserData {
 
 export interface Requests {
   requester_name: string;
+  request_id: any;
   office_dept: string;
   request_number: string;
   travel_date: string;
@@ -64,6 +67,10 @@ export interface ButtonProps {
   isHighlighted?: boolean;
   style?: StyleProp<ViewStyle>;
   largeSize?: boolean;
+  isSelected?: any;
+  transparentBGAdjust?: boolean;
+  transparentTextAdjust?: boolean;
+  isHighlightedAdjust?: boolean;
 }
 
 export interface DropdownProps {
@@ -74,15 +81,21 @@ export interface DropdownProps {
   menuAdjusted?: boolean;
   showText?: boolean;
   text?: string;
+  dropdownText2?: any;
+  selectedCategory?: any;
+  showBGPurpose?: boolean;
+  menuAdjustedPurpose?: boolean;
+  showTextPurpose?: boolean;
 }
 
 export interface InputFieldProps {
   value: string;
-  placeholder: string;
+  placeholder?: string;
   secureTextEntry?: boolean;
   icon?: any;
   onChangeText?: (text: string) => void;
   autoCapitalize?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 export interface BackgroundColorProps {
@@ -99,11 +112,23 @@ export interface ModalProps {
   content?: string;
   footer?: string;
   onNextPressed?: () => void;
-  selectedVehicle?: Vehicle | undefined;
+  selectedVehicle?: any | undefined;
   adjustedSize?: boolean;
   showHeader?: boolean;
   showContent?: boolean;
   showFooter?: boolean;
+  tripData?: any;
+  addressData?: any;
+  setVehicles?: React.Dispatch<React.SetStateAction<any[]>>;
+  setTripData?: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  setAddressData?: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  setSelectedTravelCategory?: React.Dispatch<React.SetStateAction<any>>;
+  setSelectedTravelType?: React.Dispatch<React.SetStateAction<any>>;
+  setIsRequestSubmissionLoading?: any;
+  setIsTravelDateSelected?: any;
+  setIsAutocompleteNotPressable?: any;
+  setSelectedCategory?: any;
+  style?: StyleProp<ViewStyle>;
 }
 export interface CalendarData {
   key: string;
@@ -117,6 +142,7 @@ export interface DatePickerProps {
   onDateSelected: (date: Date) => void;
   button2?: boolean;
   selectedDate?: any;
+  disableDaysBefore?: number;
 }
 
 export interface TimePickerProps {
@@ -221,3 +247,34 @@ export interface Schedule {
   status: string;
   vehicle?: string;
 }
+
+export interface InitialFormVipProps {
+  visible: boolean;
+  transparent: any;
+  animationType: any;
+  onRequestClose: () => void;
+  setTripData: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  setAddressData: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  selectedVehicle?: any | undefined;
+  tripData: {
+    travel_date: any;
+    travel_time: any;
+    return_date: any;
+    return_time: any;
+    category: any;
+  };
+  addressData: {
+    destination: any;
+    distance: any;
+  };
+  handleRequestFormVisible: (vehicle: Vehicle) => void;
+  isTravelDateSelected?: any;
+  setIsTravelDateSelected?: any;
+  isAutocompleteNotPressable?: any;
+  setIsAutocompleteNotPressable?: any;
+}
+
+// export interface CalendarSelectorProps {
+//   isCalandarSelectorVisible: any;
+//   vehicleOwnSchedule: any[]
+// }

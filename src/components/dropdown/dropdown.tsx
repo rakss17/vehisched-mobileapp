@@ -7,12 +7,10 @@ import { DropdownProps } from "../../interfaces/interfaces";
 import { Viewport } from "../../styles/globalstyles/globalstyles";
 
 export default function Dropdown(props: DropdownProps) {
-  const [selectedOption, setSelectedOption] = useState(props.text);
+  const [selectedOption, setSelectedOption] = useState(
+    props.selectedCategory || props.options[0]
+  );
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    setSelectedOption(props.text);
-  }, [props.text]);
 
   const handleMenuToggle = () => {
     setIsOpen(!isOpen);
@@ -30,6 +28,7 @@ export default function Dropdown(props: DropdownProps) {
         style={[
           DropdownStyles.dropdownToggle,
           props.showBG && DropdownStyles.showBG,
+          props.showBGPurpose && DropdownStyles.showBGPurpose,
         ]}
         onPress={handleMenuToggle}
       >
@@ -41,19 +40,40 @@ export default function Dropdown(props: DropdownProps) {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
-
-                width: Viewport.width * 0.55,
+                width: Viewport.width * 0.35,
               }}
             >
               <View>
-                <Text style={DropdownStyles.label}>
-                  {isOpen ? selectedOption : props.text}
-                </Text>
+                <Text style={DropdownStyles.label}>{selectedOption}</Text>
               </View>
 
               <View>
                 <FontAwesomeIcon
                   style={DropdownStyles.dropdownIcon2}
+                  icon={faCaretDown}
+                />
+              </View>
+            </View>
+          </>
+        )}
+        {props.showTextPurpose && (
+          <>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: Viewport.width * 0.65,
+              }}
+            >
+              <View>
+                <Text style={DropdownStyles.label2}>{selectedOption}</Text>
+              </View>
+
+              <View>
+                <FontAwesomeIcon
+                  style={DropdownStyles.dropdownIcon3}
                   icon={faCaretDown}
                 />
               </View>
@@ -78,6 +98,8 @@ export default function Dropdown(props: DropdownProps) {
           style={[
             DropdownStyles.dropdownMenu,
             props.menuAdjusted && DropdownStyles.dropdownMenuAdjusted,
+            props.menuAdjustedPurpose &&
+              DropdownStyles.dropdownMenuAdjustedPurpose,
           ]}
           data={props.options}
           keyExtractor={(item, index) => index.toString()}
@@ -86,7 +108,14 @@ export default function Dropdown(props: DropdownProps) {
               style={DropdownStyles.dropdownMenuItem}
               onPress={() => handleMenuOptionClick(item)}
             >
-              <Text style={DropdownStyles.dropdownText}>{item}</Text>
+              <Text
+                style={[
+                  DropdownStyles.dropdownText,
+                  props.dropdownText2 && DropdownStyles.dropdownText2,
+                ]}
+              >
+                {item}
+              </Text>
             </TouchableOpacity>
           )}
         />
