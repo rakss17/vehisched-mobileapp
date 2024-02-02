@@ -22,7 +22,7 @@
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#060E57"
       },
-      "package": "com.vehisched.VehiSched"
+      "package": "com.vehisched.vehisched"
     },
     "web": {
       "favicon": "./assets/favicon.png"
