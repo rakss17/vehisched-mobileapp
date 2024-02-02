@@ -2,7 +2,10 @@
   "build": {
     "preview": {
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "env": {
+          "EXPO_PUBLIC_GOOGLE_MAP_API_KEY": "AIzaSyAxtrmWT-KwrBMj9FI3aAmb0g-HmgmW9z4"
+        }
       }
     },
     "preview2": {
