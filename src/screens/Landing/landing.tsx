@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, ScrollView, Modal } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  Alert,
+} from "react-native";
 import { useState, useEffect } from "react";
 import {
   BackgroundColor,
@@ -46,6 +53,9 @@ export default function Landing() {
     (state: RootState) => state.personalInfo.data
   );
   const role = personalInfo?.role;
+
+  Alert.alert("Lahos naka");
+  console.log("lahos naka");
 
   useEffect(() => {
     const fetchTokenAndNavigate = async () => {
