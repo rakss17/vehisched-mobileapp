@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   ScrollView,
@@ -90,7 +90,7 @@ export default function GateGuard() {
     setScannedCompleted(false);
     setScannedAlreadyCompleted(false);
     setScannedTripNotFound(false);
-    setScannedNotYet(false)
+    setScannedNotYet(false);
   };
   const handleShowTripDetails = (trip: Schedule) => {
     setSelectedTrip([trip]);

@@ -14,8 +14,6 @@ const Loading: React.FC<ModalProps> = ({
   visible,
   content,
   onRequestClose,
-  adjustedSize,
-
   showContent,
 }) => {
   return (

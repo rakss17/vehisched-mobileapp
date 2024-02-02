@@ -1,5 +1,5 @@
-import { StyleSheet, View } from "react-native";
-import { Viewport, FontSizes, Colors } from "../../globalstyles/globalstyles";
+import { StyleSheet } from "react-native";
+import { Viewport, Colors } from "../../globalstyles/globalstyles";
 
 export const AutoCompleteAddressGoogleStyle = StyleSheet.create({
   container: {

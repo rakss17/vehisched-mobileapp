@@ -42,6 +42,28 @@ export default function Landing() {
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
 
+  const personalInfo = useSelector(
+    (state: RootState) => state.personalInfo.data
+  );
+  const role = personalInfo?.role;
+
+  useEffect(() => {
+    const fetchTokenAndNavigate = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        if (role === "driver") {
+          navigation.navigate("Driver");
+        } else if (role === "gate guard") {
+          navigation.navigate("GateGuard");
+        } else if (role === "requester" || role === "vip") {
+          navigation.navigate("Requester");
+        }
+      }
+    };
+
+    fetchTokenAndNavigate();
+  }, []);
+
   const handleOnChangeText = (value: any, fieldName: any) => {
     setData({ ...data, [fieldName]: value });
   };

@@ -105,15 +105,6 @@ export default function Requester() {
     destination: "",
     distance: null,
   });
-  const [selectedTime, setSelectedTime] = useState<{
-    hours: number | null;
-    minutes: number | null;
-    period: string | null;
-  }>({
-    hours: null,
-    minutes: null,
-    period: null,
-  });
   const [datePickerKeyFrom, setDatePickerKeyFrom] = useState(0);
   const [datePickerKeyTo, setDatePickerKeyTo] = useState(1);
   const [timePickerKeyFrom, setTimePickerKeyFrom] = useState(2);
@@ -727,7 +718,6 @@ export default function Requester() {
       />
       <Header />
 
-      {/* <ScrollView> */}
       <View style={Styles.container}>
         {selectedCategory === "Search Vehicle" && (
           <View style={[{ gap: Viewport.width * 0.05 }, Styles.flexRow]}>
@@ -1108,9 +1098,6 @@ export default function Requester() {
                               key={timePickerKeyFrom}
                               secondBG
                               onTimeSelected={handleFromTimeSelected}
-                              selectedHours={selectedTime.hours}
-                              selectedMinutes={selectedTime.minutes}
-                              selectedPeriod={selectedTime.period}
                             />
                             {errorMessages[0]?.travelTimeError && (
                               <Text style={Styles.textError}>
@@ -1159,9 +1146,6 @@ export default function Requester() {
                               key={timePickerKeyTo}
                               secondBG
                               onTimeSelected={handleToTimeSelected}
-                              selectedHours={selectedTime.hours}
-                              selectedMinutes={selectedTime.minutes}
-                              selectedPeriod={selectedTime.period}
                             />
                             {errorMessages[0]?.returnTimeError && (
                               <Text style={Styles.textError}>
@@ -1380,9 +1364,6 @@ export default function Requester() {
                             key={datePickerKeyToOneWay}
                             secondBG
                             onTimeSelected={handleFromTimeSelected}
-                            selectedHours={selectedTime.hours}
-                            selectedMinutes={selectedTime.minutes}
-                            selectedPeriod={selectedTime.period}
                           />
                           {errorMessages[0]?.travelTimeOnewayError && (
                             <Text style={Styles.textError}>
@@ -1624,23 +1605,6 @@ export default function Requester() {
                         </Text>
                       </>
                     )}
-                    {/* {
-                            role === "vip"
-                              ? (setIsInitialFormVIPOpen(true),
-                                setSelectedPlateNumber(vehicle.plate_number),
-                                setSelectedModel(vehicle.model),
-                                setSelectedCapacity(vehicle.capacity))
-                              : vehicle.is_vip === true
-                              ? (setIsDisclaimerOpen(true),
-                                setSelectedPlateNumber(vehicle.plate_number),
-                                setSelectedModel(vehicle.model),
-                                setSelectedCapacity(vehicle.capacity))
-                              : openRequestForm(
-                                  vehicle.plate_number,
-                                  vehicle.model,
-                                  vehicle.capacity
-                                );
-                          } */}
                     {vehicles.map((vehicle, index) => (
                       <TouchableOpacity
                         onPress={() => {
@@ -1746,7 +1710,6 @@ export default function Requester() {
               >
                 {vehicleRecommendation.map((recommend, index) => (
                   <View
-                    // onPress={() => handleRequestFormVisible(vehicle)}
                     key={index}
                     style={[
                       {
@@ -1963,7 +1926,6 @@ export default function Requester() {
                   <>
                     {pendingSchedule.map((schedule, index) => (
                       <TouchableOpacity
-                        // onPress={() => handleRequestFormVisible(vehicle)}
                         key={index}
                         style={[
                           {
@@ -2048,7 +2010,6 @@ export default function Requester() {
                   <>
                     {schedule.map((schedule, index) => (
                       <TouchableOpacity
-                        // onPress={() => handleRequestFormVisible(vehicle)}
                         key={index}
                         style={[
                           {
@@ -2175,7 +2136,6 @@ export default function Requester() {
           )}
         </View>
       </View>
-      {/* </ScrollView> */}
       <Confirmation
         visible={isConfirmationAcceptedShow}
         animationType="fade"

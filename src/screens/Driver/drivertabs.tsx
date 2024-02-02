@@ -5,7 +5,7 @@ import {
   FontSizes,
   Colors,
 } from "../../styles/globalstyles/globalstyles";
-import { faHome, faClock, faCarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faCarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Driver from "./driver";
 import Trips from "./trip";

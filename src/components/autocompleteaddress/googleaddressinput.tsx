@@ -2,7 +2,13 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { handlePlaceSelect } from "../api/api";
 import { useEffect, useState, useRef } from "react";
 import { AutoCompleteAddressGoogleStyle } from "../../styles/components/googleaddressinput/googleaddressinput";
-import { View, TouchableOpacity, Modal, Text, ActivityIndicator } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Modal,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import {
   Colors,
   FontSizes,
@@ -21,7 +27,6 @@ interface AutoCompleteAddressGoogleProps {
   category?: any;
   isAutoCompleteAddressPressed?: any;
   setIsAutoCompleteAddressPressed?: any;
-  //   removeDestinationError: () => void;
 }
 
 export default function AutoCompleteAddressGoogle({
@@ -33,12 +38,11 @@ export default function AutoCompleteAddressGoogle({
   category,
   isAutoCompleteAddressPressed,
   setIsAutoCompleteAddressPressed,
-}: //   removeDestinationError,
-AutoCompleteAddressGoogleProps) {
+}: AutoCompleteAddressGoogleProps) {
   const [travel_date, setTravelDate] = useState(travelDateProp);
   const [travel_time, setTravelTime] = useState(travelTimeProp);
   const [labelData, setLabelData] = useState("");
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY;
 
   const onPlaceSelectedRef = useRef<(data: any, details: any | null) => void>(
@@ -47,7 +51,6 @@ AutoCompleteAddressGoogleProps) {
 
   useEffect(() => {
     onPlaceSelectedRef.current = (data, details) => {
-      
       handlePlaceSelect(
         details,
         travel_date,
@@ -70,10 +73,10 @@ AutoCompleteAddressGoogleProps) {
   ]);
 
   useEffect(() => {
-    if(labelData) {
-      setIsLoading(false)
+    if (labelData) {
+      setIsLoading(false);
     }
-  }, [labelData])
+  }, [labelData]);
 
   useEffect(() => {
     setTravelDate(travelDateProp);
@@ -92,20 +95,19 @@ AutoCompleteAddressGoogleProps) {
           borderBottomWidth: 1,
           marginLeft: Viewport.width * 0.1,
           width: Viewport.width * 0.57,
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between'
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
         }}
         onPress={() => setIsAutoCompleteAddressPressed(true)}
       >
         <Text>{labelData !== "" ? labelData : "Search here....."}</Text>
         {isLoading && (
           <ActivityIndicator
-          size={FontSizes.normal}
-          color={Colors.primaryColor1}
-        />
+            size={FontSizes.normal}
+            color={Colors.primaryColor1}
+          />
         )}
-        
       </TouchableOpacity>
       <Modal
         visible={isAutoCompleteAddressPressed}
@@ -149,20 +151,10 @@ AutoCompleteAddressGoogleProps) {
               styles={AutoCompleteAddressGoogleStyle}
               placeholder="Search destination....."
               onPress={(data, details = null) => {
-                // if (details) {
-                //   const isPlaceInMindanao = details.address_components.some(
-                //     (component:any) => component.structured_formatting.secondary_text === "Lanao del Sur, Philippines"
-                //   );
-          
-                //   if (!isPlaceInMindanao) {
-                //     console.log("Selected place is not in Mindanao");
-                //     return;
-                //   }
-                // }
                 onPlaceSelectedRef.current(data, details);
                 setIsAutoCompleteAddressPressed(false);
-                setIsLoading(true)
-                console.log(data)
+                setIsLoading(true);
+                console.log(data);
               }}
               query={{
                 key: apiKey,

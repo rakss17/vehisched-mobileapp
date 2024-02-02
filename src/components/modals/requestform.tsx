@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Modal, View, Text, ScrollView, Alert } from "react-native";
-import Checkbox from "expo-checkbox";
 import {
   Styles,
   Viewport,
@@ -8,7 +7,7 @@ import {
   Colors,
 } from "../../styles/globalstyles/globalstyles";
 import InputField2 from "../inputfield/inputfield2";
-import { RequestFormDataProps, ModalProps } from "../../interfaces/interfaces";
+import { ModalProps } from "../../interfaces/interfaces";
 import Button from "../buttons/button";
 import Confirmation from "./confirmation";
 import { useSelector } from "react-redux";
@@ -48,7 +47,6 @@ const RequestForm: React.FC<ModalProps> = ({
 
   const [isFirstFormShow, setIsFirstFormShow] = useState(true);
   const [isSecondFormShow, setIsSecondFormShow] = useState(false);
-  const [isThirdFormShow, setIsThirdFormShow] = useState(false);
   const [isDistanceExceed50, setIsDistanceExceed50] = useState(false);
   const [isTextErrorShow, setIsTextErrorShow] = useState(false);
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
@@ -152,13 +150,10 @@ const RequestForm: React.FC<ModalProps> = ({
       case "Second":
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
-        setIsThirdFormShow(false);
-
         break;
       case "SecondBack":
         setIsFirstFormShow(false);
         setIsSecondFormShow(true);
-        setIsThirdFormShow(false);
 
         break;
       case "Submit":

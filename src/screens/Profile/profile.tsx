@@ -17,7 +17,6 @@ import { RootState } from "../../redux/store";
 import Button from "../../components/buttons/button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { changePassword } from "../../components/api/api";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import InputField3 from "../../components/inputfield/inputfield3";
 import Loading from "../../components/modals/loading";
 import Confirmation from "../../components/modals/confirmation";

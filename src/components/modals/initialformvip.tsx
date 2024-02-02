@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Modal, Text, TextInput } from "react-native";
+import { View, Modal, Text } from "react-native";
 import AutoCompleteAddressGoogle from "../autocompleteaddress/googleaddressinput";
 import DatePicker from "../datepicker/datepicker";
 import TimePicker from "../timepicker/timepicker";

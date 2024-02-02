@@ -137,10 +137,6 @@ const TimePicker: React.FC<TimePickerProps> = ({
           {renderArrowButton("hours", "up")}
           {renderArrowButton("hours", "down")}
         </View>
-        {/* <View style={styles.arrowContainer}>
-          {renderArrowButton("minutes", "up")}
-          {renderArrowButton("minutes", "down")}
-        </View> */}
         <View style={styles.timePicker}>
           <Text style={styles.pickerText}>
             {selectedPeriod !== null ? selectedPeriod : "- -"}

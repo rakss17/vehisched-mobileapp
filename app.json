@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Vehi-Sched",
-    "slug": "Vehi-Sched",
+    "slug": "vehisched-mobileapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -22,14 +22,22 @@
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#060E57"
       },
-      "package": "com.vehisched.vehisched"
+      "package": "com.vehisched.VehiSched"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow Vehi-Sched to access camera."
+        }
+      ]
+    ],
     "extra": {
       "eas": {
-        "projectId": "aa923bd7-7b31-4118-a258-255c6ba8538a"
+        "projectId": "1c00675c-e5a2-4725-ad63-59ffb0ae41d7"
       }
     }
   }

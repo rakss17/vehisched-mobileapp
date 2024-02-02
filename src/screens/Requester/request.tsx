@@ -15,7 +15,6 @@ import {
 } from "react-native";
 import Header from "../../components/header/header";
 import Button from "../../components/buttons/button";
-import { fetchedRequestData } from "../../components/mockdata/mockdata";
 import { Requests } from "../../interfaces/interfaces";
 import EllipsisMenu from "../../components/ellipsismenu/ellipsismenu";
 import PromptDialog from "../../components/modals/promptdialog";
@@ -42,7 +41,6 @@ export default function Request() {
   const [isConfirmationShow, setIsConfirmationShow] = useState(false);
   const [isConfirmation2Show, setIsConfirmation2Show] = useState(false);
   const [isRequestDetailsShow, setIsRequestDetailsShow] = useState(false);
-  const [prevScrollY, setPrevScrollY] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [notifList, setNotifList] = useState<any[]>([]);
   const notifLength = notifList.filter((notif) => !notif.read_status).length;
