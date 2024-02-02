@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Modal, ScrollView } from "react-native";
-import { ModalProps, Requests } from "../../interfaces/interfaces";
+import { ModalProps } from "../../interfaces/interfaces";
 import {
   Viewport,
   FontSizes,
@@ -265,11 +265,7 @@ const RequestDetails: React.FC<ModalProps & { requestData: any | null }> = ({
               </View>
             </ScrollView>
             <View>
-              <Button
-                onPress={onRequestClose}
-                text="Close"
-                defaultBG
-              />
+              <Button onPress={onRequestClose} text="Close" defaultBG />
             </View>
           </View>
         </View>

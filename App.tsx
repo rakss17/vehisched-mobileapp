@@ -20,7 +20,10 @@ export default function App() {
       <PersistGate persistor={persistor}>
         <NavigationContainer>
           <StatusBar style="light" />
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator
+            initialRouteName="Landing"
+            screenOptions={{ headerShown: false }}
+          >
             <Stack.Screen name="Landing" component={Landing} />
             <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="Requester" component={RequesterTabs} />
