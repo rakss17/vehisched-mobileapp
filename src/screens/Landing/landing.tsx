@@ -57,6 +57,8 @@ export default function Landing() {
         } else if (role === "requester" || role === "vip") {
           navigation.navigate("Requester");
         }
+      } else {
+        navigation.navigate("Landing");
       }
     };
 

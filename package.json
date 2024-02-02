@@ -1,5 +1,5 @@
 {
-  "name": "vehisched-mobileapp",
+  "name": "vehisched",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.6.1",
     "date-fns": "^2.30.0",
-    "expo": "^49.0.22",
+    "expo": "^49.0.16",
     "expo-barcode-scanner": "~12.5.3",
     "expo-checkbox": "~2.4.0",
     "expo-document-picker": "~11.5.4",
