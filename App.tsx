@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import Landing from "./src/screens/Landing/landing";
 import { RequesterTabs } from "./src/screens/Requester/requestertabs";
@@ -8,8 +9,8 @@ import { GateGuardTabs } from "./src/screens/GateGuard/gateguardtabs";
 import LoadingScreen from "./src/components/loadingscreen/loadingscreen";
 import { Props } from "./src/components/loadingscreen/loadingscreen";
 import { Provider } from "react-redux";
-import { store, persistor } from "./src/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./src/redux/store";
 import Profile from "./src/screens/Profile/profile";
 
 const Stack = createNativeStackNavigator();
@@ -17,7 +18,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
+      <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
           <StatusBar style="light" />
           <Stack.Navigator

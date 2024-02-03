@@ -54,9 +54,6 @@ export default function Landing() {
   );
   const role = personalInfo?.role;
 
-  Alert.alert("Lahos naka");
-  console.log("lahos naka");
-
   useEffect(() => {
     const fetchTokenAndNavigate = async () => {
       const token = await AsyncStorage.getItem("token");

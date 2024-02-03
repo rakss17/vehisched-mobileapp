@@ -1098,6 +1098,9 @@ export default function Requester() {
                               key={timePickerKeyFrom}
                               secondBG
                               onTimeSelected={handleFromTimeSelected}
+                              selectedHours={null}
+                              selectedMinutes={null}
+                              selectedPeriod={null}
                             />
                             {errorMessages[0]?.travelTimeError && (
                               <Text style={Styles.textError}>
@@ -1146,6 +1149,9 @@ export default function Requester() {
                               key={timePickerKeyTo}
                               secondBG
                               onTimeSelected={handleToTimeSelected}
+                              selectedHours={null}
+                              selectedMinutes={null}
+                              selectedPeriod={null}
                             />
                             {errorMessages[0]?.returnTimeError && (
                               <Text style={Styles.textError}>
@@ -1364,6 +1370,9 @@ export default function Requester() {
                             key={datePickerKeyToOneWay}
                             secondBG
                             onTimeSelected={handleFromTimeSelected}
+                            selectedHours={null}
+                            selectedMinutes={null}
+                            selectedPeriod={null}
                           />
                           {errorMessages[0]?.travelTimeOnewayError && (
                             <Text style={Styles.textError}>

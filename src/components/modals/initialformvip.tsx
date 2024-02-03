@@ -39,23 +39,7 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
   const [selectedTravelCategory, setSelectedTravelCategory] = useState<
     string | null
   >("Round Trip");
-  const [selectedTime, setSelectedTime] = useState<{
-    hours: number | null;
-    minutes: number | null;
-    period: string | null;
-  }>({
-    hours: null,
-    minutes: null,
-    period: null,
-  });
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    const key = event.key;
-
-    if (key !== "Backspace" && isNaN(Number(key))) {
-      event.preventDefault();
-    }
-  };
   const checkAutocompleteDisability = () => {
     if (tripData.travel_date !== "" && tripData.travel_time !== "") {
       setIsAutocompleteNotPressable(false);
@@ -494,9 +478,9 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                     <TimePicker
                       secondBG
                       onTimeSelected={handleFromTimeSelected}
-                      selectedHours={selectedTime.hours}
-                      selectedMinutes={selectedTime.minutes}
-                      selectedPeriod={selectedTime.period}
+                      selectedHours={null}
+                      selectedMinutes={null}
+                      selectedPeriod={null}
                     />
                     {errorMessages[0]?.travelTimeError && (
                       <Text style={Styles.textError}>
@@ -541,9 +525,9 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                     <TimePicker
                       secondBG
                       onTimeSelected={handleToTimeSelected}
-                      selectedHours={selectedTime.hours}
-                      selectedMinutes={selectedTime.minutes}
-                      selectedPeriod={selectedTime.period}
+                      selectedHours={null}
+                      selectedMinutes={null}
+                      selectedPeriod={null}
                     />
                     {errorMessages[0]?.returnTimeError && (
                       <Text style={Styles.textError}>
@@ -751,9 +735,9 @@ const InitialFormVip: React.FC<InitialFormVipProps> = ({
                   <TimePicker
                     secondBG
                     onTimeSelected={handleFromTimeSelected}
-                    selectedHours={selectedTime.hours}
-                    selectedMinutes={selectedTime.minutes}
-                    selectedPeriod={selectedTime.period}
+                    selectedHours={null}
+                    selectedMinutes={null}
+                    selectedPeriod={null}
                   />
                   {errorMessages[0]?.travelTimeOnewayError && (
                     <Text style={Styles.textError}>
